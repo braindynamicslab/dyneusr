@@ -56,3 +56,6 @@ Usage
 Once installed, you can import `dyneusr` into any Python (3.5+) environment, using the following line of code:
 
 	import dyneusr
+
+
+For more detailed examples of `dyneusr` usage, see: https://bitbucket.org/braindynamicslab/dyneusr-notebooks/
