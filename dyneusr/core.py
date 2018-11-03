@@ -265,7 +265,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
 		return self
 
 
-	def visualize(self, json_graph=None, path_html='index.html', custom_data=None, plot_tcm=False, **kwargs):
+	def visualize(self, path_html='index.html', json_graph=None, custom_data=None, plot_tcm=False, **kwargs):
 		""" Visualize DyNeuGraph.
 
 		TODO: this needs some work...

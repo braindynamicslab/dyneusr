@@ -69,7 +69,7 @@ def json_dump(obj, fp):
 	json.dump(obj, fp, default=default)
 	return 
 
-def visualize_force(js, template=None, path_html='index.html', path_csv=None, path_json=None, path_graphs='graphs', reset=True, static=False, show=False, figure=None, PORT=8000, **kwargs):
+def visualize_force(js, template=None, path_html='index.html', path_csv=None, path_json=None, path_graphs='graphs', path_assets=None, reset=True, static=False, show=False, figure=None, PORT=8000, **kwargs):
 	""" Create index.html, index.csv, graphs/*.json
 	"""
 	### Read template HTML
@@ -81,42 +81,53 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
 		html = f.read()
 
 	### Define path to output HTML
-	path_html = Path(path_html).resolve()
-	url = 'http://localhost:{}/{}'.format(PORT, path_html.name)
-		
-	### Check graphs directory
-	graphs_dir = Path('.') / path_graphs
+	path_html = Path(path_html)
+	url = 'http://localhost:{}/{}'.format(PORT, str(path_html))
+
+	### Path to save assests
+	if path_assets is None:
+		path_assets = '.'
+	path_assets = Path(path_assets)
+	if not path_assets.exists():
+		os.makedirs(str(path_assets))
+
+	### Check graphs director
+	graphs_dir = path_html.parents[0] / path_assets / path_graphs
 	if not graphs_dir.exists():
 		os.makedirs(str(graphs_dir))
 
 	### Write graphs/*.json
 	if path_json is None:
 		path_json = graphs_dir / path_html.name.replace('.html', '.json')
+	path_json = Path(path_json)
 	with open(str(path_json), 'w') as f:
 		json_dump(js, f)
 		
 
 	### Write index.csv
 	if path_csv is None:
-		path_csv =  path_html.parents[0] / path_html.name.replace('.html', '.csv')
-	# update html with csv path
+		path_csv =  path_html.parents[0] / path_assets / path_html.name.replace('.html', '.csv')
+	# clean up paths
 	path_csv = Path(path_csv)
-	html = html.replace('index.csv', str(path_csv.name))
+	path_csv_rel = path_csv.relative_to(path_html.parents[0])
+	path_json_rel = path_json.relative_to(path_html.parents[0])
+	# update html with csv path
+	html = html.replace('index.csv', str(path_csv_rel))
 	if path_csv.exists() and not reset:
 		with open(str(path_csv), 'a') as f:
 			f.write('\n')
-			f.write(str(path_json))
+			f.write(str(path_json_rel))
 	else:
 		with open(str(path_csv), 'w') as f:
 			f.write('json\n')
-			f.write(str(path_json))
+			f.write(str(path_json_rel))
 
 	### Load template HTML
 	# TODO: should probably seperate these into seperate files
 	if static is True:		
 		### Rename path with -static
 		#path_html = Path(str(path_html).replace('.html', "-static.html"))
-		url = "file:///" + str(path_html)
+		url = "file:///" + str(path_html.resolve())
 
 		### Add js directly to HTML
 		with open(str(path_json), 'r') as f:

@@ -6,6 +6,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
+
 import numpy as np
 import pandas as pd
 
@@ -16,7 +18,7 @@ import seaborn as sns
 from sklearn.preprocessing import Normalizer, Binarizer
 
 
-def plot_temporal_matrix(TCM, y=None, save_as=None, show=False, scalers=[Normalizer()], cmap='plasma', windows=None, **kwargs):
+def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normalizer()], cmap='plasma', windows=None, **kwargs):
         """ Plot temporal transitions
 
         """
@@ -77,8 +79,9 @@ def plot_temporal_matrix(TCM, y=None, save_as=None, show=False, scalers=[Normali
         
         # moving average
         window = kwargs.pop('window', 20) 
+        rolling_kind = kwargs.get('rolling', np.mean)
         deg_rolling = pd.DataFrame(deg).rolling(window, center=True, min_periods=int(window/2))
-        deg_mva = deg_rolling.apply(kwargs.get('rolling', np.mean)).values
+        deg_mva = deg_rolling.apply(rolling_kind, raw=True)
         deg_mva /= deg_mva.max()
         # scale ?
         #deg_mva = deg_mva.reshape(-1, 1)
@@ -100,6 +103,8 @@ def plot_temporal_matrix(TCM, y=None, save_as=None, show=False, scalers=[Normali
         #figs['tsplot'] = fig
         if save_as is not None:
             print("Saving figure, save_as:", save_as)
+            if not os.path.exists(os.path.dirname(save_as)):
+                os.makedirs(os.path.dirname(save_as))
             fig.savefig(save_as, transparent=True)#, facecolor='lightgray', edgecolor='w')
         
         # show
