@@ -43,16 +43,12 @@ def simple_mixture(data, index=None):
     # stack, mean over stack
     stack_pos_neg_X = np.stack([mean_pos_X, mean_neg_X])
     mean_pos_neg_X = stack_pos_neg_X.mean(axis=0, keepdims=True)
+    mean_pos_neg_X = mean_pos_neg_X.astype(np.float32)
 
     # get unmasker
-    try:
-        mm_img = data.masker.inverse_transform(mean_pos_neg_X)
-    except Exception as e:
-        print(e)
-        mm_img = data.masker.transform(mean_pos_neg_X)
+    mm_img = data.masker.inverse_transform(mean_pos_neg_X)
     mm_img = image.smooth_img(mm_img, fwhm=10)
     mm_img = image.threshold_img(mm_img, '97.5%')
-
     return mm_img
 
 
