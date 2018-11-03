@@ -25,9 +25,9 @@ import matplotlib.pyplot as plt
 ######################################################################
 ###
 ######################################################################
-def spatial_mixture(data, index=None):
+def simple_mixture(data, index=None):
     # extract rows based on index
-    mm_X = np.copy(data.X[index])
+    mm_X = np.copy(data.X[list(index), :])
     mm_pos_X = np.copy(mm_X)
     mm_neg_X = np.copy(mm_X)
 
@@ -44,39 +44,60 @@ def spatial_mixture(data, index=None):
     stack_pos_neg_X = np.stack([mean_pos_X, mean_neg_X])
     mean_pos_neg_X = stack_pos_neg_X.mean(axis=0, keepdims=True)
 
-    # get unmasked
-    mm_img = data.masker.inverse_transform(mean_pos_neg_X)
+    # get unmasker
+    try:
+        mm_img = data.masker.inverse_transform(mean_pos_neg_X)
+    except Exception as e:
+        print(e)
+        mm_img = data.masker.fit_transform(mean_pos_neg_X)
     mm_img = image.smooth_img(mm_img, fwhm=10)
-    mm_img = image.threshold_img(mm_img, 0.5)
+    mm_img = image.threshold_img(mm_img, '97.5%')
+
     return mm_img
 
 
-def spatial_mixtures(data, mixtures=[], prefix='timestep', save_dir='figures', **plot_kws):
-    filenames = []
+def simple_mixtures(data, mixtures=[], prefix='timestep', save_dir='tooltips', show_every_n=0, print_every_n=10, **plot_kws):
+    # make sure output path exists
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    # check mixtures
     if isinstance(mixtures, dict):
         mixtures = mixtures.items()
     else:
         mixtures = enumerate(mixtures)
-    for id_, mixture in mixtures:
-        print("Building Mixture Model... ID:", id_)
-        save_as = '{}{}_MM.png'.format(prefix, id_)
-        save_as = os.path.join(save_dir, save_as)
-        if not os.path.exists(os.path.dirname(save_as)):
-            os.makedirs(os.path.dirname(save_as))
-        if not os.path.exists(save_as):
-            fig = plt.figure(figsize=(8,2))
-            mm = spatial_mixture(data, index=mixture)
-            #cc = spatial_correlations(mm)
-            plot_kws = dict(dict(
-                threshold=1, figure=fig,
-                #display_mode='z',cmap="RdBu_r", cut_coords=8,
-                ), **plot_kws)
+    
+    # loop over mixtures
+    filenames = []    
+    for i, (id_, mixture) in enumerate(mixtures):
+        # format path to save figure
+        save_as = os.path.join(save_dir, 'simple_MM_{}{}.png'.format(prefix, id_))
+        filenames.append(save_as)  
+    
+        # plot, if file does not already exists
+        if os.path.exists(save_as):
+            continue
 
-            display = plotting.plot_stat_map(mm, **plot_kws)
-            display.savefig(save_as)
-            plt.close('all')
-        # save filename
-        filenames.append(save_as)
+        # get simple mixture model
+        mm = simple_mixture(data, index=mixture)
+
+        # plot simple mixture
+        plotting.plot_glass_brain(
+            mm, plot_abs=False, threshold=1,
+            cmap='jet', colorbar=True, 
+            **plot_kws
+            )
+
+        # save, show, close
+        plt.savefig(save_as, transparent=True)
+        if i>1 and i%show_every_n == 0:
+            plt.show()
+        plt.close('all')
+      
+        # display progress
+        if i%print_every_n == 0:
+            print("[{} of {}] Saved: {}".format(i, len(mixtures), save_as))
+    print('[done]')
     return filenames
 
 
