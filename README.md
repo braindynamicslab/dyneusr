@@ -8,7 +8,7 @@ Important links
 ===============
 
 - Official source code repo: https://bitbucket.org/braindynamicslab/dyneusr/
-- Example notebooks repo: https://bitbucket.org/braindynamicslab/dyneusr-notebooks/
+- Official notebooks repo: https://bitbucket.org/braindynamicslab/dyneusr-notebooks/
 
 
 Dependencies
