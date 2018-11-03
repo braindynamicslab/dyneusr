@@ -49,7 +49,7 @@ def simple_mixture(data, index=None):
         mm_img = data.masker.inverse_transform(mean_pos_neg_X)
     except Exception as e:
         print(e)
-        mm_img = data.masker.fit_transform(mean_pos_neg_X)
+        mm_img = data.masker.transform(mean_pos_neg_X)
     mm_img = image.smooth_img(mm_img, fwhm=10)
     mm_img = image.threshold_img(mm_img, '97.5%')
 
