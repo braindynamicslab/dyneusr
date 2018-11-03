@@ -86,12 +86,12 @@ def simple_mixtures(data, mixtures=[], prefix='timestep', save_dir='tooltips', s
 
         # save, show, close
         plt.savefig(save_as, transparent=True)
-        if i>1 and i%show_every_n == 0:
+        if show_every_n>0 and (i+1)%show_every_n == 0:
             plt.show()
         plt.close('all')
       
         # display progress
-        if i%print_every_n == 0:
+        if print_every_n>0 and (i+1)%print_every_n == 0:
             print("[{} of {}] Saved: {}".format(i, len(mixtures), save_as))
     print('[done]')
     return filenames
