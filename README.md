@@ -1,14 +1,14 @@
 dyneusr
 =======
 
-DyNeuSR is a Python package for generating dynamical neuroimaging spatiotemporal representations using topological data analysis.
+[DyNeuSR](https://bitbucket.org/braindynamicslab/dyneusr/) is a Python package for generating dynamical neuroimaging spatiotemporal representations using topological data analysis.
 
 
 Important links
 ===============
 
-- Official source code repo: https://bitbucket.org/braindynamicslab/dyneusr/
-- Official notebooks repo: https://bitbucket.org/braindynamicslab/dyneusr-notebooks/
+- Official DyNeuSR source code repo: https://bitbucket.org/braindynamicslab/dyneusr/
+- Official DyNeuSR-Notebooks repo: https://bitbucket.org/braindynamicslab/dyneusr-notebooks/
 
 
 Dependencies
@@ -58,4 +58,4 @@ Once installed, you can import `dyneusr` into any Python (3.5+) environment, usi
 	import dyneusr
 
 
-For more detailed examples of `dyneusr` usage, see: https://bitbucket.org/braindynamicslab/dyneusr-notebooks/
+For more detailed examples, see: [DyNeuSR-Notebooks](https://bitbucket.org/braindynamicslab/dyneusr-notebooks/).
