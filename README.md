@@ -50,4 +50,9 @@ Finally, to install `dyneusr` as a Python module, run the following command:
 	pip install -e .
 
 
+Usage
+=====
 
+Once installed, you can import `dyneusr` into any Python (3.5+) environment, using the following line of code:
+
+	import dyneusr
