@@ -38,13 +38,13 @@ First, clone the repository by running the following command in a command prompt
 	cd dyneusr
 	
 
-Next, install the required dependencies:
+Next, to install the required dependencies, run the following command:
 
 
 	pip install -r requirements.txt
 
 
-Finally, install dyneusr as a Python module:
+Finally, to install `dyneusr` as a Python module, run the following command:
 	
 
 	pip install -e .
