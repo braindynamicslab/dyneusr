@@ -665,17 +665,16 @@ function draw_force(data) {
       .attr('value', function (d) {console.log(d); return d;})
       .text(function (d) {console.log(d); return d;});
 
-  // TODO: Un-comment below to add movie button
-  //
-  //var button_movie = d3.select('#graph-meta')
-  //  .append("div")
-  //    .html("<h4>Movie</h4>")
-  //  .append("div")
-  //    .attr("class", "well")
-  //    .attr('id', 'button-movie')
-  //.append('button')
-  //  .attr('class', 'menu-button')
-  //  .text('Play')
+  // TODO: use something like this to select from csv the graph to display
+  var button_movie = d3.select('#graph-meta')
+    .append("div")
+      .html("<h4>Movie</h4>")
+    .append("div")
+      .attr("class", "well")
+      .attr('id', 'button-movie')
+  .append('button')
+    .attr('class', 'menu-button')
+    .text('Play')
 
   
   

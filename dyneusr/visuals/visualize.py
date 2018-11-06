@@ -75,7 +75,7 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
 	### Read template HTML
 	file_template = 'index.html'
 	if template is not None:
-		template = file_template.replace('.html', template)
+		file_template = file_template.replace('.html', '-{}.html'.format(template))
 	path_template = Path(__file__).resolve().parents[0] / 'templates' / file_template
 	with open(str(path_template), 'r') as f:
 		html = f.read()
