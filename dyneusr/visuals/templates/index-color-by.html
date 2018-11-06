@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>DyNeuSR</title>
+  <link rel="icon" type="image/svg+xml" href="http://web.stanford.edu/group/bdl/jekyll/images/bdl-logo.svg">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+
+<style>   
+  body {
+    font-family: "Roboto Mono", "Helvetica", sans-serif;
+
+    font-size:14px;
+    font-weight:300;
+    line-height:1.2;
+  }
+
+  #dark {
+    background-color: #242731; /*#0c1d2a;*/ /*#fdf9f0;*/ /*#384953;*/ /*#fdf9f0;*/ /*#384953;*/
+    color: #8797a0;
+   
+  }
+  #dark svg.graph {
+      background-color: #242731; /*#0a1d2b;*/ /*#fdf9f0; *//*#ece4d2;*/ 
+      margin: 0px;
+      /*box-shadow: 2px 2px 20px 2px #384953;*/
+      /*box-shadow: inset 0px 0px 10px 2px #384953;*/
+      box-shadow: 0px 0px 5px 1px #384953;
+  }
+
+  #light {
+    color: #242731; /*#0c1d2a;*/
+    background: #ffffff; /*#e4e7e8;*/
+  }
+  #light svg.graph {
+      background-color: #ffffff; /*#e4e7e8;*/
+      margin: 0px;
+      /*box-shadow: 2px 2px 20px 2px #384953;*/
+      /*box-shadow: inset 0px 0px 10px 2px #384953;*/
+      box-shadow: inset 0px 0px 5px 1px #384953;
+
+  }
+
+
+  .well {
+    padding: 20px 20px 20px 20px;
+  }
+
+  .well .well {
+    padding: 10px 10px 10px 10px;
+  }
+  #dark .well {
+    color:#e4e7e8;
+    background-color: #242731;
+    border-color:#e4e7e8;
+
+  }
+  #light .well {
+    color:#242731;
+    background: #ffffff; /*#e4e7e8;*/
+    border-color:#242731;
+  }
+
+  .navbar { 
+      padding: 1rem 0rem;
+   }
+  .navbar-inverse2 {
+    background-color:#ffffff00;
+    border-color:#2220;
+  }
+
+  #dark .navbar-inverse {
+    background-color: #ffffff00;/*#242731;*/
+    border-color:#2220;
+  }
+
+  #light .navbar-inverse {
+    background-color: #ffffff00; /*#ffffff;*/ /*#e4e7e8;*/
+    border-color:#2220;
+  }
+
+  #dark .navbar-inverse .navbar-nav>li>a {
+      color:#e4e7e8;
+  }
+  #light .navbar-inverse .navbar-nav>li>a {
+      color:#242731;
+  }
+  #dark .navbar-brand {
+    color: #00bcdb;
+  }
+  #light .navbar-brand {
+    color: #00bcdb;
+  }
+   a.navbar-brand:hover {
+    /*color: #00dbff !important;*/
+   }
+
+  .navbar-dyneusr {
+   background: #0c1d2a; /*#384953;*/
+   border-color: #0c1d2a; /*#2b3c4e;*/
+   line-height: 20px;
+   color: #8797a0; /*#fdf9f0;*/ 
+   box-shadow: 0px 0px 10px 3px #384953; /*#161d21;*/
+  }
+  h1, h2 {
+   font-size:24px;
+   font-weight: 300;
+   color: #00bcdb; /* #ece4d2;*/
+  }
+  h2 {
+    font-size: 18px;
+    padding-bottom: 10px;
+    font-weight: 700;
+  }
+  h3 {
+    font-size:16px;
+    font-weight: 700;
+    /*float: left;*/
+    padding-right: 8px;
+    display: inline-block;
+  }
+
+
+  .node { 
+    opacity: 1.0;
+  }
+  .node#defocus { 
+    opacity: 0.3;
+  }
+  #dark .node .circle {
+    stroke: #fff;
+    stroke-width: 0.0px;
+  }
+  #dark .node#hover .circle,
+  #dark .node#highlight .circle,
+  #dark .node#focus .circle {
+    opacity: 1.0;
+    stroke: #fff; /*#00bcdb;*/
+    stroke-width: 1.5px;
+  }
+
+  #light .node .circle {
+    stroke: #000;
+    stroke-width: 0.0px;
+  }
+  #light .node#hover .circle,
+  #light .node#highlight .circle,
+  #light .node#focus .circle {
+    opacity: 1.0;
+    stroke: #000; /*#00bcdb;*/
+    stroke-width: 1.5px;
+  }
+
+  #dark .link {
+    opacity: 1.0;
+    stroke: #777;
+    stroke-opacity: 0.5;
+    stroke-width: 1.5px;
+  }
+  #light .link {
+    opacity: 1.0;
+    stroke: #777;
+    stroke-opacity: 0.5;
+    stroke-width: 1.5px;
+  }
+  .link#defocus {
+    opacity: 0.3;
+  }
+
+  #dark .link#hover,
+  #dark .link#highlight,
+  #dark .link#focus {
+    stroke: #fff;
+    stroke-opacity: 1.0;
+    stroke-width: 3.0px;
+  }
+  #light .link#hover,
+  #light .link#highlight,
+  #light .link#focus {
+    stroke: #000;
+    stroke-opacity: 1.0;
+    stroke-width: 3.0px;
+  }
+
+
+  .node text {
+    display: none;
+    font: 10px sans-serif;
+  }
+
+  .node:hover text {
+    display: inline;
+  }
+
+  .cell {
+    fill: none;
+    pointer-events: all;
+  }
+
+
+  #tooltip {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    bottom: 0;
+    width: 400px;
+    padding: 20px;
+    overflow: auto;
+    display: none;
+  }
+
+  .tooltip-image {
+    width: 100%; 
+
+  }
+  #main {
+    position: relative;
+      overflow: auto;
+      padding-top:15px;
+      /*width:70%;*/
+      top:65px;
+  }
+  #meta {
+    opacity: 0.85;
+    position: fixed;
+      top: 65px;
+      right: 0px;
+      height:100%;
+      padding: 15px;
+      overflow: auto;
+      display: block;
+  }
+  #dark #meta {
+    background-color: #242732 ;
+  }
+
+  #light #meta {
+    background-color:#ffffff; /*#e4e7e8;*/
+  }
+  #main-container {
+    height:100%;
+  }
+
+  svg.legend {
+      margin-right:20px;
+  }
+  #dark text.legend-text {
+    fill:#e4e7e8;
+  } 
+  #light text.legend-text {
+    fill:#242731;
+  }
+
+  .menu-choice {
+    font-size: 14pt;
+    margin-bottom:0px;
+    border: 0px solid #fff;
+    background-color: transparent;
+    width:100%;
+  }
+     
+  </style>
+
+
+</head>
+
+
+<body id="light">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a href="#title" data-toggle="collapse" class="navbar-brand" href="#">DyNeuSR</a>
+      <div id="title" class="collapse" style="line-height:50px; width:500px;">
+        <b>Dy</b>namical <b>Neu</b>roimaging <b>S</b>patiotemporal <b>R</b>epresentations
+      </div>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+        <li><a href="#" onclick="toggle_display_mode();">MODE</a></li>
+        <li><a href="#" onclick="toggle_meta();">META</span></a></li>
+    </ul>
+  </div>
+
+</nav>
+
+    <div id="main" class="col-sm-8">
+    </div>
+    <div id="meta" class="col-sm-4">
+          <div class="well">
+            <div id="graph-meta"></div>
+          </div>
+          <div class="well">
+            <div id="node-meta"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+
+
+
+
+
+
+<script>
+
+///////////////////////////////////////////////
+// Main
+///////////////////////////////////////////////
+if (!d3.select("#json_graph").empty()) {
+    load_force_graphs();
+} else {
+    load_force_graphs_csv("index.csv");
+}
+  
+
+//allow 10 times zoom in or out
+var zoomer = d3.behavior.zoom()
+    .scaleExtent([0.1,7])
+    .on("zoom", zoom);
+
+//define the event handler function
+function zoom() {
+    //console.log("zoom", d3.event.translate, d3.event.scale);
+    d3.selectAll("g.zoomable").attr("transform", 
+             "translate(" + d3.event.translate + ")" 
+         + " scale(" + d3.event.scale + ")" );
+};
+  
+
+var color_palettes = {
+    'category': d3.scale.category10().range(),
+    'category20': d3.scale.category20().range(),
+    'spectral': ["#d53e4f","#fdae61","#e6f598","#66c2a5","#3288bd"],
+    'spectral8': ["#d53e4f","#f46d43","#fdae61","#fee08b","#e6f598","#abdda4","#66c2a5","#3288bd"],
+    'viridis': ["#440154","#3f4788", "#31b57b","#90d743","#fde725"],
+    'viridis20': ["#440154","#3f4788","#2f6b8e","#1f948c","#20a386", "#20a486", "#31b57b", "#40bd72",
+                "#50c46a","#60ca60","#70cf57", "#81d34d","#90d743","#a0da39","#b0dd2f","#c0df25",
+                "#d0e11c","#e2e418","#fde725"],
+    };
+///////////////////////////////////////////////
+// Helpers
+///////////////////////////////////////////////
+// Load a list of JSON files
+function load_force_graphs() {
+    var data = JSON.parse(
+        document.getElementById("json_graph").dataset.json
+        );
+    var inputs = {data:data, source:"default", total:1};
+    console.log(inputs);
+    draw_force(inputs);
+}
+
+// Load a list of JSON files
+function load_force_graphs_csv(csv) {
+    d3.csv(csv, function(error, data) {
+      data.forEach(function(d, i) {
+        console.log(i, data.length, d);
+        load_force_graph(d.json, data.length);
+    }); 
+  });
+}
+
+function load_force_graph(json, n) {
+    d3.json(json, function(error, data) {
+      var inputs = {data:data, source:json, total:n};
+      console.log(inputs);
+      draw_force(inputs);
+  });
+}
+
+// Draw json
+function draw_force(data) {
+    ////////////////////////////////////////////////////
+    //// inits
+    ////////////////////////////////////////////////////
+  var json = data.data,
+      source = data.source,
+      n = data.total;
+
+  var ncols = d3.min([n, 3]);
+  var nrows = d3.max([1, Math.round(n / 3)]);
+  var colsize = 12 / ncols;
+
+  console.log("source: " + source);
+  console.log(ncols, nrows);
+
+  var margin = {top: 0, right: 0, bottom: 100, left: 0},
+      width = (window.innerWidth / ncols) - margin.left - margin.right,
+      height = (window.innerHeight / ncols) - margin.top - margin.bottom;
+  console.log(width, height);
+
+  var div = d3.select("#main")
+      .append("div")
+      .attr("class", "col-lg-" + colsize)
+      .attr("width", width)
+      .attr("height", height)
+      .attr("display", "inline-block");
+  width = document.getElementById("main").offsetWidth;
+
+  
+  var svg = div.append("svg")
+    .attr("class", "graph")
+    .attr("width", "100%")
+    .attr("height", height)
+        .call(zoomer)
+      .append("g")
+        .attr("class", "zoomable");
+
+
+  ////////////////////////////////////////////////////
+  //// Reindex nodes, links
+  ////////////////////////////////////////////////////
+  // get mapping of node id => index
+  var node_index_from = {name:{}, id:{}};
+  json.nodes.forEach(function(d,i) {
+    // add to mapping
+    node_index_from.name[d.name] = i;
+    node_index_from.id[d.id] = i;
+    // update name, id
+    json.nodes[i].id = i;
+  });
+
+  // reindex links
+  json.links.forEach(function(d,i) {
+    if (typeof node_index_from.id[d.source] !== "undefined") {
+      // save source, target
+    //d.source_id = d.source;
+    //d.target_id = d.target;
+    // update link source, target
+    d.source = node_index_from.id[d.source];
+    d.target = node_index_from.id[d.target];
+    } else if (typeof node_index_from.name[d.source] !== "undefined") {
+      // save source, target
+    //d.source_name = d.source;
+    //d.target_name = d.target;
+    // update link source, target
+    d.source = node_index_from.name[d.source];
+    d.target = node_index_from.name[d.target];
+    }
+    // update link data
+    json.links[i] = d;
+  });
+
+  ////////////////////////////////////////////////////
+  //// Force setup
+  ////////////////////////////////////////////////////
+  var w = Math.round(width * 1);
+  var h = Math.round(height * 1);
+  console.log(w, h);
+
+  var force = d3.layout.force()
+      .gravity(0.2)
+      .charge(-300)
+      .linkDistance(1)
+      .size([w, h])
+      .nodes(json.nodes)
+      .links(json.links)
+        .linkDistance(function(link) {return Math.sqrt(link.distance);})
+      .start();
+
+
+  ////////////////////////////////////////////////////
+  //// Colors + labels setup
+  ////////////////////////////////////////////////////
+  // color by
+  var color_by_options = {};
+  json.nodes.map(function(d,i) {
+      d3.keys(d.proportions).map(function(k) {
+        if (color_by_options[k]!==true) {
+          color_by_options[k] = true;
+        }
+      });
+    });
+  color_by_options = d3.keys(color_by_options);
+  console.log("color_by_options: "+color_by_options);
+
+  var color_by = json.graph.color_by ? json.graph.color_by : color_by_options[0];  
+  console.log("color_by: "+color_by);
+
+
+  // colors
+  var groups = {}
+  if (typeof json.graph.groups !== "undefined") {
+    d3.keys(json.graph.groups).map(function(k, i) {
+      groups[k] = json.graph.groups[k];
+    });
+  }
+  color_by_options.map(function(k) {
+    console.log(k)
+    groups[k] = {};
+    json.nodes.map(function(d,i) {
+      d.proportions[k].map(function(p,j) {
+        if (groups[k][p.group]!==true) {
+          groups[k][p.group] = true;
+        }
+      })
+    })
+    groups[k] = d3.keys(groups[k]);
+  });
+  console.log("groups: "+groups);
+  console.log("groups: "+groups[color_by]);
+
+
+  // set custom color palette if defined
+  var color_palette = color_palettes['category'];
+  if (typeof json.graph.color !== "undefined") {
+    d3.keys(json.graph.color).map(function(k, i) {
+      color_palettes[k] = json.graph.color[k];      
+    })
+    color_palette = color_palettes[color_by];
+  }
+  var color = d3.scale.linear()
+    .domain(groups[color_by])
+    .range(color_palette);
+  console.log("color.domain: "+color.domain());
+  console.log("color.range: "+color.range());
+
+  // color labels
+  var color_labels = {};
+  d3.keys(groups).map(function(k, i) {
+    color_labels[k] = groups[k];
+  });
+  if (typeof json.graph.label !== "undefined") {
+    d3.keys(json.graph.label).map(function(k, i) {
+      color_labels[k] = json.graph.label[k]
+    })
+  }
+  var color_label = d3.scale.ordinal()
+            .domain(color_labels[color_by])
+            .range(color.range());
+  console.log("color_label.domain: "+color_label.domain());
+  console.log("color_label.range: "+color_label.range());
+
+  
+  
+    
+  // node-pie 
+  var pie = d3.layout.pie()
+            .sort(null)
+            .value(function(d) { return d.value; });
+    
+  // scale pie by max row count
+  var data_size = d3.max(json.nodes.map(d => { 
+        return d3.max(d.members);
+    }));
+  console.log("data size: "+data_size);
+
+  var pie_size = json.nodes.map(d => { 
+    return d3.max(d.proportions[color_by].map(p => 
+        { return p.row_count; }
+            ));
+      });
+  console.log("pie_size: "+pie_size);
+
+  // size node proportional to data
+  var pie_norm = d3.scale.log()
+      .domain([1, data_size])
+      .rangeRound([3, 30]);
+  //.rangeRound([2, 15]);
+  console.log("pie_norm([1,10,100,1000]): "+[1,10,100,1000].map(pie_norm));
+
+  var link = svg.selectAll(".link")
+      .data(json.links)
+      .enter().append("line")
+      .attr("class", "link");
+
+  var node = svg.selectAll(".node")
+      .data(json.nodes)
+      .enter().append("g")
+      .attr("class", "node")
+      .call(force.drag);
+
+  var circle = node.selectAll("path")
+      .data(function(d, i) {return pie(d.proportions[color_by]); })
+      .enter()
+      .append("svg:path")
+        .attr("d", d3.svg.arc().innerRadius(0).outerRadius(function(d, i) {
+          return pie_norm(d.data.row_count)*0.8;
+        }))
+        .attr("fill", function(d, i) { return color(d.data.group); })
+        .attr("class", "circle");
+      
+
+
+  //var label = node.append("text")
+  //  .attr("dy", ".25em")
+  //  .attr("dx", "1em")
+  //  .text(function(d) { return d.name + " (n="+d.members.length+")";});
+  var label = node.append("a")
+      .attr("href", "#")
+      .attr("class", "pop")
+      .attr("data-toggle", "popover")
+      .attr("data-placement", "right")
+      .attr("title", function(d) { return d.name; })
+      .attr("data-content", function(d) { return "size : "+d.members.length; })
+      .html("text");
+
+  force.on("tick", function() {
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node.attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; })
+        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"});
+      });
+
+  
+
+  ////////////////////////////////////////////////////
+  //// Node Highlight / Focus
+  ////////////////////////////////////////////////////
+  // images ?
+  var div = d3.select("#meta");
+  
+  // init Graph Meta section
+  d3.select('#graph-meta')
+    .append("div")
+    .attr("id", "source")
+    .html("<h4>Source</h4><div class='well'>"+source+"</div>");
+  d3.select('#node-meta')
+    .html("<h4>Node</h4><div class='well'></div>");
+
+  // TODO: use something like this to select from csv the graph to display
+  var menu_color_by = d3.select('#graph-meta')
+    .append("div")
+      .html("<h4>Color By</h4>")
+    .append("div")
+      .attr("class", "well")
+      .attr('id', 'menu-color-by')
+  .append('select')
+    .attr('class', 'menu-choice')
+
+  var options_color_by = menu_color_by.selectAll("option")
+  .data(color_by_options)
+  .enter().append("option")
+    .attr('value', function (d) {console.log(d); return d;})
+    .text(function (d) {console.log(d); return d;});
+
+  // color palettes
+  var menu_colors = d3.select('#graph-meta')
+      .append("div")
+        .html("<h4>Colors</h4>")
+      .append("div")
+        .attr("class", "well")
+      //.append("p")
+    //  .attr('id', 'menu-color-palette')
+        .attr('id', 'menu-colors')
+    .append('select')
+      .attr('class', 'menu-choice')
+
+  var options_colors = menu_colors.selectAll("option")
+    .data(d3.keys(color_palettes))
+    .enter().append("option")
+      .attr('value', function (d) {console.log(d); return d;})
+      .text(function (d) {console.log(d); return d;});
+
+
+    
+  // Mouseover effects
+  var focus_node = null, highlight_node = null;
+  node.on("mouseover", function(d) {
+    set_highlight(d);
+    d3.select("#meta").transition()       
+        .duration(0)      
+        .style("opacity", .85); 
+    d3.select('#graph-meta#source')
+      .html("<h4>Source</h4><div class='well'>"+source+"</div>");
+    d3.select('#node-meta')
+      .html("<h4>Node</h4><div class='well'>"+d.tooltip+"</div>");
+  }).on("mousedown", function(d) { 
+    d3.event.stopPropagation();
+    set_focus(d);
+  }).on("mouseout", function(d) {
+    if (focus_node === null) {
+        exit_highlight();
+    }
+  });
+
+  //d3.select(window)
+  d3.select("#main").on("mouseup", function() {
+    if (focus_node!==null) {
+      //exit_focus();
+    } else if (highlight_node === null) {
+      exit_highlight();
+    }
+  }).on("mousedown", function() {
+    exit_focus();
+    exit_highlight();
+  });
+
+  // Node highlighting logic
+  function exit_highlight(){
+      highlight_node = null;
+      if (focus_node===null) {
+        svg.style("cursor","move");
+        node.attr("id", null);
+        link.attr("id", null);
+      } 
+  }
+  function exit_focus(){
+  node.attr("id", null);
+  link.attr("id", null);
+    set_highlight(highlight_node);
+    focus_node = null;
+  }
+
+  var linkedByIndex = {};
+  json.links.forEach(function(d,i) {
+    linkedByIndex[d.source.index+","+d.target.index] = true;
+    linkedByIndex[d.target.index+","+d.source.index] = true;
+  });
+  function isConnected(a, b) {
+      return linkedByIndex[a+","+b] || a == b;
+  }
+  function set_focus(d) {
+    if (focus_node!==d) {
+      focus_node = d;
+      focus_path = {};
+      node.attr("id", function(o,i) {
+        return isConnected(d.index, i) ? "focus" : "defocus";
+      }); 
+      link.attr("id", function(o,i) {
+        return o.source.index == d.index || o.target.index == d.index ? "focus" : "defocus";
+      }); 
+    }
+  }
+  function set_highlight(d) {
+    svg.style("cursor","pointer");
+    if (focus_node!==null) {
+      if (highlight_node!==null) {
+        return;
+      } 
+      d = focus_node;
+    }
+    highlight_node = d;
+    if (d===null) {
+      return;
+    }
+
+    // set id to highlight
+    node.attr("id", function(o,i) {
+          return isConnected(d.index, i) ? "highlight" : null;
+      }); 
+    link.attr("id", function(o,i) {
+      return o.source.index == d.index || o.target.index == d.index ? "highlight" : null;
+    }); 
+  }
+
+  ////////////////////////////////////////////////////
+  // LEGEND 
+  ////////////////////////////////////////////////////
+
+  //var svg_legned = d3.select(".legend")
+  //    .append("svg")
+  //    .attr("width", width)
+  //    .attr("height", height)
+  var legend = d3.select('#graph-meta')
+      .append("div")
+        .attr("id", "legend")
+        .html("<h4>Legend</h4>")
+      .append("div")
+        .attr("class", "well")
+      .append("svg")
+        .attr("class", "legend")
+        .attr("width", "100%")
+        .attr("height", 20*5+"px");
+      
+  //D3 Vertical Legend//////////////////////////
+  glegend = legend.selectAll('.legend')
+      .data(color_label.domain().reverse())
+      .enter().append('g')
+      .attr("transform", function (d, i) {
+        //return "translate("+((20*groups.length/2)-20)+"," + i * 20 + ")";
+        return "translate(0," + i * 20 + ")";
+      });
+
+  var gcolors = glegend.append('rect')
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", 20)
+      .attr("height", 20)
+      .style("fill", function (d, i) {return color_label(d);})
+  var glabels = glegend.append('text')
+      .attr("x", 30)
+      .attr("y", 15)
+      .text(function (d, i) {return d;})
+      .attr("class", "legend-text")
+      .style("text-anchor", "start")
+      .style("font-size", 15)
+
+  
+  ////////////////////////////////////////////////////
+  //// Color palette selection
+  ////////////////////////////////////////////////////         
+  // force data to update when menu is changed    
+  d3.select("#menu-color-by select")
+    .on("change", reset_colors);  
+
+  d3.select("#menu-colors select")
+    .on("change", reset_colors);  
+
+  function reset_colors() {
+    // get selected color by 
+    var color_by = menu_color_by.property("value");
+    console.log('color_by: '+color_by);
+    // get selected color palette
+    var color_palette_key = menu_colors.property("value");
+    console.log('color_palette: '+color_palette_key);
+    // set palette
+    color_palette = color_palettes[color_palette_key];
+    color = color
+      .domain(groups[color_by])
+      .range(color_palette);
+    console.log("color.domain: "+color.domain());
+    //console.log("color.range: "+color.range());
+    color_label = color_label
+      .domain(color_labels[color_by])
+      .range(color.range());
+    console.log("color_label.domain: "+color_label.domain());
+    //console.log("color_label.range: "+color_label.range());
+
+    
+    //////////////////////////////////////////
+    // Reset Legend //////////////////////////
+    //////////////////////////////////////////
+    glegend.remove('*');
+    glegend = legend.selectAll('.legend')
+        .data(color_label.domain().reverse())
+        .enter().append('g')
+        .attr("transform", function (d, i) {
+          //return "translate("+((20*groups.length/2)-20)+"," + i * 20 + ")";
+          return "translate(0," + i * 20 + ")";
+        });
+    var gcolors = glegend.append('rect')
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 20)
+        .attr("height", 20)
+        .style("fill", function (d, i) {return color_label(d);})
+    var glabels = glegend.append('text')
+        .attr("x", 30)
+        .attr("y", 15)
+        .text(function (d, i) {return d;})
+        .attr("class", "legend-text")
+        .style("text-anchor", "start")
+        .style("font-size", 15)
+
+    //////////////////////////////////////////
+    // Reset Nodes  //////////////////////////
+    //////////////////////////////////////////
+    circle.remove('*');
+    circle = node.selectAll("path")
+          .data(function(d, i) {return pie(d.proportions[color_by]);})
+          .enter()
+          .append("svg:path")
+            .attr("d", d3.svg.arc().innerRadius(0).outerRadius(function(d, i) {
+              return pie_norm(d.data.row_count)*0.8;
+            }))
+            .attr("fill", function(d, i) { return color(d.data.group); })
+            .attr("class", "circle");
+    
+    // re-color circles, legend
+    //circle.attr("fill", function(d, i) { return color(d.data.group); });
+    //gcolors.style("fill", function (d, i) {return color_label(d);});
+  }
+
+
+  ////////////////////////////////////////////////////
+  //// SVG width/heigh
+  ////////////////////////////////////////////////////     
+  svg.width = function(value) {
+      if (!arguments.length) return width;
+      width = value;
+      return self;
+  };
+
+  svg.height = function(value) {
+      if (!arguments.length) return height;
+      height = value;
+      return svg;
+  };
+
+  return svg;
+};
+
+
+
+
+
+
+function toggle_display_mode() {
+  if (d3.select("body").attr('id')=="dark") {
+    d3.select("body").attr('id', null).attr('id', "light");
+  } else {
+    d3.select("body").attr('id', null).attr('id', "dark");
+  }
+}
+
+function toggle_meta() {
+  if (d3.select("#meta").style('display')=="block") {
+    d3.select("#meta").style('display', "none");
+    //d3.select("#meta").attr("class", null);
+    d3.select("#main").attr("class", "col-sm-12");
+  } else {
+    d3.select("#meta").style('display', "block");
+    d3.select("#meta").attr("class", "col-sm-4");
+    d3.select("#main").attr("class", "col-sm-8");
+  }
+}
+
+
+// Key press events
+window.addEventListener("keydown", function (event) {
+  if (event.defaultPrevented) {
+      console.log('event.defaultPrevented');
+      return; // Do nothing if the event was already processed
+  }
+  switch (event.key) {
+  case "d":
+      toggle_display_mode();
+      break;     
+  default:
+      return; // Quit when this doesn't handle the key event.
+  }
+  // Cancel the default action to avoid it being handled twice
+  event.preventDefault();
+    }, true);
+
+
+
+//d3.selectAll("a.pop")
+//    .call(popover);
+
+</script>
+
+</html>
