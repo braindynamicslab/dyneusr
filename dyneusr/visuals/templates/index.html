@@ -466,33 +466,71 @@ function draw_force(data) {
   ////////////////////////////////////////////////////
   //// Colors + labels setup
   ////////////////////////////////////////////////////
+  // color by
+  var color_by_options = {};
+  json.nodes.map(function(d,i) {
+      d3.keys(d.proportions).map(function(k) {
+        if (color_by_options[k]!==true) {
+          color_by_options[k] = true;
+        }
+      });
+    });
+  color_by_options = d3.keys(color_by_options);
+  console.log("color_by_options: "+color_by_options);
+
+  var color_by = json.graph.color_by ? json.graph.color_by : color_by_options[0];  
+  console.log("color_by: "+color_by);
+
+
   // colors
-  var groups = d3.set(json.nodes.map(function(d,i) {
-        return d.group;
-      })).values().sort();
+  var groups = {}
   if (typeof json.graph.groups !== "undefined") {
-    groups = d3.set(json.graph.groups.map(function(d,i) {
-        return d
-    })).values().sort();
+    d3.keys(json.graph.groups).map(function(k, i) {
+      groups[k] = json.graph.groups[k];
+    });
   }
+  color_by_options.map(function(k) {
+    console.log(k)
+    groups[k] = {};
+    json.nodes.map(function(d,i) {
+      d.proportions[k].map(function(p,j) {
+        if (groups[k][p.group]!==true) {
+          groups[k][p.group] = true;
+        }
+      })
+    })
+    groups[k] = d3.keys(groups[k]);
+  });
   console.log("groups: "+groups);
+  console.log("groups: "+groups[color_by]);
+
 
   // set custom color palette if defined
   var color_palette = color_palettes['category10'];
   if (typeof json.graph.color !== "undefined") {
-    color_palettes['custom'] = json.graph.color;
-    color_palette = color_palettes['custom'];
+    d3.keys(json.graph.color).map(function(k, i) {
+      color_palettes[k] = json.graph.color[k];      
+    })
+    color_palette = color_palettes[color_by];
   }
   var color = d3.scale.linear()
-    .domain(groups)
+    .domain(groups[color_by])
     .range(color_palette);
   console.log("color.domain: "+color.domain());
   console.log("color.range: "+color.range());
 
-  // color labes
-  var color_labels = json.graph.label ? json.graph.label : groups;  
+  // color labels
+  var color_labels = {};
+  d3.keys(groups).map(function(k, i) {
+    color_labels[k] = groups[k];
+  });
+  if (typeof json.graph.label !== "undefined") {
+    d3.keys(json.graph.label).map(function(k, i) {
+      color_labels[k] = json.graph.label[k]
+    })
+  }
   var color_label = d3.scale.ordinal()
-            .domain(color_labels)
+            .domain(color_labels[color_by])
             .range(color.range());
   console.log("color_label.domain: "+color_label.domain());
   console.log("color_label.range: "+color_label.range());
@@ -512,7 +550,7 @@ function draw_force(data) {
   console.log("data size: "+data_size);
 
   var pie_size = json.nodes.map(d => { 
-    return d3.max(d.proportions.map(p => 
+    return d3.max(d.proportions[color_by].map(p => 
         { return p.row_count; }
             ));
       });
@@ -537,7 +575,7 @@ function draw_force(data) {
       .call(force.drag);
 
   var circle = node.selectAll("path")
-      .data(function(d, i) {return pie(d.proportions); })
+      .data(function(d, i) {return pie(d.proportions[color_by]); })
       .enter()
       .append("svg:path")
         .attr("d", d3.svg.arc().innerRadius(0).outerRadius(function(d, i) {
@@ -589,6 +627,22 @@ function draw_force(data) {
     .html("<h4>Node</h4><div class='well'></div>");
 
   // TODO: use something like this to select from csv the graph to display
+  var menu_color_by = d3.select('#graph-meta')
+    .append("div")
+      .html("<h4>Color By</h4>")
+    .append("div")
+      .attr("class", "well")
+      .attr('id', 'menu-color-by')
+  .append('select')
+    .attr('class', 'menu-choice')
+
+  var options_color_by = menu_color_by.selectAll("option")
+  .data(color_by_options)
+  .enter().append("option")
+    .attr('value', function (d) {console.log(d); return d;})
+    .text(function (d) {console.log(d); return d;});
+
+  // color palettes
   var menu_colors = d3.select('#graph-meta')
       .append("div")
         .html("<h4>Colors</h4>")
@@ -685,6 +739,9 @@ function draw_force(data) {
       d = focus_node;
     }
     highlight_node = d;
+    if (d===null) {
+      return;
+    }
 
     // set id to highlight
     node.attr("id", function(o,i) {
@@ -712,10 +769,12 @@ function draw_force(data) {
       .append("svg")
         .attr("class", "legend")
         .attr("width", "100%")
-        .attr("height", 20*groups.length+"px");
-
+        .attr("height", 20*groups[color_by].length+"px");
+      
   //D3 Vertical Legend//////////////////////////
   glegend = legend.selectAll('.legend')
+        .attr("width", "100%")
+        .attr("height", 20*groups[color_by].length+"px")
       .data(color_label.domain().reverse())
       .enter().append('g')
       .attr("transform", function (d, i) {
@@ -742,25 +801,77 @@ function draw_force(data) {
   //// Color palette selection
   ////////////////////////////////////////////////////         
   // force data to update when menu is changed    
+  d3.select("#menu-color-by select")
+    .on("change", reset_colors);  
+
   d3.select("#menu-colors select")
     .on("change", reset_colors);  
 
   function reset_colors() {
+    // get selected color by 
+    var color_by = menu_color_by.property("value");
+    console.log('color_by: '+color_by);
     // get selected color palette
     var color_palette_key = menu_colors.property("value");
     console.log('color_palette: '+color_palette_key);
     // set palette
     color_palette = color_palettes[color_palette_key];
-    color = color.range(color_palette);
+    color = color
+      .domain(groups[color_by])
+      .range(color_palette);
     console.log("color.domain: "+color.domain());
-    console.log("color.range: "+color.range());
-    color_label = color_label.range(color.range());
+    //console.log("color.range: "+color.range());
+    color_label = color_label
+      .domain(color_labels[color_by])
+      .range(color.range());
     console.log("color_label.domain: "+color_label.domain());
-    console.log("color_label.range: "+color_label.range());
+    //console.log("color_label.range: "+color_label.range());
 
+    
+    //////////////////////////////////////////
+    // Reset Legend //////////////////////////
+    //////////////////////////////////////////
+    glegend.remove('*');
+    glegend = legend.selectAll('.legend')
+          .attr("width", "100%")
+          .attr("height", 20*groups[color_by].length+"px")
+        .data(color_label.domain().reverse())
+        .enter().append('g')
+        .attr("transform", function (d, i) {
+          //return "translate("+((20*groups.length/2)-20)+"," + i * 20 + ")";
+          return "translate(0," + i * 20 + ")";
+        });
+    var gcolors = glegend.append('rect')
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 20)
+        .attr("height", 20)
+        .style("fill", function (d, i) {return color_label(d);})
+    var glabels = glegend.append('text')
+        .attr("x", 30)
+        .attr("y", 15)
+        .text(function (d, i) {return d;})
+        .attr("class", "legend-text")
+        .style("text-anchor", "start")
+        .style("font-size", 15)
+
+    //////////////////////////////////////////
+    // Reset Nodes  //////////////////////////
+    //////////////////////////////////////////
+    circle.remove('*');
+    circle = node.selectAll("path")
+          .data(function(d, i) {return pie(d.proportions[color_by]);})
+          .enter()
+          .append("svg:path")
+            .attr("d", d3.svg.arc().innerRadius(0).outerRadius(function(d, i) {
+              return pie_norm(d.data.row_count)*0.8;
+            }))
+            .attr("fill", function(d, i) { return color(d.data.group); })
+            .attr("class", "circle");
+    
     // re-color circles, legend
-    circle.attr("fill", function(d, i) { return color(d.data.group); });
-    gcolors.style("fill", function (d, i) {return color_label(d);});
+    //circle.attr("fill", function(d, i) { return color(d.data.group); });
+    //gcolors.style("fill", function (d, i) {return color_label(d);});
   }
 
 

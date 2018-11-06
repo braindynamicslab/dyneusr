@@ -24,6 +24,70 @@ from sklearn.preprocessing import Normalizer, LabelEncoder
 import networkx as nx
 
 
+def process_meta(meta_, labels=None):
+    # ensure we have dataframe
+    if not isinstance(meta_, pd.DataFrame):
+        meta_ = pd.DataFrame(meta_)
+
+    # process each column of meta
+    meta_sets = dict()
+    meta_labels = dict()
+    for i,meta_col in enumerate(meta_.columns):
+        print("Processing meta column: {}".format(meta_col))
+        meta = np.ravel(meta_[meta_col].values.copy())
+        # process meta label
+        meta_label = None
+        if isinstance(labels, dict):
+            # one list per column
+            if meta_col in labels:
+                meta_label = list(labels[meta_col])
+        elif isinstance(labels, list):
+            # shared list
+            if not isinstance(labels[0], list):
+                meta_label = list(labels)
+
+        # process meta
+        if len(set(meta)) > 9:
+            # zscore
+            yi = meta.copy()
+            yi_nz = yi[~np.isnan(yi)]
+            zi = stats.zscore(yi_nz)
+            zi = np.sign(zi) * np.floor(np.abs(zi))
+
+            # digitize
+            zi_bins = np.arange(zi.min(), zi.max()+1, step=1)
+            zi = np.digitize(zi, zi_bins, right=True) + 1
+            yi[~np.isnan(yi)] = zi
+            yi[np.isnan(yi)] = 0
+            yi = yi.astype(int)
+            meta_bins = np.ravel([np.nan] + list(zi_bins))
+            meta_label = meta_bins[np.sort(np.unique(yi))]
+            meta = yi.copy()
+
+            # map meta to labels
+            meta_str = {False: '\u03BC (= {:0.2f})'.format(np.mean(yi_nz)),
+                        True: '\u03BC + {:1.0f}\u03C3'}
+            meta_label = [meta_str[np.abs(float(_)) > 0].format(float(_)) for _ in meta_label if not np.isnan(_)]
+            meta_label = ['n/a'] + meta_label
+        elif str(meta[0]).isalpha():
+            encoders = defaultdict(LabelEncoder)
+            yi = encoders[color_by].fit_transform(meta)
+            yi_bins = np.linspace(yi.min(), yi.max(), num=min(5, len(set(yi))), endpoint=True)
+            meta = np.digitize(yi, yi_bins, right=True)
+            meta = yi_bins[meta]
+            meta_label = [str(_) for _ in encoders[color_by].classes_]
+
+        # labels for legend
+        meta_sets[meta_col] = [_ for _ in np.sort(np.unique(meta))]
+        if meta_label is not None:
+            meta_labels[meta_col] = [_ for _ in meta_label]
+        print("  [+] found {} unique groups.".format(len(meta_sets[meta_col])))
+
+        # re-assign meta
+        meta_[meta_col] = meta.copy()
+
+    return meta_, meta_sets, meta_labels
+
 
 def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None, **kwargs):
     # convert to nx
@@ -38,64 +102,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
     # TODO: move all of this logic into color map utils
     #meta = Normalizer().fit_transform(meta.reshape(-1, 1))
     # bin meta (?)
-    if isinstance(meta, pd.DataFrame):
-        if isinstance(color_by, str):
-            meta = meta[color_by].values
-        else:
-            meta = meta.iloc[:, color_by].values
-    elif np.ndim(meta) > 1:
-        meta = meta[:, color_by]
-    meta = np.ravel(meta).copy()
-    meta_label = None
-    if labels is not None:
-        meta_label = list(labels)
-    if len(set(meta)) > 9:
-        # zscore
-        yi = meta.copy()
-        yi_nz = yi[~np.isnan(yi)]
-        zi = stats.zscore(yi_nz)
-        # set each zscore to the lower bound of absolute value
-        zi = np.sign(zi) * np.floor(np.abs(zi))
-
-        # digitize
-        zi_bins = np.arange(zi.min(), zi.max()+1, step=1)
-        zi = np.digitize(zi, zi_bins, right=True) + 1
-        yi[~np.isnan(yi)] = zi
-        yi[np.isnan(yi)] = 0
-        yi = yi.astype(int)
-        meta_bins = np.ravel([np.nan] + list(zi_bins))
-        meta_label = meta_bins[np.sort(np.unique(yi))]
-        meta = yi.copy()
-        #print(set(meta))
-        #print(meta_bins)
-
-        # map meta to labels
-        meta_str = {False: '\u03BC (= {:0.2f})'.format(np.mean(yi_nz)),
-                    True: '\u03BC + {:1.0f}\u03C3'}
-        meta_label = [meta_str[np.abs(float(_)) > 0].format(float(_)) for _ in meta_label if not np.isnan(_)]
-        meta_label = ['n/a'] + meta_label
-        #print(meta_label)
-
-        # now re-encode labels to meta
-        #encoder = LabelEncoder().fit_transform(meta)
-        #yi = encoder.fit_transform(meta)
-        #yi_bins = np.linspace(yi.min(), yi.max(), num=min(5, len(set(yi))), endpoint=True)
-        #meta = np.digitize(yi, yi_bins, right=True)
-        #meta = yi_bins[meta]
-    elif str(meta[0]).isalpha():
-        encoders = defaultdict(LabelEncoder)
-        yi = encoders[color_by].fit_transform(meta)
-        yi_bins = np.linspace(yi.min(), yi.max(), num=min(5, len(set(yi))), endpoint=True)
-        meta = np.digitize(yi, yi_bins, right=True)
-        meta = yi_bins[meta]
-        meta_label = [str(_) for _ in encoders[color_by].classes_]
-
-    # labels for legend
-    metaset = np.sort(np.unique(meta))
-    print("Found {} unique groups.".format(len(metaset)))
-    #print(metaset)
-    #print(meta_label)
-
+    meta, meta_sets, meta_labels  = process_meta(meta, labels=labels)
 
     # index
     node_to_index = {n:i for i,n in enumerate(nodelist)}
@@ -109,18 +116,24 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
 
     ### NODES
     G = nx.Graph()
-    G.graph['label'] = meta_label 
-    G.graph['groups'] = list(metaset)
+    G.graph['label'] = meta_labels
+    G.graph['groups'] = meta_sets
+    G.graph['color_by'] = color_by if color_by in meta.columns else meta.columns[color_by]
     for node_id, (name, members) in enumerate(nodelist.items()):
         # define node_dict for G
         members = list(sorted(members))
-        groups = meta[members]
-        proportions = [
-            dict(group=int(_), row_count=len(groups), value=int(c))
-            for _,c in Counter(groups).most_common() #metaset
-            ]
-        group = Counter(groups).most_common()[0][0]
         tooltip = tooltips[node_id]
+
+        # proportions by column
+        group = dict()
+        proportions = dict()
+        for meta_col in meta.columns:
+            groups = meta[meta_col].values[members]
+            proportions[meta_col] = [
+                dict(group=int(_), row_count=len(groups), value=int(c))
+                for _,c in Counter(groups).most_common() #metaset
+                ]
+            group[meta_col] = int(Counter(groups).most_common()[0][0])
 
         # format node dict
         node_dict = dict(
@@ -129,7 +142,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
             tooltip=tooltip,
             members=members,
             proportions=proportions,
-            group=int(group),
+            group=group,
             # node color, size
             size=len(members),
         ) 
