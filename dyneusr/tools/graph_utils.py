@@ -25,10 +25,7 @@ import networkx as nx
 
 
 def process_meta(meta_, labels=None):
-    # ensure we have dataframe
-    if not isinstance(meta_, pd.DataFrame):
-        meta_ = pd.DataFrame(meta_)
-
+ 
     # process each column of meta
     meta_sets = dict()
     meta_labels = dict()
@@ -47,7 +44,17 @@ def process_meta(meta_, labels=None):
                 meta_label = list(labels)
 
         # process meta
-        if len(set(meta)) > 9:
+        if str(meta[0]).isalpha() or type(meta[0]) is str:
+            encoder = LabelEncoder()
+            yi = encoder.fit_transform(meta)
+            yi_bins = np.linspace(yi.min(), yi.max(), num=min(5, len(set(yi))), endpoint=True)
+            meta = np.digitize(yi, yi_bins, right=True)
+            meta = yi_bins[meta]
+            meta_label = [list(yi_bins).index(_) for _ in sorted(set(meta))]
+            meta_label = ['Group '+str(_+1) for _ in meta_label]
+
+        
+        elif len(set(meta)) > 9:
             # zscore
             yi = meta.copy()
             yi_nz = yi[~np.isnan(yi)]
@@ -69,14 +76,8 @@ def process_meta(meta_, labels=None):
                         True: '\u03BC + {:1.0f}\u03C3'}
             meta_label = [meta_str[np.abs(float(_)) > 0].format(float(_)) for _ in meta_label if not np.isnan(_)]
             meta_label = ['n/a'] + meta_label
-        elif str(meta[0]).isalpha():
-            encoders = defaultdict(LabelEncoder)
-            yi = encoders[color_by].fit_transform(meta)
-            yi_bins = np.linspace(yi.min(), yi.max(), num=min(5, len(set(yi))), endpoint=True)
-            meta = np.digitize(yi, yi_bins, right=True)
-            meta = yi_bins[meta]
-            meta_label = [str(_) for _ in encoders[color_by].classes_]
 
+    
         # labels for legend
         meta_sets[meta_col] = [_ for _ in np.sort(np.unique(meta))]
         if meta_label is not None:
@@ -95,8 +96,28 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
     edgelist = dict(graph['links'])
     memberlist = np.sort(np.unique([
         __ for _ in nodelist.values() for __ in _]))
+    
     if meta is None:
-        meta = np.zeros_like(memberlist)
+        meta = pd.DataFrame().assign(
+            data_id=np.arange(np.max(memberlist)+1).astype(str), 
+            default=0,
+            )
+    elif not isinstance(meta, pd.DataFrame):
+        meta = meta.reshape(len(meta), -1)
+        # check labels
+        columns = ['meta-column-{}'.format(i) for i,_ in enumerate(meta.T)]
+        if labels is not None and len(labels):
+            columns[:len(labels)] = list(labels.keys())
+        # convert to DataFrame
+        meta = pd.DataFrame(
+            meta, 
+            columns=columns
+            )
+    # add some defaults
+    meta = meta.assign(
+        data_id=np.arange(len(meta)).astype(str),
+        default='0'
+        )
 
     # normalize meta
     # TODO: move all of this logic into color map utils

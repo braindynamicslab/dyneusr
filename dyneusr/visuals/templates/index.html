@@ -769,12 +769,10 @@ function draw_force(data) {
       .append("svg")
         .attr("class", "legend")
         .attr("width", "100%")
-        .attr("height", 20*groups[color_by].length+"px");
+        .attr("height", 20*5+"px");
       
   //D3 Vertical Legend//////////////////////////
   glegend = legend.selectAll('.legend')
-        .attr("width", "100%")
-        .attr("height", 20*groups[color_by].length+"px")
       .data(color_label.domain().reverse())
       .enter().append('g')
       .attr("transform", function (d, i) {
@@ -833,8 +831,6 @@ function draw_force(data) {
     //////////////////////////////////////////
     glegend.remove('*');
     glegend = legend.selectAll('.legend')
-          .attr("width", "100%")
-          .attr("height", 20*groups[color_by].length+"px")
         .data(color_label.domain().reverse())
         .enter().append('g')
         .attr("transform", function (d, i) {
