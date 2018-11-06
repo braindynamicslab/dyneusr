@@ -334,13 +334,15 @@ function zoom() {
   
 
 var color_palettes = {
-    'category10': d3.scale.category10().range(),
+    'category': d3.scale.category10().range(),
     'category20': d3.scale.category20().range(),
-    'spectral': ["#d53e4f", "#f46d43", "#fdae61", "#fee08b", "#e6f598", "#abdda4", "#66c2a5", "#3288bd"],
-    'viridis': ["#440154","#3f4788","#2f6b8e","#1f948c","#20a386", "#20a486", "#31b57b", "#40bd72",
+    'spectral': ["#d53e4f","#fdae61","#e6f598","#66c2a5","#3288bd"],
+    'spectral8': ["#d53e4f","#f46d43","#fdae61","#fee08b","#e6f598","#abdda4","#66c2a5","#3288bd"],
+    'viridis': ["#440154","#3f4788", "#31b57b","#90d743","#fde725"],
+    'viridis20': ["#440154","#3f4788","#2f6b8e","#1f948c","#20a386", "#20a486", "#31b57b", "#40bd72",
                 "#50c46a","#60ca60","#70cf57", "#81d34d","#90d743","#a0da39","#b0dd2f","#c0df25",
-                "#d0e11c","#e2e418","#fde725"]    
-};
+                "#d0e11c","#e2e418","#fde725"],
+    };
 ///////////////////////////////////////////////
 // Helpers
 ///////////////////////////////////////////////
@@ -506,7 +508,7 @@ function draw_force(data) {
 
 
   // set custom color palette if defined
-  var color_palette = color_palettes['category10'];
+  var color_palette = color_palettes['category'];
   if (typeof json.graph.color !== "undefined") {
     d3.keys(json.graph.color).map(function(k, i) {
       color_palettes[k] = json.graph.color[k];      
