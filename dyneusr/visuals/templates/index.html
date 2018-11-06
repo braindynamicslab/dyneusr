@@ -771,30 +771,35 @@ function draw_force(data) {
       .append("svg")
         .attr("class", "legend")
         .attr("width", "100%")
-        .attr("height", 20*5+"px");
+        .attr("height", 20*5+10+"px");
       
-  //D3 Vertical Legend//////////////////////////
+  // D3 Vertical Legend //////////////////////////
+  var n_labels = color_label.domain().length;
+  var label_style = {w: 100, h: 100 / n_labels};
+  label_style.font_size = label_style.w / 5 - 4;
+  label_style.x = label_style.w + (label_style.w / 5);
+  label_style.y = label_style.h - (label_style.h - label_style.font_size) / 2;
+
+  // add legend labels 
   glegend = legend.selectAll('.legend')
       .data(color_label.domain().reverse())
       .enter().append('g')
       .attr("transform", function (d, i) {
-        //return "translate("+((20*groups.length/2)-20)+"," + i * 20 + ")";
-        return "translate(0," + i * 20 + ")";
+        return "translate(0," + i * label_style.h + ")";
       });
-
   var gcolors = glegend.append('rect')
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("width", 20)
-      .attr("height", 20)
+      .attr("x", 5)
+      .attr("y", 5)
+      .attr("width", label_style.w)
+      .attr("height", label_style.h)
       .style("fill", function (d, i) {return color_label(d);})
   var glabels = glegend.append('text')
-      .attr("x", 30)
-      .attr("y", 15)
+      .attr("x", label_style.x) 
+      .attr("y", label_style.y)
       .text(function (d, i) {return d;})
       .attr("class", "legend-text")
       .style("text-anchor", "start")
-      .style("font-size", 15)
+      .style("font-size", label_style.font_size)
 
   
   ////////////////////////////////////////////////////
@@ -831,27 +836,32 @@ function draw_force(data) {
     //////////////////////////////////////////
     // Reset Legend //////////////////////////
     //////////////////////////////////////////
+    var n_labels = color_label.domain().length;
+    var label_style = {w: 100, h: 100 / n_labels};
+    label_style.font_size = label_style.w / 5 - 4;
+    label_style.x = label_style.w + (label_style.w / 5);
+    label_style.y = label_style.h - (label_style.h - label_style.font_size) / 2;
+
     glegend.remove('*');
     glegend = legend.selectAll('.legend')
         .data(color_label.domain().reverse())
         .enter().append('g')
         .attr("transform", function (d, i) {
-          //return "translate("+((20*groups.length/2)-20)+"," + i * 20 + ")";
-          return "translate(0," + i * 20 + ")";
+          return "translate(0," + i * label_style.h + ")";
         });
     var gcolors = glegend.append('rect')
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("width", 20)
-        .attr("height", 20)
+        .attr("x", 5)
+        .attr("y", 5)
+        .attr("width", label_style.w)
+        .attr("height", label_style.h)
         .style("fill", function (d, i) {return color_label(d);})
     var glabels = glegend.append('text')
-        .attr("x", 30)
-        .attr("y", 15)
+        .attr("x", label_style.x)
+        .attr("y", label_style.y)
         .text(function (d, i) {return d;})
         .attr("class", "legend-text")
         .style("text-anchor", "start")
-        .style("font-size", 15)
+        .style("font-size", label_style.font_size)
 
     //////////////////////////////////////////
     // Reset Nodes  //////////////////////////
