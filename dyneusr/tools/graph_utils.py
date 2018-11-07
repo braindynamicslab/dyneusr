@@ -149,12 +149,20 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
         group = dict()
         proportions = dict()
         for meta_col in meta.columns:
-            groups = meta[meta_col].values[members]
+            groups = meta[meta_col].values[members] 
             proportions[meta_col] = [
                 dict(group=int(_), row_count=len(groups), value=int(c))
                 for _,c in Counter(groups).most_common() #metaset
                 ]
             group[meta_col] = int(Counter(groups).most_common()[0][0])
+        # multilabel
+        groups = meta.values[members, :-2] 
+        groups *= np.arange(1, len(meta.columns)+1)
+        groups = groups.flatten()        
+        proportions['multi'] = [
+                dict(group=int(_), row_count=len(groups), value=int(c))
+                for _,c in Counter(groups).most_common() 
+                ]
 
         # format node dict
         node_dict = dict(
