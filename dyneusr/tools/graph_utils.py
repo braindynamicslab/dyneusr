@@ -145,36 +145,56 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
         members = list(sorted(members))
         tooltip = tooltips[node_id]
 
+        coloring = kwargs.get('rsn_color','separate')
         # proportions by column
-        group = dict()
-        proportions = dict()
-        for meta_col in meta.columns:
-            groups = meta[meta_col].values[members] 
-            proportions[meta_col] = [
-                dict(group=int(_), row_count=len(groups), value=int(c))
-                for _,c in Counter(groups).most_common() #metaset
-                ]
-            group[meta_col] = int(Counter(groups).most_common()[0][0])
-        # multilabel
-        groups = meta.values[members, :-2] 
-        groups *= np.arange(1, len(meta.columns)+1)
-        groups = groups.flatten()        
-        proportions['multi'] = [
-                dict(group=int(_), row_count=len(groups), value=int(c))
-                for _,c in Counter(groups).most_common() 
-                ]
+        if coloring is 'separate': # Color networks separately or put all together in one graph
+            group = dict()
+            proportions = dict()
+            for meta_col in meta.columns:
+                groups = meta[meta_col].values[members] 
+                proportions[meta_col] = [
+                    dict(group=int(_), row_count=len(groups), value=int(c))
+                    for _,c in Counter(groups).most_common() #metaset
+                    ]
+                group[meta_col] = int(Counter(groups).most_common()[0][0])
 
-        # format node dict
-        node_dict = dict(
-            id=int(node_id),
-            name=name,
-            tooltip=tooltip,
-            members=members,
-            proportions=proportions,
-            group=group,
-            # node color, size
-            size=len(members),
-        ) 
+                # format node dict
+                node_dict = dict(
+                    id=int(node_id),
+                    name=name,
+                    tooltip=tooltip,
+                    members=members,
+                    proportions=proportions,
+                    group=group,
+                    # node color, size
+                    size=len(members),
+                ) 
+
+        elif coloring is 'together':
+            # multilabel
+            proportions = dict()
+            groups = meta.values[members, :-2] 
+            allgroups = [np.nonzero(memlabels) for memlabels in groups]
+            allgroups = [el for subarr in allgroups for subsubarr in subarr for el in subsubarr]   
+            proportions['multi'] = [
+                    dict(group=int(_), row_count=len(allgroups), value=int(c))
+                    for _,c in Counter(allgroups).most_common() 
+                    ]
+            group = int(Counter(allgroups).most_common()[0][0])
+
+            # format node dict
+            node_dict = dict(
+                id=int(node_id),
+                name=name,
+                tooltip=tooltip,
+                members=members,
+                proportions=proportions,
+                group=group,
+                # node color, size
+                size=len(members),
+            ) 
+
+        
         # update G
         G.add_node(name, **node_dict)
         
