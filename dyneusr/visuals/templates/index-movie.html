@@ -920,7 +920,7 @@ function draw_force(data) {
     button_movie.text('Pause');
 
     // movie length
-    var n_nodes = d3.max(node.each(function(d,i) {return i+1}));
+    var n_nodes = data_size; //d3.max(node.each(function(d,i) {return i+1}));
     var frame_duration = 0.2 * 1000; // 1 fps = 20 / 2
     var duration = frame_duration * n_nodes;
 
@@ -934,10 +934,13 @@ function draw_force(data) {
       
       // loop over nodes and focus the focus node
       node.each(function(d, i) {
-        if (i == focus_i) {
-          set_highlight(d);
-          set_focus(d);
-        }
+        d.members.map(function(dd, ii) {
+          if (focus_i == dd) {
+            console.log("[movie] TR="+dd+", NodeID="+d.index);
+            set_highlight(d);
+            set_focus(d);
+          }
+        })
       })
     
       if (movie_playing === false) {
