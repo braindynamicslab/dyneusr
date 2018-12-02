@@ -69,7 +69,7 @@ def json_dump(obj, fp):
 	json.dump(obj, fp, default=default)
 	return 
 
-def visualize_force(js, template=None, path_html='index.html', path_csv=None, path_json=None, path_graphs='graphs', path_assets=None, reset=True, static=False, show=False, figure=None, PORT=8000, **kwargs):
+def visualize_force(js, template='movie', path_html='index.html', path_csv=None, path_json=None, path_graphs='graphs', path_assets=None, reset=True, static=False, show=False, figure=None, PORT=8000, **kwargs):
 	""" Create index.html, index.csv, graphs/*.json
 	"""
 	### Read template HTML
