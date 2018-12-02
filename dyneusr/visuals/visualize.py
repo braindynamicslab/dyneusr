@@ -59,10 +59,10 @@ def json_dump(obj, fp):
 	"""
 	def default(o):
 		if isinstance(o, np.int64): 
-			print(o)
+			#print(o)
 			return int(o)
 		if isinstance(o, np.ndarray): 
-			print(o)
+			#print(o)
 			return list(o)  
 		raise TypeError
 
