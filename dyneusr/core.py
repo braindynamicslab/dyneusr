@@ -22,7 +22,7 @@ from dyneusr import tools
 
 class DyNeuGraph(BaseEstimator, TransformerMixin):
 
-	def __init__(self, *args, **params):
+	def __init__(self, **params):
 		""" DyNeuGraph
 		
 		Parameters
@@ -45,8 +45,8 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
 			dyneuG.visualize()
 		"""
 		self.cache_ = dict(params)
-		if len(args) or len(params):
-			self.fit(*args, **params)
+		if len(params):
+			self.fit(**params)
 
 
 	def cache(self, *args, **kwargs):
