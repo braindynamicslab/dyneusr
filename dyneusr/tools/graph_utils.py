@@ -32,7 +32,7 @@ def _agg_proportions(df, members=slice(0, -1)):
     p = p.T.assign(
         group=pd.factorize(p.columns)[0],
         label=pd.factorize(p.columns)[-1],
-        value=p.sum() / p.sum().sum() * p.shape[0],
+        value=p.sum(), #/ p.sum().sum() * p.shape[0],
         row_count=p.shape[0]
         )
     p = p[['label', 'group', 'value', 'row_count']]
@@ -161,9 +161,10 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     color_by = 'multiclass' if color_by is None else color_by
     meta_sets['multiclass'] = [_.get('group') for _ in reversed(multiclass)]
     meta_labels['multiclass'] = [_.get('label') for _ in reversed(multiclass)]
-    tooltip = (pd.DataFrame(multiclass)
-                    .set_index('label')
-                    .to_html())
+    tooltip = pd.DataFrame(multiclass).to_html(
+                        index=False, columns=['label','group','value','row_count'],
+                        float_format='{:0.2f}'.format,
+                        )
     if kwargs.get('verbose', 1) > 0:
         display(HTML(tooltip))
 
@@ -175,7 +176,11 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
 
     # tooltips (TODO: should this be here)
     if tooltips is None:
-        tooltips = np.array([','.join(map(str, _)) for _ in nodelist.items()])
+        tooltips = np.array([
+            "<b>{}</b> (<b>size:</b> {})<br><br>".format(
+                k, len(_)
+            ) for k,_ in nodelist.items()
+            ])
     tooltips = np.array(tooltips).astype(str)
 
 
@@ -192,9 +197,10 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
 
         # aggregate proportions into a single column
         multiclass = _agg_proportions(meta_orig, members)
-        tooltip += (pd.DataFrame(multiclass)
-                    .set_index('label')
-                    .to_html())
+        tooltip += pd.DataFrame(multiclass).to_html(
+                        index=False, header=False, columns=['label','value'],
+                        float_format='{:0.2f}'.format,
+                        )
 
         proportions = dict(
             multiclass=multiclass
