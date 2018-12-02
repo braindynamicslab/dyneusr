@@ -23,6 +23,20 @@ from scipy import stats
 from sklearn.preprocessing import Normalizer, LabelEncoder
 import networkx as nx
 
+def _agg_proportions(df, members=slice(0, -1)):
+    """ Aggregate proportions df for members. 
+    """
+    p = df.copy().iloc[members]
+    p = p.T.assign(
+        group=pd.factorize(p.columns)[0],
+        label=pd.factorize(p.columns)[-1],
+        value=p.sum() / p.sum().sum() * p.shape[0],
+        row_count=p.shape[0]
+        )
+    p = p[['label', 'group', 'value', 'row_count']]
+    p = list(p.T.to_dict().values())
+    return p
+
 
 def process_meta(meta_, labels=None):
  
@@ -90,7 +104,7 @@ def process_meta(meta_, labels=None):
     return meta_, meta_sets, meta_labels
 
 
-def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None, **kwargs):
+def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=None, **kwargs):
     # convert to nx
     # extract nodes, links
     if isinstance(graph, nx.Graph):
@@ -113,6 +127,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
             default=0,
             )
     elif not isinstance(meta, pd.DataFrame):
+        meta = meta.copy()
         meta = meta.reshape(len(meta), -1)
         # check labels
         columns = ['meta-column-{}'.format(i) for i,_ in enumerate(meta.T)]
@@ -123,24 +138,38 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
             meta, 
             columns=columns
             )
+
+    # save un-processed metadata
+    meta = meta.copy()
+    meta._orig = meta.copy()
+
     # add some defaults
-    meta = meta.assign(
-        data_id=np.arange(len(meta)).astype(str),
-        default='0'
-        )
-    
+    meta['data_id'] = np.arange(len(meta)).astype(str)
+    meta['uniform'] = '0' 
 
     # normalize meta
     # TODO: move all of this logic into color map utils
     #meta = Normalizer().fit_transform(meta.reshape(-1, 1))
     # bin meta (?)
     meta, meta_sets, meta_labels  = process_meta(meta, labels=labels)
-    color_by = color_by if color_by in meta.columns else meta.columns[color_by]
+    
+    # multiclass proportions
+    # TODO: make sure this works on edge cases
+    multiclass = _agg_proportions(meta._orig)
+    color_by = 'multiclass' if color_by is None else color_by
+    meta_sets['multiclass'] = [_.get('group') for _ in multiclass]
+    meta_labels['multiclass'] = [_.get('label') for _ in multiclass]
+    print(pd.DataFrame(multiclass).set_index('label'))
 
+    # color_by
+    color_by = 0 if color_by is None else color_by
+    if color_by not in meta_labels.keys():
+        color_by = list(meta_labels.keys())[color_by]
+       
 
     # tooltips (TODO: should this be here)
     if tooltips is None:
-        tooltips = np.array(['{}'.format(_) for _ in nodelist.items()])
+        tooltips = np.array([','.join(map(str, _)) for _ in nodelist.items()])
     tooltips = np.array(tooltips).astype(str)
 
 
@@ -155,11 +184,32 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
         members = list(sorted(members))
         tooltip = tooltips[node_id]
 
+        # aggregate proportions into a single column
+        multiclass = _agg_proportions(meta._orig, members)
+        tooltip += (pd.DataFrame(multiclass)
+                    .set_index('label')
+                    .to_html())
+
+        proportions = dict(
+            multiclass=multiclass
+            )
+
+        # format node dict
+        node_dict = dict(
+            id=int(node_id),
+            name=name,
+            tooltip=tooltip,
+            members=members,
+            proportions=proportions,
+            group=-1,
+            # node color, size
+            size=len(members),
+            ) 
+
         coloring = kwargs.get('rsn_color','separate')
         # proportions by column
         if coloring is 'separate': # Color networks separately or put all together in one graph
             group = dict()
-            proportions = dict()
             for meta_col in meta.columns:
                 groups = meta[meta_col].values[members] 
                 proportions[meta_col] = [
@@ -167,22 +217,14 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
                     for _,c in Counter(groups).most_common() #metaset
                     ]
                 group[meta_col] = int(Counter(groups).most_common()[0][0])
-
                 # format node dict
-                node_dict = dict(
-                    id=int(node_id),
-                    name=name,
-                    tooltip=tooltip,
-                    members=members,
-                    proportions=proportions,
-                    group=group,
-                    # node color, size
-                    size=len(members),
-                ) 
+                node_dict.update(
+                    proportions=proportions, 
+                    group=group
+                    )  
 
         elif coloring is 'together':
             # multilabel
-            proportions = dict()
             groups = meta.values[members, :-2] 
             allgroups = [np.nonzero(memlabels) for memlabels in groups]
             allgroups = [el for subarr in allgroups for subsubarr in subarr for el in subsubarr]   
@@ -191,18 +233,11 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
                     for _,c in Counter(allgroups).most_common() 
                     ]
             group = int(Counter(allgroups).most_common()[0][0])
-
             # format node dict
-            node_dict = dict(
-                id=int(node_id),
-                name=name,
-                tooltip=tooltip,
-                members=members,
-                proportions=proportions,
-                group=group,
-                # node color, size
-                size=len(members),
-            ) 
+            node_dict.update(
+                proportions=proportions, 
+                group=group
+                )  
         
         # update G
         G.add_node(name, **node_dict)
