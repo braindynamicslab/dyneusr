@@ -30,7 +30,7 @@ def process_meta(meta_, labels=None):
     meta_sets = dict()
     meta_labels = dict()
     for i,meta_col in enumerate(meta_.columns):
-        print("Processing meta column: {}".format(meta_col))
+        #print("Processing meta column: {}".format(meta_col))
         meta = np.ravel(meta_[meta_col].values.copy())
         # process meta label
         meta_label = None
@@ -82,7 +82,7 @@ def process_meta(meta_, labels=None):
         meta_sets[meta_col] = [_ for _ in np.sort(np.unique(meta))]
         if meta_label is not None:
             meta_labels[meta_col] = [_ for _ in meta_label]
-        print("  [+] found {} unique groups.".format(len(meta_sets[meta_col])))
+        #print("  [+] found {} unique groups.".format(len(meta_sets[meta_col])))
 
         # re-assign meta
         meta_[meta_col] = meta.copy()
@@ -92,11 +92,21 @@ def process_meta(meta_, labels=None):
 
 def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None, **kwargs):
     # convert to nx
+    # extract nodes, links
+    if isinstance(graph, nx.Graph):
+        g = graph.copy()
+        graph = nx.node_link_data(g)
+    # extract node, links
     nodelist = dict(graph['nodes'])
     edgelist = dict(graph['links'])
     memberlist = np.sort(np.unique([
         __ for _ in nodelist.values() for __ in _]))
     
+    # index
+    node_to_index = {n:i for i,n in enumerate(nodelist)}
+    index_to_node = {i:n for i,n in enumerate(nodelist)}
+
+    # meta stuff
     if meta is None:
         meta = pd.DataFrame().assign(
             data_id=np.arange(np.max(memberlist)+1).astype(str), 
@@ -118,28 +128,28 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
         data_id=np.arange(len(meta)).astype(str),
         default='0'
         )
+    
 
     # normalize meta
     # TODO: move all of this logic into color map utils
     #meta = Normalizer().fit_transform(meta.reshape(-1, 1))
     # bin meta (?)
     meta, meta_sets, meta_labels  = process_meta(meta, labels=labels)
+    color_by = color_by if color_by in meta.columns else meta.columns[color_by]
 
-    # index
-    node_to_index = {n:i for i,n in enumerate(nodelist)}
-    index_to_node = {i:n for i,n in enumerate(nodelist)}
 
     # tooltips (TODO: should this be here)
     if tooltips is None:
-        tooltips = np.array(list(nodelist.keys()))
+        tooltips = np.array(['{}'.format(_) for _ in nodelist.items()])
     tooltips = np.array(tooltips).astype(str)
 
 
     ### NODES
-    G = nx.Graph()
-    G.graph['label'] = meta_labels
-    G.graph['groups'] = meta_sets
-    G.graph['color_by'] = color_by if color_by in meta.columns else meta.columns[color_by]
+    G = nx.Graph(
+        labels=meta_labels,
+        groups=meta_sets,
+        color_by=color_by
+        )
     for node_id, (name, members) in enumerate(nodelist.items()):
         # define node_dict for G
         members = list(sorted(members))
@@ -193,7 +203,6 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
                 # node color, size
                 size=len(members),
             ) 
-
         
         # update G
         G.add_node(name, **node_dict)
@@ -205,8 +214,8 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
             source_id = node_to_index[source]
             target_id = node_to_index[target]
 
-            source_node = G.nodes[source]
-            target_node = G.nodes[target]
+            source_node = G.node[source]
+            target_node = G.node[target]
 
             # find member intersection
             members_index = [i for i,_ in enumerate(target_node['members'])
@@ -223,20 +232,16 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=0, labels=None,
             G.add_edge(source, target, **edge_dict)
 
     # more attribues
-    nx.set_node_attributes(G, {n: {
-        'degree': G.degree[n],
-        } for n in G})
-    nx.set_edge_attributes(G, {e: {
-        'distance': 100. * (1. / min([G.degree[n] for n in e])),
-        'distance': (1. / min([G.degree[n] for n in e]))**2,
+    for n, nbrs in G.adj.items():
+        G.node[n]['degree'] = G.degree(n)
+        for nbr in nbrs:
+            G.edges[(n,nbr)]['distance'] = 100. * (1. / min([G.degree(n), G.degree(nbr)]))
 
-        } for e in G.edges})    
     # max dist
-    max_distance = np.max(list(dict(nx.get_edge_attributes(G, 'distance')).values()))
-    print(max_distance)
-    nx.set_edge_attributes(G, {e: {
-        'strength': 1 - (G.edges[e]['distance'] / max_distance),
-        } for e in G.edges})         
+    max_distance = max([_ for u,v,_ in G.edges(data='distance')])
+    for n, nbrs in G.adj.items():
+        for nbr in nbrs:
+            G.edges[(n,nbr)]['strength'] = 1 - (G.edges[(n,nbr)]['distance'] / max_distance)
     return G
 
 
@@ -252,24 +257,24 @@ def extract_matrices(G):
         __ for n,_ in G.nodes(data=True) for __ in _['members']
         ]))
     nTR = max(data.max()+1, data.shape[0])
-    A = nx.to_numpy_matrix(G)          # node x node
+    A = nx.to_numpy_matrix(G)  # node x node
     M = np.zeros((nTR, A.shape[0]))    #   TR x node
     T = np.zeros((nTR, nTR))
 
     # mapping from 'cube0_cluster0' => 0
-    node_to_index = {n:i for i,n in enumerate(G.nodes)}
+    node_to_index = {n:i for i,n in enumerate(G)}
     node_to_members = dict(nx.get_node_attributes(G, 'members'))
 
     # loop over TRs to fill in C_rc, C_tp
     for TR in range(nTR):
         # find nodes containing TR 
-        TR_nodes = [n for n,d in G.nodes(data=True) if TR in d['members']]
+        TR_nodes = [n for n in G if TR in G.node[n]['members']]
         #node_degrees = dict(G.degree(TR_nodes)).values()
 
         # find TRs for each edge sharing node
         node_index = [node_to_index[_] for _ in TR_nodes]  
         source_TRs = [node_to_members[n] for n in TR_nodes]
-        target_TRs = [node_to_members[n] for (_,n) in G.edges(TR_nodes)]
+        target_TRs = [node_to_members[nbr] for n in G for nbr in G.neighbors(n)]
         similar_TRs = list(set(__ for _ in source_TRs+target_TRs for __ in _))
 
         # normalized node degrees 

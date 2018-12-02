@@ -80,8 +80,13 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
 		self.y_ = y
 
 		# extract nodes, links
-		nodes = G['nodes']
-		edges = G['links']
+		if isinstance(G, nx.Graph):
+			g = G.copy()
+			G = nx.node_link_data(g)
+		else:
+			nodes = G['nodes']
+			edges = G['links']
+		
 
 		# states, microstates
 		node_ids = np.sort([_ for i,_ in enumerate(nodes)])
@@ -99,9 +104,11 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
 
 		# annotate any additional node datahere
 		if node_data is not None:
-			nx.set_node_attributes(G, dict(node_data))
+			for k in node_data:
+				nx.set_node_attributes(G, dict(node_data[k]), k)
 		if edge_data is not None:
-   			nx.set_edge_attributes(G, dict(edge_data))
+			for k in edge_data:
+   				nx.set_edge_attributes(G, dict(edge_data[k]), k)
 
 		# mixture of connected TRs, for each TR 
 		mixtures = [_.nonzero()[0] for _ in TCM]
