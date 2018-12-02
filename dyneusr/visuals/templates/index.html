@@ -340,15 +340,28 @@ function zoom() {
 };
   
 
-var color_palettes = {
-    'category': d3.scale.category10().range(),
+var color_palettes = {    
+    'kepler3': ['#0500ff', '#65ff00', '#ff0000'],
+    'kepler5': ['#0500ff', '#00a4ff', '#65ff00', '#ff8c00', '#ff0000'],
+    'kepler15': ['#0500ff', '#0100ff', '#0022ff', '#0064ff', '#00a4ff', 
+               '#00e4ff', '#00ff83', '#65ff00', '#fdff00', '#ffdc00', 
+               '#ffb400', '#ff7800', '#ff5000', '#ff2800', '#ff0000'],
+    
+    'spectral3': ['#9e0142', '#ffffbe', '#5e4fa2'],
+    'spectral5':['#9e0142', '#f98e52', '#ffffbe', '#86cfa5', '#5e4fa2'],
+    'spectral15':['#9e0142', '#c52c4b', '#e2514a', '#f57547', '#fca55d', 
+                  '#feca79', '#fee999', '#ffffbe', '#edf8a3', '#cdeb9d', 
+                  '#a2d9a4', '#6ec5a5', '#47a0b3', '#3f77b5', '#5e4fa2'],
+
+    'viridis3':['#440154', '#21918c', '#fde725'],
+    'viridis5': ['#440154', '#3b528b', '#21918c', '#5ec962', '#fde725'],
+    'viridis15':['#440154', '#481b6d', '#46327e', '#3f4788', '#365c8d', 
+                 '#2e6e8e', '#277f8e', '#21918c', '#1fa187', '#2db27d', 
+                 '#4ac16d', '#73d056', '#a0da39', '#d0e11c', '#fde725'],
+
+    'category10': d3.scale.category10().range(),
     'category20': d3.scale.category20().range(),
-    'spectral': ["#d53e4f","#fdae61","#e6f598","#66c2a5","#3288bd"],
-    'spectral8': ["#d53e4f","#f46d43","#fdae61","#fee08b","#e6f598","#abdda4","#66c2a5","#3288bd"],
-    'viridis': ["#440154","#3f4788", "#31b57b","#90d743","#fde725"],
-    'viridis20': ["#440154","#3f4788","#2f6b8e","#1f948c","#20a386", "#20a486", "#31b57b", "#40bd72",
-                "#50c46a","#60ca60","#70cf57", "#81d34d","#90d743","#a0da39","#b0dd2f","#c0df25",
-                "#d0e11c","#e2e418","#fde725"],
+
     };
 ///////////////////////////////////////////////
 // Helpers
@@ -515,7 +528,8 @@ function draw_force(data) {
 
 
   // set custom color palette if defined
-  var color_palette = color_palettes['category'];
+  var color_palette_key = 'kepler15';
+  var color_palette = color_palettes[color_palette_key];
   if (typeof json.graph.colors !== "undefined") {
     d3.keys(json.graph.colors).map(function(k, i) {
       color_palettes[k] = json.graph.colors[k];      
@@ -672,7 +686,8 @@ function draw_force(data) {
     .data(d3.keys(color_palettes))
     .enter().append("option")
       .attr('value', function (d) {console.log(d); return d;})
-      .text(function (d) {console.log(d); return d;});
+      .text(function (d) {console.log(d); return d;})
+      .property("selected", function(d){ return d === color_palette_key; });
 
   // TODO: Un-comment below to add movie button
   //
@@ -844,7 +859,7 @@ function draw_force(data) {
     color_by = menu_color_by.property("value");
     console.log('color_by: '+color_by);
     // get selected color palette
-    var color_palette_key = menu_colors.property("value");
+    color_palette_key = menu_colors.property("value");
     console.log('color_palette: '+color_palette_key);
     // set palette
     color_palette = color_palettes[color_palette_key];
