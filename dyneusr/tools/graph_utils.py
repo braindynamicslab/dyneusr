@@ -141,7 +141,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
 
     # save un-processed metadata
     meta = meta.copy()
-    meta._orig = meta.copy()
+    meta_orig = meta.copy()
 
     # add some defaults
     meta['data_id'] = np.arange(len(meta)).astype(str)
@@ -155,7 +155,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     
     # multiclass proportions
     # TODO: make sure this works on edge cases
-    multiclass = _agg_proportions(meta._orig)
+    multiclass = _agg_proportions(meta_orig)
     color_by = 'multiclass' if color_by is None else color_by
     meta_sets['multiclass'] = [_.get('group') for _ in multiclass]
     meta_labels['multiclass'] = [_.get('label') for _ in multiclass]
@@ -185,7 +185,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
         tooltip = tooltips[node_id]
 
         # aggregate proportions into a single column
-        multiclass = _agg_proportions(meta._orig, members)
+        multiclass = _agg_proportions(meta_orig, members)
         tooltip += (pd.DataFrame(multiclass)
                     .set_index('label')
                     .to_html())
