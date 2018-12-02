@@ -159,8 +159,8 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     # TODO: make sure this works on edge cases
     multiclass = _agg_proportions(meta_orig)
     color_by = 'multiclass' if color_by is None else color_by
-    meta_sets['multiclass'] = [_.get('group') for _ in reversed(multiclass)]
-    meta_labels['multiclass'] = [_.get('label') for _ in reversed(multiclass)]
+    meta_sets['multiclass'] = [_.get('group') for _ in multiclass]
+    meta_labels['multiclass'] = [_.get('label') for _ in multiclass]
     tooltip = pd.DataFrame(multiclass).to_html(
                         index=False, columns=['label','group','value','row_count'],
                         float_format='{:0.2f}'.format,
