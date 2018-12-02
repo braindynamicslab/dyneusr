@@ -11,6 +11,8 @@ import functools
 import json
 import os
 
+from IPython.core.display import HTML, display
+
 from collections import defaultdict, Counter
 
 import multiprocessing as mp
@@ -159,7 +161,11 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     color_by = 'multiclass' if color_by is None else color_by
     meta_sets['multiclass'] = [_.get('group') for _ in multiclass]
     meta_labels['multiclass'] = [_.get('label') for _ in multiclass]
-    print(pd.DataFrame(multiclass).set_index('label'))
+    tooltip = (pd.DataFrame(multiclass)
+                    .set_index('label')
+                    .to_html())
+    if kwargs.get('verbose', 1) > 0:
+        display(HTML(tooltip))
 
     # color_by
     color_by = 0 if color_by is None else color_by
