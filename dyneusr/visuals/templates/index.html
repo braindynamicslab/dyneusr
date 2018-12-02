@@ -516,7 +516,12 @@ function draw_force(data) {
 
   // set custom color palette if defined
   var color_palette = color_palettes['category'];
-  if (typeof json.graph.color !== "undefined") {
+  if (typeof json.graph.colors !== "undefined") {
+    d3.keys(json.graph.colors).map(function(k, i) {
+      color_palettes[k] = json.graph.colors[k];      
+    })
+    color_palette = color_palettes[color_by];
+  } else if (typeof json.graph.color !== "undefined") {
     d3.keys(json.graph.color).map(function(k, i) {
       color_palettes[k] = json.graph.color[k];      
     })
@@ -533,7 +538,11 @@ function draw_force(data) {
   d3.keys(groups).map(function(k, i) {
     color_labels[k] = groups[k];
   });
-  if (typeof json.graph.label !== "undefined") {
+  if (typeof json.graph.labels !== "undefined") {
+    d3.keys(json.graph.labels).map(function(k, i) {
+      color_labels[k] = json.graph.labels[k]
+    })
+  } else if (typeof json.graph.label !== "undefined") {
     d3.keys(json.graph.label).map(function(k, i) {
       color_labels[k] = json.graph.label[k]
     })
@@ -779,6 +788,8 @@ function draw_force(data) {
   //    .append("svg")
   //    .attr("width", width)
   //    .attr("height", height)
+  var n_labels = color_label.domain().length;
+  var legend_height = 20*n_labels+10;
   var legend = d3.select('#graph-meta')
       .append("div")
         .attr("id", "legend")
@@ -788,11 +799,10 @@ function draw_force(data) {
       .append("svg")
         .attr("class", "legend")
         .attr("width", "100%")
-        .attr("height", 20*5+10+"px");
+        .attr("height", legend_height+"px");
       
   // D3 Vertical Legend //////////////////////////
-  var n_labels = color_label.domain().length;
-  var label_style = {w: 100, h: 100 / n_labels};
+  var label_style = {w: 100, h: legend_height / n_labels};
   label_style.font_size = label_style.w / 5 - 4;
   label_style.x = label_style.w + (label_style.w / 5);
   label_style.y = label_style.h - (label_style.h - label_style.font_size) / 2;
@@ -831,7 +841,7 @@ function draw_force(data) {
 
   function reset_colors() {
     // get selected color by 
-    var color_by = menu_color_by.property("value");
+    color_by = menu_color_by.property("value");
     console.log('color_by: '+color_by);
     // get selected color palette
     var color_palette_key = menu_colors.property("value");
@@ -853,8 +863,9 @@ function draw_force(data) {
     //////////////////////////////////////////
     // Reset Legend //////////////////////////
     //////////////////////////////////////////
-    var n_labels = color_label.domain().length;
-    var label_style = {w: 100, h: 100 / n_labels};
+    n_labels = color_label.domain().length;
+    legend_height = 20*n_labels+10;
+    label_style = {w: 100, h: legend_height / n_labels};
     label_style.font_size = label_style.w / 5 - 4;
     label_style.x = label_style.w + (label_style.w / 5);
     label_style.y = label_style.h - (label_style.h - label_style.font_size) / 2;
