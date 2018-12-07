@@ -304,7 +304,7 @@ def extract_matrices(G):
         __ for n,_ in G.nodes(data=True) for __ in _['members']
         ]))
     nTR = max(data.max()+1, data.shape[0])
-    A = nx.to_numpy_matrix(G)  # node x node
+    A = nx.to_numpy_array(G)  # node x node
     M = np.zeros((nTR, A.shape[0]))    #   TR x node
     T = np.zeros((nTR, nTR))
 
@@ -321,7 +321,7 @@ def extract_matrices(G):
         # find TRs for each edge sharing node
         node_index = [node_to_index[_] for _ in TR_nodes]  
         source_TRs = [node_to_members[n] for n in TR_nodes]
-        target_TRs = [node_to_members[nbr] for n in G for nbr in G.neighbors(n)]
+        target_TRs = [node_to_members[nbr] for n in TR_nodes for nbr in G.neighbors(n)]
         similar_TRs = list(set(__ for _ in source_TRs+target_TRs for __ in _))
 
         # normalized node degrees 
