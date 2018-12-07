@@ -536,6 +536,13 @@ function draw_force(data) {
 
   // set custom color palette if defined
   var color_palette_key = 'kepler15';
+  if (groups[color_by].length <= 3) {
+    color_palette_key = 'kepler3';
+  } else if (groups[color_by].length <= 5) {
+    color_palette_key = 'kepler5';
+  } 
+  console.log("color_palette_key: "+color_palette_key);
+
   var color_palette = color_palettes[color_palette_key];
   if (typeof json.graph.colors !== "undefined") {
     d3.keys(json.graph.colors).map(function(k, i) {
