@@ -93,10 +93,12 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
 		# states, microstates
 		node_ids = np.sort([_ for i,_ in enumerate(nodes)])
 		data_ids = np.sort(np.unique([_ for n in nodes for _ in nodes[n]]))
+		if y is not None:
+			data_ids = np.sort(y.reset_index().index)
 
 		# process graph
 		G = tools.process_graph(G, meta=y, **kwargs)
-		A, M, TCM = tools.extract_matrices(G)
+		A, M, TCM = tools.extract_matrices(G, index=data_ids)
 
 		# create graph from TCM
 		if G_data is True:

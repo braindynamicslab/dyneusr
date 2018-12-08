@@ -295,15 +295,16 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
 
 
 
-def extract_matrices(G):
+def extract_matrices(G, index=None, **kwargs):
     # construct matrices
     #   A    => adjacency matrix
     #   M    => normalized node degree
     #   T    => normalized node degree
-    data = np.sort(np.unique([
-        __ for n,_ in G.nodes(data=True) for __ in _['members']
-        ]))
-    nTR = max(data.max()+1, data.shape[0])
+    if index is None:
+        index = np.sort(np.unique([
+            __ for n in G for __ in G.node[n]['members']
+            ]))
+    nTR = max(np.max(index)+1, len(index))
     A = nx.to_numpy_array(G)  # node x node
     M = np.zeros((nTR, A.shape[0]))    #   TR x node
     T = np.zeros((nTR, nTR))
