@@ -108,15 +108,24 @@ def process_meta(meta_, labels=None):
 
 def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=None, **kwargs):
     # convert to nx
-    # extract nodes, links
     if isinstance(graph, nx.Graph):
         g = graph.copy()
         graph = nx.node_link_data(g)
+    elif graph is None:
+        graph = {}
+
+    # copy graph, override defaults
+    graph = dict(dict(nodes={}, links={}), **graph)
+
+    # return empty graph
+    if len(graph['nodes']) + len(graph['links']) < 1:
+        return nx.Graph()
+
     # extract node, links
-    nodelist = dict(graph['nodes'])
-    edgelist = dict(graph['links'])
-    memberlist = np.sort(np.unique([
-        __ for _ in nodelist.values() for __ in _]))
+    nodelist = dict(graph.get('nodes', {}))
+    edgelist = dict(graph.get('links', {}))
+    memberlist = np.unique([_ for n,d in nodelist.items() for _ in d])
+    nTR = int(max(np.r_[len(memberlist), memberlist+1]))
     
     # index
     node_to_index = {n:i for i,n in enumerate(nodelist)}
@@ -125,7 +134,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     # meta stuff
     if meta is None:
         meta = pd.DataFrame().assign(
-            data_id=np.arange(np.max(memberlist)+1).astype(str), 
+            data_id=np.arange(nTR).astype(str), 
             default=0,
             )
     elif not isinstance(meta, pd.DataFrame):
@@ -301,13 +310,17 @@ def extract_matrices(G, index=None, **kwargs):
     #   M    => normalized node degree
     #   T    => normalized node degree
     if index is None:
-        index = np.sort(np.unique([
+        index = np.unique([
             __ for n in G for __ in G.node[n]['members']
-            ]))
-    nTR = max(np.max(index)+1, len(index))
+            ])
+    nTR = int(max(np.r_[len(index), np.ravel(index)+1]))
     A = nx.to_numpy_array(G)  # node x node
     M = np.zeros((nTR, A.shape[0]))    #   TR x node
     T = np.zeros((nTR, nTR))
+
+    # return empty arrays if graph is empty
+    if not len(G):
+        return A, M, T
 
     # mapping from 'cube0_cluster0' => 0
     node_to_index = {n:i for i,n in enumerate(G)}
