@@ -18,13 +18,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-CUSTOM_CSS = """
-<style>
-  .container { width:80% !important; margin:auto }
-  .output_scroll {height: 80px !important;}
-</style>
-"""
-
 
 def format_IFrame(path, **kwargs):
     defaults = dict(src=path, width="100%", height=800, frameBorder=0)
@@ -39,6 +32,13 @@ def format_HTML(html):
             html = fid.read()
     return IPython.display.HTML(html)
 
+
+CUSTOM_CSS = """
+<style>
+  .container { width:80% !important; margin:auto }
+  .output_scroll {height: 80px !important;}
+</style>
+"""
 
 def display_HTML(src="", figure=None, static=False):
     """ Display html inside a Jupyter notebook.

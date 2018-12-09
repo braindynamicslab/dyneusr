@@ -15,6 +15,7 @@ import networkx as nx
 
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from dyneusr import datasets
 from dyneusr import visuals
 from dyneusr import tools
 

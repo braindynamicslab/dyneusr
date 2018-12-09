@@ -13,9 +13,12 @@ import pandas as pd
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+mpl.use('TkAgg', warn=False)
+
 import seaborn as sns 
 
 from sklearn.preprocessing import Normalizer, Binarizer
+
 
 
 def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normalizer()], cmap='plasma', windows=None, **kwargs):

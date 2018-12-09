@@ -25,6 +25,8 @@ from scipy import stats
 from sklearn.preprocessing import Normalizer, LabelEncoder
 import networkx as nx
 
+
+
 def _agg_proportions(df, members=slice(0, -1)):
     """ Aggregate proportions df for members. 
     """

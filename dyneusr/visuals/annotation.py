@@ -17,7 +17,6 @@ import networkx as nx
 
 
 
-
 NODE_HTML = """
 <div id="tooltip-content">
   <div><b>Node ID:</b> {node_name}</div>

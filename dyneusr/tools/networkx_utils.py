@@ -10,12 +10,15 @@ from collections import Counter
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+mpl.use('TkAgg', warn=False)
+
 import seaborn as sns
 
 import numpy as np
 import pandas as pd
 
 import networkx as nx
+
 
 
 def get_cover_cubes(lens=None, graph=None, cover=None, scale=False, **kwargs):
