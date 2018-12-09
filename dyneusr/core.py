@@ -127,7 +127,12 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         self.map_ = M             # node attr matrix
         self.tcm_ =  TCM                # temporal connectivity
         self.mixtures_ = mixtures
-        self.json_graph_ = {}
+
+        # some new conventions
+        self.G = self.G_
+        self.A = self.adj_
+        self.M = self.map_
+        self.TCM = self.tcm_
         return self
 
 
@@ -284,18 +289,17 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         # format html
         if isinstance(custom_data, dict):
             self.annotate_graph(**custom_data)
+        
         # to node_link
-        self.json_graph_ = nx.node_link_data(self.G_)
+        self.node_link_data_ = dict(nx.node_link_data(self.G))
 
         # [1] plot TCM
         if plot_tcm:
             figs = visuals.plot_temporal_matrix(self.tcm_, y=None, show=True, **kwargs)
 
         # [2] visualize force
-        HTTP = visuals.visualize_force(self.json_graph_, path_html=path_html, **kwargs)
+        HTTP = visuals.visualize_force(self.node_link_data_, path_html=path_html, **kwargs)
         self.HTTP = HTTP
-        self.url_ = HTTP.url
-        self.path_html_ = os.path.basename(self.url_)
         return self
 
 

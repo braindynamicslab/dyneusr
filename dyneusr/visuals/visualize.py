@@ -211,6 +211,7 @@ def visualize_force(js, template='movie', path_html='index.html', path_csv=None,
 
     # cache some things
     HTTP.url = str(url)
+    HTTP.src = str(path_html)
     HTTP.html = str(html)
     HTTP.json = dict(js)
 
