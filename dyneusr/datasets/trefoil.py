@@ -19,6 +19,7 @@ import pandas as pd
 from sklearn.datasets.base import Bunch
 
 import matplotlib as mpl
+mpl.use('TkAgg', warn=False)
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -77,20 +78,22 @@ def make_trefoil(size=1000, noise=0.0, a=2, b=2, c=3, **kwargs):
 ##############################################################################
 ### data visualizers
 ##############################################################################
-def draw_trefoil3d(X, y=None, c=None, s='z', ax=None, fig=None, view=(90, -90), **kwargs):
+def draw_trefoil3d(x=None, y=None, z=None, c=None, s='z', ax=None, fig=None, view=(90, -90), **kwargs):
     """Plot trefoil knot.
     """   
     if c is None:
-    	c = np.copy(y)
+    	c = np.copy(z)
     cmap = plt.get_cmap(kwargs.get('cmap', "tab10"))
     norm = mpl.colors.Normalize(c.min(), cmap.N)
 
     # extract x, y, z
-    x,y,z = X.T[:3]
     if s == 'z':
         zbins = np.linspace(z.min(), z.max(), num=10)
         zbins = np.digitize(z, zbins) 
         s = zbins**2
+
+    # combine features
+    X = np.c_[x, y, z]
 
     # plot data
     fig, axes = plt.subplots(1, 3, figsize=(15,5),subplot_kw=dict(projection='3d'))
@@ -139,20 +142,22 @@ def draw_trefoil3d(X, y=None, c=None, s='z', ax=None, fig=None, view=(90, -90), 
 
 
 
-def draw_trefoil(X, y=None, c=None, s='z', ax=None, fig=None, **kwargs):
+def draw_trefoil(x=None, y=None, z=None, c=None, s='z', ax=None, fig=None, **kwargs):
     """Plot trefoil knot.
     """   
     if c is None:
-        c = np.copy(y)
+        c = np.copy(z)
     cmap = plt.get_cmap(kwargs.get('cmap', "tab10"))
     norm = mpl.colors.Normalize(c.min(), cmap.N)
 
     # extract x, y, z
-    x,y,z = X.T[:3]
     if s == 'z':
         zbins = np.linspace(z.min(), z.max(), num=10)
         zbins = np.digitize(z, zbins) 
         s = zbins**2
+
+    # combine features
+    X = np.c_[x, y, z]
 
     # plot data
     fig, axes = plt.subplots(3, 1, figsize=(15,5))

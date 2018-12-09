@@ -9,8 +9,9 @@ from __future__ import unicode_literals
 from collections import Counter
 
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 mpl.use('TkAgg', warn=False)
+import matplotlib.pyplot as plt
+
 
 import seaborn as sns
 
