@@ -199,7 +199,8 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     G = nx.Graph(
         labels=meta_labels,
         groups=meta_sets,
-        color_by=color_by
+        color_by=color_by,
+        color=kwargs.get('color_functions', {})
         )
     for node_id, (name, members) in enumerate(nodelist.items()):
         # define node_dict for G

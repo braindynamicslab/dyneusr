@@ -77,7 +77,6 @@ def optimize_cover(X=None, r=30, g=3, limits=True, ndim=2):
         # Ignore limits, probably using older version
         cover = Cover(n_cubes, p_overlap)
         print("[warning]", e)
-
     return cover
 
 
@@ -91,15 +90,13 @@ def optimize_dbscan(X, **kwargs):
 
 
 
-def optimize_eps(X, threshold=100, k=2, tree=None):
+def optimize_eps(X, threshold=100, k=2, metric='minkowski', leaf_size=30, p=2):
     """ Get optimized value for eps based on data.
     """
     from sklearn.neighbors import KDTree
 
-    # Initialize neighbor tree
-    if tree is None:
-        # Use 'minkowski', p=2 (i.e. euclidean metric)
-        tree = KDTree(X, leaf_size=30, metric='minkowski', p=2)
+    # Use 'minkowski', p=2 (i.e. euclidean metric)
+    tree = KDTree(X, leaf_size=leaf_size, metric=metric, p=p)
 
     # Query k nearest-neighbors for X
     dist, ind = tree.query(X, k=k)

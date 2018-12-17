@@ -282,11 +282,19 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         return self
 
 
-    def visualize(self, path_html='index.html', json_graph=None, custom_data=None, plot_tcm=False, **kwargs):
+    def visualize(self, path_html='index.html', json_graph=None, color_functions=None, custom_data=None, plot_tcm=False, **kwargs):
         """ Visualize DyNeuGraph.
 
         TODO: this needs some work...
         """
+        # color functions
+        if color_functions is not None:
+            if not isinstance(color_functions, dict):
+                color_functions = dict(default=color_functions)
+            self.G.graph.update(color = color_functions)
+
+        
+
         # format html
         if isinstance(custom_data, dict):
             self.annotate_graph(**custom_data)

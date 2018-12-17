@@ -123,16 +123,16 @@ def http_server(port=None, host='localhost'):
 
 
     
-def visualize_force(js, template='movie', path_html='index.html', path_csv=None, path_json=None, path_graphs='graphs', path_assets=None, reset=True, static=False, show=False, figure=None, **kwargs):
+def visualize_force(js, template='movie', path_html='index.html', path_csv=None, path_json=None, path_graphs='graphs', path_assets=None, reset=True, static=False, show=True, figure=None, port=8000, **kwargs):
     """ Create index.html, index.csv, graphs/*.json
     """
     ### check for deprecated options
     if kwargs.get('PORT'):
         # PORT => port
-        kwargs['port'] = kwargs['PORT']
+        port = kwargs.pop('PORT')
 
     ### Run http.server on port
-    HTTP = http_server(**kwargs)
+    HTTP = http_server(port=port, **kwargs)
 
     ### Read template HTML
     file_template = 'index.html'
