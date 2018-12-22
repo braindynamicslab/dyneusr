@@ -25,6 +25,9 @@ from scipy import stats
 from sklearn.preprocessing import Normalizer, LabelEncoder
 import networkx as nx
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
 
 
 def _agg_proportions(df, members=slice(0, -1)):
@@ -183,7 +186,16 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     color_by = 0 if color_by is None else color_by
     if color_by not in meta_labels.keys():
         color_by = list(meta_labels.keys())[color_by]
-       
+
+    # color functions
+    color_functions = kwargs.get('color_functions', {})
+    cmap = kwargs.get('cmap', 'tab20c')
+    if color_by not in color_functions:
+        # get hex color for each group
+        color_function = [_ for _  in meta_sets[color_by]]
+        cmap = plt.get_cmap(cmap, len(np.unique(color_function)) + 1)
+        color_function = [mpl.colors.to_hex(_) for _ in cmap(color_function)]
+        color_functions[color_by] = color_function
 
     # tooltips (TODO: should this be here)
     if tooltips is None:
@@ -200,7 +212,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
         labels=meta_labels,
         groups=meta_sets,
         color_by=color_by,
-        color=kwargs.get('color_functions', {})
+        color=color_functions,
         )
     for node_id, (name, members) in enumerate(nodelist.items()):
         # define node_dict for G
