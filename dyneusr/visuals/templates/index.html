@@ -817,7 +817,7 @@ function draw_force(data) {
   //    .append("svg")
   //    .attr("width", width)
   //    .attr("height", height)
-  var n_labels = color_label.domain().length;
+  var n_labels = d3.max([5, color_label.domain().length]);
   var legend_height = 20*n_labels+10;
   var legend = d3.select('#graph-meta')
       .append("div")
