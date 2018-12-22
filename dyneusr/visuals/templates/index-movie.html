@@ -818,7 +818,8 @@ function draw_force(data) {
   //    .attr("width", width)
   //    .attr("height", height)
   var n_labels = color_label.domain().length;
-  var legend_height = d3.max([100, 20*n_labels]) + 10;
+  var max_n_labels = d3.max(d3.values(groups).map(v => {return v.length;}));
+  var legend_height = 20 * max_n_labels + 10;
   var legend = d3.select('#graph-meta')
       .append("div")
         .attr("id", "legend")
@@ -893,7 +894,6 @@ function draw_force(data) {
     // Reset Legend //////////////////////////
     //////////////////////////////////////////
     n_labels = color_label.domain().length;
-    legend_height = d3.max([100, 20*n_labels]) + 10;
     label_style = {w: 100, h: legend_height / n_labels};
     label_style.font_size = label_style.w / 5 - 4;
     label_style.x = label_style.w + (label_style.w / 5);
