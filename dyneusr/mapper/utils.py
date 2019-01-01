@@ -88,16 +88,16 @@ def optimize_cover(X=None, r=30, g=3, limits=True, ndim=2):
 
 
 
-def optimize_dbscan(X, **kwargs):
+def optimize_dbscan(X, n_neighbors=5, min_samples=1, **kwargs):
     """ Get dbscan based on eps determined by data.
     """
-    eps = optimize_eps(X)
-    dbscan = DBSCAN(eps=eps, **kwargs)
+    eps = optimize_eps(X, n_neighbors=n_neighbors)
+    dbscan = DBSCAN(eps=eps, min_samples=min_samples, **kwargs)
     return dbscan
 
 
 
-def optimize_eps(X, threshold=100, k=2, metric='minkowski', leaf_size=30, p=2):
+def optimize_eps(X, threshold=100, n_neighbors=5, metric='minkowski', leaf_size=30, p=2):
     """ Get optimized value for eps based on data.
     """
     from sklearn.neighbors import KDTree
@@ -106,8 +106,8 @@ def optimize_eps(X, threshold=100, k=2, metric='minkowski', leaf_size=30, p=2):
     tree = KDTree(X, leaf_size=leaf_size, metric=metric, p=p)
 
     # Query k nearest-neighbors for X
-    dist, ind = tree.query(X, k=k)
+    dist, ind = tree.query(X, k=n_neighbors+1)
 
     # Find eps s.t. % of points within eps of k nearest-neighbor 
-    eps = np.percentile(dist[:, k-1], threshold)
+    eps = np.percentile(dist[:, n_neighbors], threshold)
     return eps
