@@ -53,22 +53,29 @@ def optimize_cover(X=None, r=30, g=3, limits=True, ndim=2):
     """   
     from kmapper.cover import Cover
     
+    # Convert to gain, if defined as percent
+    if g < 1:
+        g = np.ceil(1. / (1. - g))
+
     # Define r, g based on data / heuristic
     if X is not None:
-        r = int(r * (len(X) / 1000.) * (2. / ndim))
-
+        scale_factor = (len(X) / 1000.) * (2. / ndim)
+        r = r * scale_factor
+        g = g / scale_factor
+        
     # Get n_cubes, overlap
-    n_cubes = int(max(1, r))
-    p_overlap = float(g)
+    n_cubes = max(1, r)
+    p_overlap = (g - 1) / float(g)
 
-    # Convert to percent, if gain > 1
-    if g > 1:
-        p_overlap = (g-1) / float(g)
-   
+    # Round final values 
+    n_cubes = int(n_cubes)
+    p_overlap = np.round(p_overlap, 2)
+
     # Define optimized limits
     if limits is True:
         offset = p_overlap / float(n_cubes)
         limits = [[-offset, 1+offset] for _ in range(ndim)]
+        n_cubes += 2
 
     try:
         # Initialize Cover with limits
