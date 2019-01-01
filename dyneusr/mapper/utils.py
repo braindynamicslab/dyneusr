@@ -53,9 +53,9 @@ def optimize_cover(X=None, r=30, g=3, limits=True, ndim=2):
     """   
     from kmapper.cover import Cover
     
-    # Define r, g based on data
+    # Define r, g based on data / heuristic
     if X is not None:
-        r = r * (len(X) / 1000.)
+        r = int(r * (len(X) / 1000.) * (2. / ndim))
 
     # Get n_cubes, overlap
     n_cubes = int(max(1, r))
