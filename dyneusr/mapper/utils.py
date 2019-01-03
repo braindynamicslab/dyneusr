@@ -66,7 +66,7 @@ def optimize_cover(X=None, r=30, g=3, ndim=2, limits=True, scale_r=True, scale_g
         if scale_g:
             # Convert to gain, if defined as percent
             if g < 1:
-                g = np.ceil(1. / (1. - g))
+                g = 1. / (1. - g)
             # Scale
             g = g * scale_factor
 
