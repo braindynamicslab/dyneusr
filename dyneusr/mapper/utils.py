@@ -43,7 +43,7 @@ except ImportError as e:
 ###############################################################################
 ### Helper functions
 ###############################################################################
-def optimize_cover(X=None, r=30, g=3, limits=True, ndim=2):
+def optimize_cover(X=None, r=30, g=3, ndim=2, limits=True, scale_r=True, scale_g=True):
     """ Get optimized cover for data.
 
     Notes
@@ -52,20 +52,33 @@ def optimize_cover(X=None, r=30, g=3, limits=True, ndim=2):
 
     """   
     from kmapper.cover import Cover
-    
-    # Convert to gain, if defined as percent
-    if g < 1:
-        g = np.ceil(1. / (1. - g))
 
     # Define r, g based on data / heuristic
     if X is not None:
+        # Heuristic based on size, dimensionality of data
         scale_factor = (len(X) / 1000.) * (2. / ndim)
-        r = r * scale_factor
-        g = g / scale_factor
+        
+        # Scale r
+        if scale_r:
+            r = r * scale_factor
+
+        # Scale g
+        if scale_g:
+            # Convert to gain, if defined as percent
+            #if g < 1:
+            #    g = np.ceil(1. / (1. - g))
+            # Scale
+            g = g * scale_factor
+
+
+    # Convert gain to percent
+    if g >= 1:
+        g = (g - 1) / float(g)
         
     # Get n_cubes, overlap
     n_cubes = max(1, r)
-    p_overlap = (g - 1) / float(g)
+    p_overlap = float(g)
+
 
     # Round final values 
     n_cubes = int(n_cubes)
