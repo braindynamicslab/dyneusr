@@ -124,3 +124,7 @@ def optimize_eps(X, threshold=100, n_neighbors=5, metric='minkowski', leaf_size=
     # Find eps s.t. % of points within eps of k nearest-neighbor 
     eps = np.percentile(dist[:, n_neighbors], threshold)
     return eps
+
+
+
+

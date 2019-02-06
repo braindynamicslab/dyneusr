@@ -41,6 +41,7 @@ def _agg_proportions(df, members=slice(0, -1)):
         row_count=p.shape[0]
         )
     p = p[['label', 'group', 'value', 'row_count']]
+    p.columns = ['label', 'group', 'value', 'row_count']
     p = list(p.T.to_dict().values())
     return p
 
@@ -175,7 +176,8 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     color_by = 'multiclass' if color_by is None else color_by
     meta_sets['multiclass'] = [_.get('group') for _ in multiclass]
     meta_labels['multiclass'] = [_.get('label') for _ in multiclass]
-    tooltip = pd.DataFrame(multiclass).to_html(
+    df_multiclass = pd.DataFrame(multiclass)
+    tooltip = df_multiclass.to_html(
                         index=False, columns=['label','group','value','row_count'],
                         float_format='{:0.2f}'.format,
                         )

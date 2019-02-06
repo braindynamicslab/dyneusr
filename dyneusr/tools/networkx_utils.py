@@ -11,116 +11,17 @@ from collections import Counter
 import matplotlib as mpl
 mpl.use('TkAgg', warn=False)
 import matplotlib.pyplot as plt
-
-
 import seaborn as sns
 
 import numpy as np
 import pandas as pd
-
 import networkx as nx
 
 
 
-def get_cover_cubes(lens=None, graph=None, cover=None, scale=False, **kwargs):
-    # define bins
-    cover = cover
-    ids = np.arange(len(lens)).reshape(-1, 1)
-    ilens = np.c_[ids, lens]
-    bins = [tuple(_) for _ in cover.define_bins(ilens)]
-    
-    chunk_dist = cover.chunk_dist
-    overlap_dist = cover.overlap_dist
-    d = cover.d
-    
-    # plot for testing
-    cover_cubes = {}
-    for i, cube in enumerate(bins):
-        # Compute bounds
-        lower = d + (cube * chunk_dist)
-        upper = lower + chunk_dist + overlap_dist
-        cover_cubes[tuple(cube)] = np.r_['0,2', lower, upper]
-
-    if scale:
-        try:
-            scaler = eval(graph['meta_data']['scaler'])
-        except:
-            scaler = MinMaxScaler()
-        # scale
-        stacked = np.vstack(cover_cubes.values())
-        scaler.fit(stacked)
-        for cube in cover_cubes:
-            _ = scaler.transform(cover_cubes[cube])
-            cover_cubes[cube] = _
-
-    # cubes
-    cover_cubes = cover_cubes
-    
-    # reindex by node
-    coords = {n: tuple(graph['meta_nodes'][n]["coordinates"]) for n in graph["nodes"]}
-    cover_cubes = {n: cover_cubes[coords[n]] for n in graph["nodes"]}
-    return cover_cubes
-
-
-def draw_cover(ax=None, cover_cubes=None, draw_all=False, max_draw=2, **kwargs):
-    """ Add cover to scatter plot of projection/lens.
-    """
-    if ax is None:
-        ax = plt.gca()
-
-    # save for later
-    xlim = np.ravel(ax.get_xlim())
-    ylim = np.ravel(ax.get_ylim())
-  
-
-    if cover_cubes is None:
-        cover_cubes = get_cover_cubes(**kwargs)
-
-    # plot
-    cmaps = [#lambda _: "cyan", lambda _: "deeppink"]
-            #plt.get_cmap("Purples_r"), plt.get_cmap("Purples_r")]
-            plt.get_cmap("bone")]*2# forDark2"), plt.get_cmap("Dark2")]
-
-    axspan_funcs = [ax.axvspan, ax.axhspan]
-    axline_funcs = [ax.axvline, ax.axhline]
-
-    xbins,ybins = np.vstack([_ for cube,_ in cover_cubes.items()]).T
-    xbins = np.ravel(sorted(set(xbins)))
-    ybins = np.ravel(sorted(set(ybins)))
-    hypercubes = np.c_[xbins, ybins]
-
-    max_draw = 2
-    if draw_all is True:
-        max_draw = len(hypercubes)
-    norm = mpl.colors.Normalize(0, 1)
-    #norm = mpl.colors.Normalize(-0.3*max_draw, 0.3*max_draw)
-    #norm = mpl.colors.Normalize(0, len(hypercubes)-2)#max_draw)
-    d = hypercubes[1,:] - hypercubes[0,:]
-    hypercubes = np.vstack([hypercubes, hypercubes[-1:, :] + d])
-    for i, hypercube in enumerate(hypercubes[:]):
-        for di, (axspan, axline) in enumerate(zip(axspan_funcs,axline_funcs)):
-            c = cmaps[di](norm(0.4+0.3*int(i%2>0)))
-            alpha = 1.0
-            zo = i + 1
-            if max_draw == 2 and (i < 2 or i > 3):
-                alpha=0.2 
-                zo = 0
-            axspan(hypercubes[i,di], hypercubes[i,di]+d[di], alpha=0.1*alpha, fc=c, zorder=zo)
-            axline(hypercubes[i,di], alpha=alpha, c=c, zorder=zo**2)
-            axline(hypercubes[i,di]+d[di], alpha=alpha, c=c, zorder=zo**2+zo)
-    
-
-
-    # finish
-    ax.set_xlim(xlim)
-    ax.set_ylim(ylim)
-    return ax
-
-    
-
-"""
-    Utils for working with networkx Graphs
-"""
+###############################################################################
+###  Utils for working with networkx Graphs
+###############################################################################
 def get_layout_pos(G, layout="spring", layout_kws={}, pos=None, lens=None, **kwargs):
     if pos is None and layout is None:
         return None
@@ -307,9 +208,184 @@ def despine(ax, spines=['top','right'], **kwargs):
 
 
 
-"""
-    functions aliases
-"""
+###############################################################################
+### aliases
+###############################################################################
 format_nx = format_networkx
 draw_nx = draw_networkx
+
+
+
+###############################################################################
+### Visualizing stages of MAPPER
+###############################################################################
+# TODO: move to mapper utils
+def get_cover_cubes(lens=None, graph=None, cover=None, scale=False, **kwargs):
+    # define bins
+    cover = cover
+    ids = np.arange(len(lens)).reshape(-1, 1)
+    ilens = np.c_[ids, lens]
+    bins = [tuple(_) for _ in cover.define_bins(ilens)]
+    
+    chunk_dist = cover.chunk_dist
+    overlap_dist = cover.overlap_dist
+    d = cover.d
+    
+    # plot for testing
+    cover_cubes = {}
+    for i, cube in enumerate(bins):
+        # Compute bounds
+        lower = d + (cube * chunk_dist)
+        upper = lower + chunk_dist + overlap_dist
+        cover_cubes[tuple(cube)] = np.r_['0,2', lower, upper]
+
+    if scale:
+        try:
+            scaler = eval(graph['meta_data']['scaler'])
+        except:
+            scaler = MinMaxScaler()
+        # scale
+        stacked = np.vstack(cover_cubes.values())
+        scaler.fit(stacked)
+        for cube in cover_cubes:
+            _ = scaler.transform(cover_cubes[cube])
+            cover_cubes[cube] = _
+
+    # cubes
+    cover_cubes = cover_cubes
+    
+    # reindex by node
+    coords = {n: tuple(graph['meta_nodes'][n]["coordinates"]) for n in graph["nodes"]}
+    cover_cubes = {n: cover_cubes[coords[n]] for n in graph["nodes"]}
+    return cover_cubes
+
+
+def draw_cover(ax=None, cover_cubes=None, draw_all=False, max_draw=2, **kwargs):
+    """ Add cover to scatter plot of projection/lens.
+    """
+    if ax is None:
+        ax = plt.gca()
+
+    # save for later
+    xlim = np.ravel(ax.get_xlim())
+    ylim = np.ravel(ax.get_ylim())
+  
+
+    if cover_cubes is None:
+        cover_cubes = get_cover_cubes(**kwargs)
+
+    # plot
+    cmaps = [#lambda _: "cyan", lambda _: "deeppink"]
+            #plt.get_cmap("Purples_r"), plt.get_cmap("Purples_r")]
+            plt.get_cmap("bone")]*2# forDark2"), plt.get_cmap("Dark2")]
+
+    axspan_funcs = [ax.axvspan, ax.axhspan]
+    axline_funcs = [ax.axvline, ax.axhline]
+
+    xbins,ybins = np.vstack([_ for cube,_ in cover_cubes.items()]).T
+    xbins = np.ravel(sorted(set(xbins)))
+    ybins = np.ravel(sorted(set(ybins)))
+    hypercubes = np.c_[xbins, ybins]
+
+    max_draw = 2
+    if draw_all is True:
+        max_draw = len(hypercubes)
+    norm = mpl.colors.Normalize(0, 1)
+    #norm = mpl.colors.Normalize(-0.3*max_draw, 0.3*max_draw)
+    #norm = mpl.colors.Normalize(0, len(hypercubes)-2)#max_draw)
+    d = hypercubes[1,:] - hypercubes[0,:]
+    hypercubes = np.vstack([hypercubes, hypercubes[-1:, :] + d])
+    for i, hypercube in enumerate(hypercubes[:]):
+        for di, (axspan, axline) in enumerate(zip(axspan_funcs,axline_funcs)):
+            c = cmaps[di](norm(0.4+0.3*int(i%2>0)))
+            alpha = 1.0
+            zo = i + 1
+            if max_draw == 2 and (i < 2 or i > 3):
+                alpha=0.2 
+                zo = 0
+            axspan(hypercubes[i,di], hypercubes[i,di]+d[di], alpha=0.1*alpha, fc=c, zorder=zo)
+            axline(hypercubes[i,di], alpha=alpha, c=c, zorder=zo**2)
+            axline(hypercubes[i,di]+d[di], alpha=alpha, c=c, zorder=zo**2+zo)
+    
+
+
+    # finish
+    ax.set_xlim(xlim)
+    ax.set_ylim(ylim)
+    return ax
+
+    
+
+def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
+    """ Visualize stages of MAPPER.
+
+    TODO
+    -----
+    - this needs to be tested...
+    - move to mapper utils
+
+    """
+
+    #### Setup
+    y = data.y.copy()
+    G = dG.G_.copy()
+    
+    # member_color 
+    point_color = data.cmap(data.norm(y))
+
+    # node color, size
+    node_size = kwargs.get('node_size')
+    if node_size is None:
+        node_scale_by = kwargs.get('node_scale_by', 20)
+        node_size = [node_scale_by*len(y[_]) for n,_ in G.nodes(data='members')]
+    node_color = [Counter(y[_]).most_common()[0][0] for n,_ in G.nodes(data='members')]
+    node_color = data.cmap(data.norm(node_color))
+
+    # edge color, size
+    edge_size = kwargs.get('edge_size')
+    if edge_size is None:
+        edge_scale_by = kwargs.get('edge_scale_by', 1)
+        edge_size = [edge_scale_by*_ for u,v,_ in G.edges(data='size')]
+    edge_color = kwargs.get('edge_color')
+    if edge_color is None:
+        edge_sources = [G.nodes[u]['members'] for u,v in G.edges()]
+        edge_targets = [G.nodes[v]['members'] for u,v in G.edges()]
+        edge_color = [Counter(y[s + t]).most_common()[0][0] for s,t in zip(edge_sources, edge_targets)]
+        edge_color = data.cmap(data.norm(edge_color))
+
+    # init figure, subplots
+    figsize = kwargs.get('figsize', (20,4))
+    fig, axes = plt.subplots(1, 4, figsize=figsize)
+
+    
+    #### Draw
+    # 1. draw lens (axes: 1-3)
+    for ax in axes[:3]:
+        ax.scatter(*lens.T, c=point_color)
+
+    # 2. draw cover (axes: 2)
+    draw_cover(ax=axes[1], graph=graph, lens=lens, cover=cover)
+
+    # 3. draw clusters (axes: 3)
+    draw_networkx(G, lens=lens, pos="inverse", layout=None, 
+            node_color=node_color, node_size=node_size, 
+            edge_color=edge_color, width=edge_size, 
+            alpha=0.5, edges=False, ax=axes[2])
+
+    # 4. draw graph (axes: 4)
+    draw_networkx(G, lens=lens, pos="inverse", layout=None, 
+                node_color=node_color, node_size=node_size, 
+                edge_color=edge_color, width=edge_size, 
+                alpha=1.0, ax=axes[3])
+    axes[3].axis('off')
+
+
+    #### Finish
+    for _ in axes:
+        despine(_)
+
+    return fig, axes
+
+
+
 
