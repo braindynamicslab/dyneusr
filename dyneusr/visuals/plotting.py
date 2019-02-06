@@ -77,16 +77,18 @@ def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normali
         draw_axlines(plt.axvline)
 
         # normalized degree
-        deg = (tcm > 0.0).astype(float).sum(axis=1)
+        #deg = (tcm > 0.0).astype(float).sum(axis=1)
+        deg = tcm.sum(axis=1)
         deg /= deg.max()
-        
         
         # moving average
         window = kwargs.pop('window', 20) 
-        rolling_kind = kwargs.get('rolling', np.mean)
-        deg_rolling = pd.DataFrame(deg).rolling(window, center=True, min_periods=int(window/2))
-        deg_mva = deg_rolling.apply(rolling_kind, raw=True)
-        deg_mva /= deg_mva.max()
+        deg_mva = deg.copy()
+        if window > 1:
+            rolling_kind = kwargs.get('rolling', np.mean)
+            deg_rolling = pd.DataFrame(deg).rolling(window, center=True, min_periods=int(window/2))
+            deg_mva = deg_rolling.apply(rolling_kind, raw=True)
+            deg_mva /= deg_mva.max()
         # scale ?
         #deg_mva = deg_mva.reshape(-1, 1)
         #for scaler in filter(None, np.ravel(scalers)):
@@ -95,7 +97,7 @@ def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normali
    
         # plot
         trs = np.arange(deg.shape[0])
-        plt.plot(trs, np.ravel(deg),ls='-', marker='', alpha=0.1, color=color)
+        plt.plot(trs, np.ravel(deg),ls='-', marker='', alpha=0.3, color=color)
         plt.plot(trs, np.ravel(deg_mva)[:len(trs)], alpha=1.0,lw=3, color=color)
 
         ax = plt.gca()
