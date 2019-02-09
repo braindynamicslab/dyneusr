@@ -95,7 +95,10 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         node_ids = np.unique([n for i,n in enumerate(G['nodes'])])
         data_ids = np.unique([_ for n,d in G['nodes'].items() for _ in d])
         if y is not None:
-            data_ids = np.sort(y.reset_index().index)
+            if isinstance(y, pd.DataFrame):
+                data_ids = np.sort(y.reset_index().index)
+            else:
+                data_ids = np.arange(len(y))
 
         # process graph
         G = tools.process_graph(G, meta=y, **kwargs)
