@@ -62,11 +62,15 @@ def make_trefoil(size=1000, noise=0.0, a=2, b=2, c=3, **kwargs):
     data = np.c_[x, y, z][:]
     data_ids = np.arange(phi.shape[0])
 
+    # define target
+    target = np.roll(phi, 5)
+
+
     # format data bunch
     dataset = Bunch(
         data=data,
         feature_names=["x", "y", "z"],
-        target=-z,
+        target=target,
         # other meta-data
         index=data_ids,
         domain=phi,
@@ -83,8 +87,8 @@ def draw_trefoil3d(x=None, y=None, z=None, c=None, s='z', ax=None, fig=None, vie
     """   
     if c is None:
     	c = np.copy(z)
-    cmap = plt.get_cmap(kwargs.get('cmap', "tab10"))
-    norm = mpl.colors.Normalize(c.min(), cmap.N)
+    cmap = plt.get_cmap(kwargs.get('cmap', "brg"), 3)
+    norm = mpl.colors.Normalize(c.min(), c.max())
 
     # extract x, y, z
     if s == 'z':
@@ -147,8 +151,8 @@ def draw_trefoil(x=None, y=None, z=None, c=None, s='z', ax=None, fig=None, **kwa
     """   
     if c is None:
         c = np.copy(z)
-    cmap = plt.get_cmap(kwargs.get('cmap', "tab10"))
-    norm = mpl.colors.Normalize(c.min(), cmap.N)
+    cmap = plt.get_cmap(kwargs.get('cmap', "brg"), 3)
+    norm = mpl.colors.Normalize(c.min(), c.max())
 
     # extract x, y, z
     if s == 'z':
