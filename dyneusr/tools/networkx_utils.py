@@ -327,7 +327,11 @@ def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
     """
 
     #### Setup
-    y = data.y.copy()
+    try:
+        y = data.y.copy()
+    except:
+        y = data.target.copy()
+        
     G = dG.G_.copy()
     
     # member_color 

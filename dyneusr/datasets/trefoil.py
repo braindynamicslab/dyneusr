@@ -77,7 +77,7 @@ def make_trefoil(size=1000, noise=0.0, a=2, b=2, c=3, **kwargs):
         feature_names=["x", "y", "z"],
         target=target,
         coloring=coloring,
-        cmap=cmap,
+        cmap=cmap, norm=norm,
         # other meta-data
         index=data_ids,
         )
