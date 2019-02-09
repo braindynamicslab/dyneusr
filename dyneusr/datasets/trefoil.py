@@ -65,15 +65,21 @@ def make_trefoil(size=1000, noise=0.0, a=2, b=2, c=3, **kwargs):
     # define target
     target = np.roll(phi, 5)
 
+    # coloring based on target
+    cmap = plt.get_cmap('brg', 3)
+    norm = mpl.colors.Normalize(target.min(), target.max())
+    coloring = cmap(norm(target))
+
 
     # format data bunch
     dataset = Bunch(
         data=data,
         feature_names=["x", "y", "z"],
         target=target,
+        coloring=coloring,
+        cmap=cmap,
         # other meta-data
         index=data_ids,
-        domain=phi,
         )
     return dataset
 
