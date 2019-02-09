@@ -166,6 +166,10 @@ class KMapperWrapper(BaseMapperWrapper):
 ###############################################################################
 ### wrappers as functions
 ###############################################################################
+def fit_kmapper(data, **params):
+    mapper = KMapperWrapper(**params)
+    return mapper.fit(data, **params)
+
 
 def run_kmapper(data, **params):
     mapper = KMapperWrapper(**params)
@@ -178,4 +182,8 @@ def run_kmapper(data, **params):
         params=params,
         )
     return result
+
+
+    
+   
    
