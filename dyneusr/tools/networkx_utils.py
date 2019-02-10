@@ -342,8 +342,8 @@ def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
     if node_size is None:
         node_scale_by = kwargs.get('node_scale_by', 20)
         node_size = [node_scale_by*len(y[_]) for n,_ in G.nodes(data='members')]
-    #node_color = [Counter(y[_]).most_common()[0][0] for n,_ in G.nodes(data='members')]
-    node_color = [np.mean(y[_]) for n,_ in dG.G_.nodes(data='members')]
+    node_color = [Counter(y[_]).most_common()[0][0] for n,_ in G.nodes(data='members')]
+    #node_color = [np.mean(y[_]) for n,_ in dG.G_.nodes(data='members')]
     node_color = data.cmap(data.norm(node_color))
 
     # edge color, size

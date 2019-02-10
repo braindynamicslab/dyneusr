@@ -30,7 +30,7 @@ sns.set("paper", "white")
 ##############################################################################
 ### data generators
 ##############################################################################
-def make_trefoil(size=1000, noise=0.0, a=2, b=2, c=3, **kwargs):
+def make_trefoil(size=90, noise=0.0, a=2, b=2, c=3, **kwargs):
     """Generate synthetic trefoil dataset.
 
     Params
@@ -63,7 +63,8 @@ def make_trefoil(size=1000, noise=0.0, a=2, b=2, c=3, **kwargs):
     data_ids = np.arange(phi.shape[0])
 
     # define target
-    target = np.roll(phi, 5)
+    target = np.copy(phi)
+    target = np.roll(target, int(size*0.05))
 
     # coloring based on target
     cmap = plt.get_cmap('brg', 3)
@@ -80,6 +81,7 @@ def make_trefoil(size=1000, noise=0.0, a=2, b=2, c=3, **kwargs):
         cmap=cmap, norm=norm,
         # other meta-data
         index=data_ids,
+        domain=phi,
         )
     return dataset
 
