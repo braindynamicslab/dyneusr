@@ -11,6 +11,7 @@ import pandas as pd
 
 # Machine learning libraries
 from sklearn.datasets.base import Bunch
+from sklearn.externals.joblib import Memory
 from sklearn.base import BaseEstimator, TransformerMixin, ClusterMixin
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
@@ -42,9 +43,25 @@ except ImportError as e:
 
 
 # everything else should be in utils
-from .utils import optimize_cover, optimize_dbscan 
+from dyneusr.mapper.utils import optimize_cover, optimize_dbscan 
 
 
+
+###############################################################################
+### Helper Functions
+###############################################################################
+def _transform_lens(X=None, verbose=1, **params):
+    """ Transform data into a lens using KeplerMapper. """
+    mapper = KeplerMapper(verbose=verbose)
+    return mapper.fit_transform(X, **params)
+
+
+def _map_graph(lens=None, X=None, verbose=1, **params):
+    """ Map lens, data into graph using KeplerMapper. """
+    mapper = KeplerMapper(verbose=verbose)
+    return mapper.map(lens, X=X, **params)
+
+ 
 
 ###############################################################################
 ### Base MapperWrapper
@@ -74,6 +91,7 @@ class KMapperWrapper(BaseMapperWrapper):
             self, 
             projection=PCA(2), scaler=MinMaxScaler(), 
             cover=None, clusterer=None, 
+            memory='dyneusr_cache', 
             verbose=1
             ):
         """ Wraps KeplerMapper 
@@ -105,20 +123,25 @@ class KMapperWrapper(BaseMapperWrapper):
         self.clusterer = clusterer
         self.cover = cover 
 
-    
+        # setup memory
+        self.memory = Memory(memory, verbose=verbose)
+             
+
     def fit_lens(self, data, projection=None, scaler=None, **kwargs):
         """ Fit a lens over data.
-         """
+        """        
         # init params
-        self.mapper = KeplerMapper(verbose=self.verbose-1)
+        #self.mapper = KeplerMapper(verbose=self.verbose-1)
         self.projection = projection or self.projection 
         self.scaler = scaler or self.scaler
 
          # fit lens
-        lens = self.mapper.fit_transform(
-            data, 
+        _transform_lens_cached = self.memory.cache(_transform_lens)
+        lens = _transform_lens_cached(
+            data,  
             projection=self.projection, 
-            scaler=self.scaler
+            scaler=self.scaler,
+            verbose=self.verbose
             )
 
         # save variables
@@ -128,20 +151,25 @@ class KMapperWrapper(BaseMapperWrapper):
 
 
 
-    def fit_graph(self, lens, data=None, clusterer=None, cover=None, **kwargs):
+    def fit_graph(self, lens=None, data=None, clusterer=None, cover=None, **kwargs):
         """ Fit a lens over data, map data into graph.
         """
+        # extract inputs
+        data = self.data_ if data is None else data
+        lens = self.lens_ if lens is None else lens
+
         # init params
-        self.mapper = KeplerMapper(verbose=self.verbose)
+        #self.mapper = KeplerMapper(verbose=self.verbose)
         self.clusterer = clusterer or self.clusterer or optimize_dbscan(data)
         self.cover = cover or self.cover or optimize_cover(data)
-        optimize_cover(data)
 
         # fit graph
-        graph = self.mapper.map(
+        _map_graph_cached = self.memory.cache(_map_graph)
+        graph = _map_graph_cached(
             lens, X=data,
             clusterer=self.clusterer,
-            cover=self.cover
+            cover=self.cover,
+            verbose=self.verbose
             )
 
         # save variables
@@ -166,7 +194,7 @@ class KMapperWrapper(BaseMapperWrapper):
 
 ###############################################################################
 ### wrappers as functions
-###############################################################################
+###############################################################################    
 def fit_kmapper(data, **params):
     mapper = KMapperWrapper(**params)
     return mapper.fit(data, **params)
