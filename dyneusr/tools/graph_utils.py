@@ -46,7 +46,7 @@ def _agg_proportions(df, members=slice(0, -1)):
     return p
 
 
-def process_meta(meta_, labels=None):
+def process_meta(meta_, labels=None, zscore=False, **kwargs):
  
     # process each column of meta
     meta_sets = dict()
@@ -73,10 +73,13 @@ def process_meta(meta_, labels=None):
             meta = np.digitize(yi, yi_bins, right=True)
             meta = yi_bins[meta]
             meta_label = [list(yi_bins).index(_) for _ in sorted(set(meta))]
-            meta_label = ['Group '+str(_+1) for _ in meta_label]
+            #meta_label = ['Group '+str(_+1) for _ in meta_label]
+            meta_bins = [_ for _ in zip(yi_bins[:-1], yi_bins[1:])] 
+            meta_label = ['Group {} {}'.format(_+1, __) for _,__ in enumerate(meta_bins)]
 
         
-        elif len(set(meta)) > 9:
+        elif len(set(meta)) > 9 and zscore is True:
+            # TODO: how do we decide whether to use continuous vs. discrete
             # zscore
             yi = meta.copy()
             yi_nz = yi[~np.isnan(yi)]
@@ -94,12 +97,20 @@ def process_meta(meta_, labels=None):
             meta = yi.copy()
 
             # map meta to labels
-            meta_str = {False: '\u03BC (= {:0.2f})'.format(np.mean(yi_nz)),
-                        True: '\u03BC + {:1.0f}\u03C3'}
+            #meta_str = {False: '\u03BC (= {:0.2f})'.format(np.mean(yi_nz)),
+            #            True: '\u03BC + {:1.0f}\u03C3'}
+            meta_str = {False: 'Mean ({:0.2f})'.format(np.mean(yi_nz)),
+                        True: '{:1.0f} S.D.'}
             meta_label = [meta_str[np.abs(float(_)) > 0].format(float(_)) for _ in meta_label if not np.isnan(_)]
-            meta_label = ['n/a'] + meta_label
+            
+            # add n/a label if nans found
+            if len(yi_nz) < len(yi):
+                meta_label = ['NaN'] + meta_label
+        
+        elif len(set(meta)) > 9 and zscore is False:
+            # TODO: figureout continuous scale here
+            pass
 
-    
         # labels for legend
         meta_sets[meta_col] = [_ for _ in np.sort(np.unique(meta))]
         if meta_label is not None:
@@ -140,7 +151,6 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     # meta stuff
     if meta is None:
         meta = pd.DataFrame().assign(
-            data_id=np.arange(nTR).astype(str), 
             default=0,
             )
     elif not isinstance(meta, pd.DataFrame):
@@ -155,7 +165,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
             meta, 
             columns=columns
             )
-
+        
     # save un-processed metadata
     meta = meta.copy()
     meta_orig = meta.copy()
@@ -168,8 +178,11 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     # TODO: move all of this logic into color map utils
     #meta = Normalizer().fit_transform(meta.reshape(-1, 1))
     # bin meta (?)
-    meta, meta_sets, meta_labels  = process_meta(meta, labels=labels)
+    meta, meta_sets, meta_labels = process_meta(meta, labels=labels, **kwargs)
     
+    # color_by
+    color_by = meta_orig.columns[0] if color_by is None else color_by
+
     # multiclass proportions
     # TODO: make sure this works on edge cases
     multiclass = _agg_proportions(meta_orig)
@@ -184,20 +197,20 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     if kwargs.get('verbose', 1) > 0:
         display(HTML(tooltip))
 
-    # color_by
-    color_by = 0 if color_by is None else color_by
-    if color_by not in meta_labels.keys():
-        color_by = list(meta_labels.keys())[color_by]
-
     # color functions
     color_functions = kwargs.get('color_functions', {})
-    cmap = kwargs.get('cmap', 'tab20c')
-    if color_by not in color_functions:
+    #if color_by not in color_functions:
+    for color_by_ in meta_sets:
         # get hex color for each group
-        color_function = [_ for _  in meta_sets[color_by]]
-        cmap = plt.get_cmap(cmap, len(np.unique(color_function)) + 1)
+        color_function = [_ for _  in meta_sets[color_by_]]
+        n_colors = len(np.unique(color_function)) + 1
+        cmap = kwargs.get('cmap', 'tab20c')
+        cmap = plt.get_cmap(cmap, n_colors)
+        if n_colors < 20:
+            norm = mpl.colors.Normalize(np.min(color_function), np.max(color_function))
+            color_function = norm(color_function)
         color_function = [mpl.colors.to_hex(_) for _ in cmap(color_function)]
-        color_functions[color_by] = color_function
+        color_functions[color_by_] = color_function
 
     # tooltips (TODO: should this be here)
     if tooltips is None:
