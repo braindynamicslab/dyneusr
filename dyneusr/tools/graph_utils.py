@@ -202,14 +202,19 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     #if color_by not in color_functions:
     for color_by_ in meta_sets:
         # get hex color for each group
-        color_function = [_ for _  in meta_sets[color_by_]]
-        n_colors = len(np.unique(color_function)) + 1
+        color_values = meta_sets[color_by_]
+        n_colors = len(np.unique(color_values)) + 1
         cmap = kwargs.get('cmap', 'tab20c')
-        cmap = plt.get_cmap(cmap, n_colors)
+        if not callable(cmap):
+            cmap = plt.get_cmap(cmap)
+
+        # save color values (normalized)
         if n_colors < 20:
-            norm = mpl.colors.Normalize(np.min(color_function), np.max(color_function))
-            color_function = norm(color_function)
-        color_function = [mpl.colors.to_hex(_) for _ in cmap(color_function)]
+            norm = mpl.colors.Normalize(np.min(color_values), np.max(color_values))
+            color_values = norm(color_values)        
+
+        # save color function as hex
+        color_function = [mpl.colors.to_hex(_) for _ in cmap(color_values)]
         color_functions[color_by_] = color_function
 
     # tooltips (TODO: should this be here)
