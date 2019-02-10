@@ -43,7 +43,7 @@ except ImportError as e:
 ###############################################################################
 ### Helper functions
 ###############################################################################
-def optimize_cover(X=None, r=30, g=0.67, ndim=2, limits=True, scale_r=True, scale_g=True):
+def optimize_cover(X=None, r=30, g=0.67, ndim=2, limits=True, scale_r=True, scale_g=False):
     """ Get optimized cover for data.
 
     Notes
