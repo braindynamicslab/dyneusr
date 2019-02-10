@@ -30,7 +30,7 @@ sns.set("paper", "white")
 ##############################################################################
 ### data generators
 ##############################################################################
-def make_trefoil(size=90, noise=0.0, a=2, b=2, c=3, **kwargs):
+def make_trefoil(size=100, noise=0.0, a=2, b=2, c=3, **kwargs):
     """Generate synthetic trefoil dataset.
 
     Params

@@ -335,16 +335,16 @@ def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
     G = dG.G_.copy()
     
     # member_color 
-    point_color = data.cmap(data.norm(y))
+    c = data.cmap(data.norm(y))
+    c_hex = np.array([mpl.colors.to_hex(_) for _ in c])
 
     # node color, size
     node_size = kwargs.get('node_size')
     if node_size is None:
         node_scale_by = kwargs.get('node_scale_by', 20)
         node_size = [node_scale_by*len(y[_]) for n,_ in G.nodes(data='members')]
-    node_color = [Counter(y[_]).most_common()[0][0] for n,_ in G.nodes(data='members')]
-    #node_color = [np.mean(y[_]) for n,_ in dG.G_.nodes(data='members')]
-    node_color = data.cmap(data.norm(node_color))
+    node_color = [Counter(c_hex[_]).most_common()[0][0] for n,_ in G.nodes(data='members')]
+
 
     # edge color, size
     edge_size = kwargs.get('edge_size')
@@ -355,8 +355,7 @@ def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
     if edge_color is None:
         edge_sources = [G.nodes[u]['members'] for u,v in G.edges()]
         edge_targets = [G.nodes[v]['members'] for u,v in G.edges()]
-        edge_color = [Counter(y[s + t]).most_common()[0][0] for s,t in zip(edge_sources, edge_targets)]
-        edge_color = data.cmap(data.norm(edge_color))
+        edge_color = [Counter(c_hex[s + t]).most_common()[0][0] for s,t in zip(edge_sources, edge_targets)]
 
     # init figure, subplots
     figsize = kwargs.get('figsize', (20,4))
@@ -366,7 +365,7 @@ def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
     #### Draw
     # 1. draw lens (axes: 1-3)
     for ax in axes[:3]:
-        ax.scatter(*lens.T, c=point_color)
+        ax.scatter(*lens.T, c=c)
 
     # 2. draw cover (axes: 2)
     draw_cover(ax=axes[1], graph=graph, lens=lens, cover=cover)
