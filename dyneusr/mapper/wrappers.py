@@ -127,6 +127,7 @@ class KMapperWrapper(BaseMapperWrapper):
         return self
 
 
+
     def fit_graph(self, lens, data=None, clusterer=None, cover=None, **kwargs):
         """ Fit a lens over data, map data into graph.
         """
