@@ -102,16 +102,20 @@ def optimize_cover(X=None, r=30, g=0.67, scale_r=False, scale_g=False, ndim=2, s
 
 
 
-def optimize_dbscan(X, n_neighbors=3, min_samples=2, **kwargs):
+def optimize_dbscan(X, n_neighbors=1, min_samples=2, metric='minkowski', leaf_size=30, p=2, **kwargs):
     """ Get dbscan based on eps determined by data.
     """
-    eps = optimize_eps(X, n_neighbors=n_neighbors)
-    dbscan = DBSCAN(eps=eps, min_samples=min_samples, **kwargs)
+    eps = optimize_eps(X, n_neighbors=n_neighbors, metric=metric, leaf_size=leaf_size, p=p)
+    dbscan = DBSCAN(
+        eps=eps, min_samples=min_samples, 
+        metric=metric, leaf_size=leaf_size, p=p, 
+        n_jobs=-1, **kwargs
+        )
     return dbscan
 
 
 
-def optimize_eps(X, threshold=100, n_neighbors=3, metric='minkowski', leaf_size=30, p=2):
+def optimize_eps(X, threshold=100, n_neighbors=1, metric='minkowski', leaf_size=30, p=2):
     """ Get optimized value for eps based on data.
     """
     from sklearn.neighbors import KDTree
