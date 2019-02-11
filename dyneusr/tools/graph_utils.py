@@ -204,7 +204,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     for color_by_ in meta_sets:
         # get hex color for each group
         color_values = meta_sets[color_by_]
-        n_colors = len(np.unique(color_values)) + 1 
+        n_colors = len(np.unique(color_values)) 
         if n_colors < 3:
             continue
 
