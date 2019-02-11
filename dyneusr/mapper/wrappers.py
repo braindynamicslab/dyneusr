@@ -125,9 +125,16 @@ class KMapperWrapper(BaseMapperWrapper):
 
         # setup memory
         self.memory = Memory(memory, verbose=verbose)
+
+
+    def reset(self):
+        self.data_ = None
+        self.lens_ = None
+        self.graph_ = None
+        return self
              
 
-    def fit_lens(self, data, projection=None, scaler=None, **kwargs):
+    def fit_lens(self, data=None, projection=None, scaler=None, **kwargs):
         """ Fit a lens over data.
         """        
         # init params
@@ -138,15 +145,15 @@ class KMapperWrapper(BaseMapperWrapper):
          # fit lens
         _transform_lens_cached = self.memory.cache(_transform_lens)
         lens = _transform_lens_cached(
-            data,  
+            X=data,  
             projection=self.projection, 
             scaler=self.scaler,
             verbose=self.verbose
             )
 
         # save variables
-        self.data_ = np.copy(data)
-        self.lens_ = np.copy(lens)
+        self.data_ = data
+        self.lens_ = lens
         return self
 
 
@@ -166,20 +173,20 @@ class KMapperWrapper(BaseMapperWrapper):
         # fit graph
         _map_graph_cached = self.memory.cache(_map_graph)
         graph = _map_graph_cached(
-            lens, X=data,
+            lens=lens, X=data,
             clusterer=self.clusterer,
             cover=self.cover,
             verbose=self.verbose
             )
 
         # save variables
-        self.data_ = np.copy(data)
-        self.lens_ = np.copy(lens)
-        self.graph_ = dict(graph)
+        self.data_ = data
+        self.lens_ = lens
+        self.graph_ = graph
         return self
 
 
-    def fit(self, data, lens=None, **kwargs):
+    def fit(self, data=None, lens=None, **kwargs):
         """ Fit a lens over data, map data into graph.
         """
         # [1] fit lens
@@ -188,7 +195,7 @@ class KMapperWrapper(BaseMapperWrapper):
             lens = self.lens_
      
         # [2] map graph
-        self.fit_graph(lens, data, **kwargs)
+        self.fit_graph(lens, data=data, **kwargs)
         return self
 
 
