@@ -89,7 +89,7 @@ def optimize_cover(X=None, r=30, g=0.67, scale_r=False, scale_g=False, ndim=2, s
     if scale_limits is True:
         offset = p_overlap / float(n_cubes)
         limits = [[-offset, 1+offset] for _ in range(ndim)]
-        n_cubes += 2
+        n_cubes += 2 * ndim
 
     try:
         # Initialize Cover with limits
@@ -109,7 +109,7 @@ def optimize_dbscan(X, n_neighbors=1, min_samples=2, metric='minkowski', leaf_si
     dbscan = DBSCAN(
         eps=eps, min_samples=min_samples, 
         metric=metric, leaf_size=leaf_size, p=p, 
-        n_jobs=-1, **kwargs
+        **kwargs
         )
     return dbscan
 
