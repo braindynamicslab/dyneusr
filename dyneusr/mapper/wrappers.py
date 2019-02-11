@@ -89,7 +89,7 @@ class KMapperWrapper(BaseMapperWrapper):
 
     def __init__(
             self, 
-            projection=PCA(2), scaler=MinMaxScaler(), 
+            projection=None, scaler=None, 
             cover=None, clusterer=None, 
             memory='dyneusr_cache', 
             verbose=1
@@ -117,7 +117,7 @@ class KMapperWrapper(BaseMapperWrapper):
 
         # [1] fit params
         self.projection = projection
-        self.scaler = scaler
+        self.scaler = scaler or MinMaxScaler()
 
         # [2] map params
         self.clusterer = clusterer
@@ -167,8 +167,8 @@ class KMapperWrapper(BaseMapperWrapper):
 
         # init params
         #self.mapper = KeplerMapper(verbose=self.verbose)
-        self.clusterer = clusterer or self.clusterer or optimize_dbscan(data)
-        self.cover = cover or self.cover or optimize_cover(data)
+        self.clusterer = clusterer or self.clusterer
+        self.cover = cover or self.cover
 
         # fit graph
         _map_graph_cached = self.memory.cache(_map_graph)
@@ -204,12 +204,12 @@ class KMapperWrapper(BaseMapperWrapper):
 ###############################################################################    
 def fit_kmapper(data, **params):
     mapper = KMapperWrapper(**params)
-    return mapper.fit(data, **params)
+    return mapper.fit(data=data)
 
 
 def run_kmapper(data, **params):
     mapper = KMapperWrapper(**params)
-    mapper.fit(data, **params)
+    mapper.fit(data=data)
     # save as bunch
     result = Bunch(
         data=mapper.data_,

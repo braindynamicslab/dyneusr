@@ -82,7 +82,7 @@ def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normali
         deg /= deg.max()
         
         # moving average
-        window = kwargs.pop('window', 20) 
+        window = kwargs.pop('window', 1) 
         deg_mva = deg.copy()
         if window > 1:
             rolling_kind = kwargs.get('rolling', np.mean)
@@ -102,9 +102,17 @@ def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normali
 
         ax = plt.gca()
         #ax.set_ylim(0.0, 1.1)
-        ax.set_xlabel("Time frame (TR)", fontweight='bold', fontsize=16)
-        ax.set_ylabel("Normalized degree", fontweight='bold', fontsize=16)
-        ax.set_title('Degree (TCM)', fontweight='bold', fontsize=18)
+        xlim = kwargs.get('xlim', (trs.min(), trs.max()))
+        ax.set_xlim(xlim)
+        
+        if xlim is not None:
+            ax.set_xlim(xlim)
+
+        title = kwargs.get('title') or 'Degree (TCM)'
+        if title:
+            ax.set_xlabel("Time frame (TR)", fontweight='bold', fontsize=16)
+            ax.set_ylabel("Normalized degree", fontweight='bold', fontsize=16)
+            ax.set_title(title, fontweight='bold', fontsize=18)
         fig.tight_layout(rect=(0.0, 0.03, 1.0, 0.98))
         #figs['tsplot'] = fig
         if save_as is not None:

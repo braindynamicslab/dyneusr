@@ -46,7 +46,7 @@ def _agg_proportions(df, members=slice(0, -1)):
     return p
 
 
-def process_meta(meta_, labels=None, zscore=False, **kwargs):
+def process_meta(meta_, labels=None, zscore=True, **kwargs):
  
     # process each column of meta
     meta_sets = dict()
@@ -181,12 +181,13 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     meta, meta_sets, meta_labels = process_meta(meta, labels=labels, **kwargs)
     
     # color_by
-    color_by = meta_orig.columns[0] if color_by is None else color_by
+    if len(meta_orig.T) < 5:        
+        color_by = color_by or meta_orig.columns[0] 
 
     # multiclass proportions
     # TODO: make sure this works on edge cases
     multiclass = _agg_proportions(meta_orig)
-    color_by = 'multiclass' if color_by is None else color_by
+    color_by = color_by or 'multiclass' 
     meta_sets['multiclass'] = [_.get('group') for _ in multiclass]
     meta_labels['multiclass'] = [_.get('label') for _ in multiclass]
     df_multiclass = pd.DataFrame(multiclass)

@@ -43,7 +43,7 @@ except ImportError as e:
 ###############################################################################
 ### Helper functions
 ###############################################################################
-def optimize_cover(X=None, r=30, g=0.67, ndim=2, limits=True, scale_r=True, scale_g=False):
+def optimize_cover(X=None, r=30, g=0.67, scale_r=False, scale_g=False, ndim=2, scale_limits=True):
     """ Get optimized cover for data.
 
     Notes
@@ -85,7 +85,8 @@ def optimize_cover(X=None, r=30, g=0.67, ndim=2, limits=True, scale_r=True, scal
     p_overlap = np.round(p_overlap, 2)
 
     # Define optimized limits
-    if limits is True:
+    limits = None
+    if scale_limits is True:
         offset = p_overlap / float(n_cubes)
         limits = [[-offset, 1+offset] for _ in range(ndim)]
         n_cubes += 2
@@ -101,7 +102,7 @@ def optimize_cover(X=None, r=30, g=0.67, ndim=2, limits=True, scale_r=True, scal
 
 
 
-def optimize_dbscan(X, n_neighbors=5, min_samples=1, **kwargs):
+def optimize_dbscan(X, n_neighbors=3, min_samples=2, **kwargs):
     """ Get dbscan based on eps determined by data.
     """
     eps = optimize_eps(X, n_neighbors=n_neighbors)
@@ -110,7 +111,7 @@ def optimize_dbscan(X, n_neighbors=5, min_samples=1, **kwargs):
 
 
 
-def optimize_eps(X, threshold=100, n_neighbors=5, metric='minkowski', leaf_size=30, p=2):
+def optimize_eps(X, threshold=100, n_neighbors=3, metric='minkowski', leaf_size=30, p=2):
     """ Get optimized value for eps based on data.
     """
     from sklearn.neighbors import KDTree
