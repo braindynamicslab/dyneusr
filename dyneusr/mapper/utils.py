@@ -43,7 +43,7 @@ except ImportError as e:
 ###############################################################################
 ### Helper functions
 ###############################################################################
-def optimize_cover(X=None, r=30, g=0.67, scale_r=False, scale_g=False, ndim=2, scale_limits=True):
+def optimize_cover(X=None, r=30, g=0.67, scale_r=False, scale_g=False, ndim=2, scale_limits=False):
     """ Get optimized cover for data.
 
     Notes
@@ -102,20 +102,20 @@ def optimize_cover(X=None, r=30, g=0.67, scale_r=False, scale_g=False, ndim=2, s
 
 
 
-def optimize_dbscan(X, n_neighbors=1, min_samples=2, metric='minkowski', leaf_size=30, p=2, **kwargs):
+def optimize_dbscan(X, n_neighbors=2, min_samples=2, metric='minkowski', p=2, **kwargs):
     """ Get dbscan based on eps determined by data.
     """
-    eps = optimize_eps(X, n_neighbors=n_neighbors, metric=metric, leaf_size=leaf_size, p=p)
+    eps = optimize_eps(X, n_neighbors=n_neighbors, metric=metric, p=p)
     dbscan = DBSCAN(
         eps=eps, min_samples=min_samples, 
-        metric=metric, leaf_size=leaf_size, p=p, 
+        metric=metric, p=p, 
         **kwargs
         )
     return dbscan
 
 
 
-def optimize_eps(X, threshold=100, n_neighbors=1, metric='minkowski', leaf_size=30, p=2):
+def optimize_eps(X, threshold=100, n_neighbors=2, metric='minkowski', leaf_size=30, p=2):
     """ Get optimized value for eps based on data.
     """
     from sklearn.neighbors import KDTree
