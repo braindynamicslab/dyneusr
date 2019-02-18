@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 
 import os
 import numpy as np
+import scipy.stats
 
 from sklearn.preprocessing import StandardScaler, Normalizer
 
@@ -26,9 +27,15 @@ mpl.use('TkAgg', warn=False)
 ######################################################################
 ###
 ######################################################################
-def simple_mixture(data, index=None):
+def simple_mixture(data, index=None, agg='mean', fwhm=6, threshold="90%", **kwargs):
+    # extract array
+    try:
+        X = data.X
+    except:
+        X = data.data.values
+   
     # extract rows based on index
-    mm_X = np.copy(data.X[list(index), :])
+    mm_X = X[list(index), :]
     mm_pos_X = np.copy(mm_X)
     mm_neg_X = np.copy(mm_X)
 
@@ -40,20 +47,29 @@ def simple_mixture(data, index=None):
     # TODO: use StandardScaler().fit_transform(...)
     mean_pos_X = mm_pos_X.mean(axis=0) / (mm_pos_X.std(axis=0)+1) * len(index)
     mean_neg_X = mm_neg_X.mean(axis=0) / (mm_neg_X.std(axis=0)+1) * len(index)
-
-    # stack, mean over stack
     stack_pos_neg_X = np.stack([mean_pos_X, mean_neg_X])
-    mean_pos_neg_X = stack_pos_neg_X.mean(axis=0, keepdims=True)
-    mean_pos_neg_X = mean_pos_neg_X.astype(np.float32)
 
-    # get unmasker
-    mm_img = data.masker.inverse_transform(mean_pos_neg_X)
-    mm_img = image.smooth_img(mm_img, fwhm=10)
-    mm_img = image.threshold_img(mm_img, '97.5%')
+    # agg over stack
+    np_agg = agg if callable(agg) else getattr(np, agg)
+    pos_neg_X = np_agg(stack_pos_neg_X, axis=0, keepdims=True)
+    pos_neg_X = pos_neg_X.astype(np.float32)
+    #pos_neg_X = scipy.stats.zscore(pos_neg_X)
+
+    # unmask
+    mm_img = data.masker.inverse_transform(pos_neg_X)
+
+    # clean
+    #mm_img = image.clean_img(mm_img, standardize=True)
+
+    # smooth, threshold
+    if fwhm is not None:
+        mm_img = image.smooth_img(mm_img, fwhm=fwhm)        
+    if threshold is not None:
+        mm_img = image.threshold_img(mm_img, threshold)
     return mm_img
 
 
-def simple_mixtures(data, mixtures=[], prefix='timestep', save_dir='tooltips', show_every_n=0, print_every_n=10, **plot_kws):
+def simple_mixtures(data, mixtures=[], targets=None, mode='glass', prefix='timestep', save_dir='tooltips', show_every_n=0, print_every_n=10, figsize=(8,8), plot_kws=dict(), **kwargs):
     # make sure output path exists
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -62,31 +78,58 @@ def simple_mixtures(data, mixtures=[], prefix='timestep', save_dir='tooltips', s
     if isinstance(mixtures, dict):
         mixtures = mixtures.items()
     else:
-        mixtures = enumerate(mixtures)
-    
+        mixtures = list(enumerate(mixtures))
+   
     # loop over mixtures
     filenames = []    
     for i, (id_, mixture) in enumerate(mixtures):
+        # continue
+        if not len(mixture):
+            continue
+
         # format path to save figure
-        save_as = os.path.join(save_dir, 'simple_MM_{}{}.png'.format(prefix, id_))
+        save_as = os.path.join(save_dir, 'simple_MM_{}{}.jpg'.format(prefix, id_))
         filenames.append(save_as)  
+
+        # title
+        title = "{}{}".format(prefix, id_)
+        try:
+            target = targets[id_]
+            title += " ({})".format(target)
+        except:
+            pass
+
     
         # plot, if file does not already exists
         if os.path.exists(save_as):
             continue
 
         # get simple mixture model
-        mm = simple_mixture(data, index=mixture)
+        mm = simple_mixture(data, index=mixture, **kwargs)
 
         # plot simple mixture
-        plotting.plot_glass_brain(
-            mm, plot_abs=False, threshold=1,
-            cmap='jet', colorbar=True, 
-            **plot_kws
-            )
+        fig = plt.figure(figsize=figsize)
+        if 'glass' in mode:
+            # setup for plotting
+            plot_kws = dict(dict(
+                display_mode='z',
+                plot_abs=False, threshold=0.5,
+                #cmap='jet', 
+                colorbar=True,
+                ), **plot_kws)
+            # plot
+            plotting.plot_glass_brain(mm, figure=fig, title=title, **plot_kws)
+        else:
+            # setup for plotting
+            plot_kws = dict(dict(
+                display_mode='z', cut_coords=1, threshold=0.5, 
+                ), **plot_kws)
+            # plot
+            plotting.plot_stat_map(mm, figure=fig, title=title, **plot_kws)
+
 
         # save, show, close
-        plt.savefig(save_as, transparent=True)
+        plt.savefig(save_as, dpi=300, transparent=True)
         if show_every_n>0 and (i+1)%show_every_n == 0:
             plt.show()
         plt.close('all')

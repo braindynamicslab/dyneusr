@@ -42,8 +42,8 @@ def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normali
         tcm = np.copy(TCM)
 
         # scale ?
-        for scaler in filter(None, np.ravel(scalers)):
-            tcm = scaler.fit_transform(tcm)
+        #for scaler in filter(None, np.ravel(scalers)):
+        #    tcm = scaler.fit_transform(tcm)
     
         figs = dict()
 
