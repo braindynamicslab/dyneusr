@@ -376,11 +376,23 @@ def extract_matrices(G, index=None, **kwargs):
         node_index = [node_to_index[_] for _ in TR_nodes]  
         source_TRs = [node_to_members[n] for n in TR_nodes]
         target_TRs = [node_to_members[nbr] for n in TR_nodes for nbr in G.neighbors(n)]
-        similar_TRs = list(set(__ for _ in source_TRs+target_TRs for __ in _))
+        #similar_TRs = list(set(__ for _ in source_TRs+target_TRs for __ in _))
+        
+        # normalized node degrees 
+        #M[TR, node_index] += 1.0
+        #T[TR, similar_TRs] += 1.0
+
+        # count TRs multiple times
+        similar_TRs = list(__ for _ in source_TRs+target_TRs for __ in _)
+        TRs_counted = [similar_TRs.count(_) for _ in sorted(set(similar_TRs))]
+        similar_TRs = sorted(set(similar_TRs))
 
         # normalized node degrees 
         M[TR, node_index] += 1.0
-        T[TR, similar_TRs] += 1.0
-       
+        T[TR, similar_TRs] += TRs_counted
+
+    # normalize
+    T /= T.max() 
+    
     # return 
     return A, M, T
