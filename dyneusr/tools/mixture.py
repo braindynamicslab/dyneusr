@@ -27,15 +27,38 @@ mpl.use('TkAgg', warn=False)
 ######################################################################
 ###
 ######################################################################
-def simple_mixture(data, index=None, agg='mean', fwhm=6, threshold="90%", **kwargs):
+def mean_mixture(data, index=None, fwhm=None, threshold=None, **kwargs):
     # extract array
     try:
-        X = data.X
-    except:
         X = data.data.values
+    except:
+        X = data.X
    
     # extract rows based on index
-    mm_X = X[list(index), :]
+    mm_X = X[list(index), :].copy() # 
+    mm_X = mm_X.mean(axis=0, keepdims=True)
+
+    # unmask
+    mm_img = data.masker.inverse_transform(mm_X)
+  
+    # smooth, threshold
+    #mm_img = image.mean_img(mm_img)
+    if fwhm is not None:
+        mm_img = image.smooth_img(mm_img, fwhm=fwhm)        
+    if threshold is not None:
+        mm_img = image.threshold_img(mm_img, threshold)
+    return mm_img
+
+
+def simple_mixture(data, index=None, agg='mean', fwhm=None, threshold=None, **kwargs):
+    # extract array
+    try:
+        X = data.data.values
+    except:
+        X = data.X
+   
+    # extract rows based on index
+    mm_X = X[list(index), :].copy()
     mm_pos_X = np.copy(mm_X)
     mm_neg_X = np.copy(mm_X)
 
@@ -52,11 +75,11 @@ def simple_mixture(data, index=None, agg='mean', fwhm=6, threshold="90%", **kwar
     # agg over stack
     np_agg = agg if callable(agg) else getattr(np, agg)
     pos_neg_X = np_agg(stack_pos_neg_X, axis=0, keepdims=True)
-    pos_neg_X = pos_neg_X.astype(np.float32)
-    #pos_neg_X = scipy.stats.zscore(pos_neg_X)
+    mm_X = mm_X.mean(axis=0, keepdims=True)#pos_neg_X.astype(np.float32)
 
     # unmask
-    mm_img = data.masker.inverse_transform(pos_neg_X)
+    #mm_X = scipy.stats.zscore(mm_X, axis=-1)
+    mm_img = data.masker.inverse_transform(mm_X)
 
     # clean
     #mm_img = image.clean_img(mm_img, standardize=True)
@@ -69,7 +92,7 @@ def simple_mixture(data, index=None, agg='mean', fwhm=6, threshold="90%", **kwar
     return mm_img
 
 
-def simple_mixtures(data, mixtures=[], targets=None, mode='glass', prefix='timestep', save_dir='tooltips', show_every_n=0, print_every_n=10, figsize=(8,8), plot_kws=dict(), **kwargs):
+def simple_mixtures(data, mixtures=[], targets=None, kind='simple', mode='glass', prefix='timestep', save_dir='tooltips', show_every_n=0, print_every_n=1, figsize=(4,4), plot_kws=dict(), **kwargs):
     # make sure output path exists
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -88,7 +111,7 @@ def simple_mixtures(data, mixtures=[], targets=None, mode='glass', prefix='times
             continue
 
         # format path to save figure
-        save_as = os.path.join(save_dir, 'simple_MM_{}{}.jpg'.format(prefix, id_))
+        save_as = os.path.join(save_dir, '{}_MM_{}{}.jpg'.format(kind, prefix, id_))
         filenames.append(save_as)  
 
         # title
@@ -102,18 +125,30 @@ def simple_mixtures(data, mixtures=[], targets=None, mode='glass', prefix='times
     
         # plot, if file does not already exists
         if os.path.exists(save_as):
+
+            # show the image, even if it already exists
+            if show_every_n>0 and (i)%show_every_n == 0:
+                plt.figure(figsize=figsize)
+                plt.imshow(plt.imread(save_as))
+                plt.axis('off')
+                plt.show()
             continue
 
         # get simple mixture model
-        mm = simple_mixture(data, index=mixture, **kwargs)
+        mm = None
+        if kind == 'mean':
+            mm = mean_mixture(data, index=mixture, **kwargs)
+        else:
+            mm = simple_mixture(data, index=mixture, **kwargs)
+
 
         # plot simple mixture
         fig = plt.figure(figsize=figsize)
         if 'glass' in mode:
             # setup for plotting
             plot_kws = dict(dict(
-                display_mode='z',
-                plot_abs=False, threshold=0.5,
+                display_mode='z', plot_abs=False, 
+                vmin=-3, vmax=3, #threshold=0.5,
                 #cmap='jet', 
                 colorbar=True,
                 ), **plot_kws)
@@ -122,7 +157,8 @@ def simple_mixtures(data, mixtures=[], targets=None, mode='glass', prefix='times
         else:
             # setup for plotting
             plot_kws = dict(dict(
-                display_mode='z', cut_coords=1, threshold=0.5, 
+                display_mode='z', cut_coords=1, 
+                #threshold=0.5, 
                 ), **plot_kws)
             # plot
             plotting.plot_stat_map(mm, figure=fig, title=title, **plot_kws)
@@ -130,12 +166,12 @@ def simple_mixtures(data, mixtures=[], targets=None, mode='glass', prefix='times
 
         # save, show, close
         plt.savefig(save_as, dpi=300, transparent=True)
-        if show_every_n>0 and (i+1)%show_every_n == 0:
+        if show_every_n>0 and (i)%show_every_n == 0:
             plt.show()
         plt.close('all')
       
         # display progress
-        if print_every_n>0 and (i+1)%print_every_n == 0:
+        if print_every_n>0 and (i)%print_every_n == 0:
             print("[{} of {}] Saved: {}".format(i, len(mixtures), save_as))
     print('[done]')
     return filenames
