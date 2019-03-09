@@ -102,10 +102,10 @@ def optimize_cover(X=None, r=30, g=0.67, scale_r=False, scale_g=False, ndim=2, s
 
 
 
-def optimize_dbscan(X, n_neighbors=2, min_samples=2, metric='minkowski', p=2, leaf_size=15, **kwargs):
+def optimize_dbscan(X, threshold=100.0, n_neighbors=2, min_samples=2, metric='minkowski', p=2, leaf_size=15, **kwargs):
     """ Get dbscan based on eps determined by data.
     """
-    eps = optimize_eps(X, n_neighbors=n_neighbors, metric=metric, p=p, leaf_size=leaf_size)
+    eps = optimize_eps(X, threshold=threshold, n_neighbors=n_neighbors, metric=metric, p=p, leaf_size=leaf_size)
     dbscan = DBSCAN(
         eps=eps, min_samples=min_samples, 
         metric=metric, p=p, leaf_size=leaf_size,
