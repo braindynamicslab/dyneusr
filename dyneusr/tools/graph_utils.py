@@ -181,7 +181,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     meta, meta_sets, meta_labels = process_meta(meta, labels=labels, **kwargs)
     
     # color_by
-    if len(meta_orig.T) < 5:        
+    if len(meta_orig.T) < 2:        
         color_by = color_by or meta_orig.columns[0] 
 
     # multiclass proportions
