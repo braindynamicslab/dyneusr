@@ -102,32 +102,46 @@ def optimize_cover(X=None, r=30, g=0.67, scale_r=False, scale_g=False, ndim=2, s
 
 
 
-def optimize_dbscan(X, threshold=100.0, n_neighbors=2, min_samples=2, metric='minkowski', p=2, leaf_size=15, **kwargs):
+def optimize_dbscan(X, k=2, p=100.0, min_samples=2, **kwargs):
     """ Get dbscan based on eps determined by data.
     """
-    eps = optimize_eps(X, threshold=threshold, n_neighbors=n_neighbors, metric=metric, p=p, leaf_size=leaf_size)
+    eps = optimize_eps(X, k=k, p=p)
     dbscan = DBSCAN(
         eps=eps, min_samples=min_samples, 
-        metric=metric, p=p, leaf_size=leaf_size,
+        metric='minkowski', p=2, leaf_size=15
         **kwargs
         )
     return dbscan
 
 
 
-def optimize_eps(X, threshold=100.0, n_neighbors=2, metric='minkowski', p=2, leaf_size=15, **kwargs):
-    """ Get optimized value for eps based on data.
+def optimize_eps(X, k=2, p=100.0, **kwargs):
+    """ Get optimized value for eps based on data. 
+
+    Parameters
+    ----------
+    k: int
+        * calculate distance to k-th nearest neighbor
+
+    p: float 
+        * threshold percentage to keep
+
+    Returns
+    -------
+    eps: float
+        * a parameter for DBSCAN
+
     """
     from sklearn.neighbors import KDTree
 
     # Use 'minkowski', p=2 (i.e. euclidean metric)
-    tree = KDTree(X, leaf_size=leaf_size, metric=metric, p=p)
+    tree = KDTree(X, metric='minkowski', p=2, leaf_size=15)
 
-    # Query k nearest-neighbors for X
-    dist, ind = tree.query(X, k=n_neighbors+1)
+    # Query k nearest-neighbors for X, not including self
+    dist, ind = tree.query(X, k=k+1)
 
     # Find eps s.t. % of points within eps of k nearest-neighbor 
-    eps = np.percentile(dist[:, n_neighbors], threshold)
+    eps = np.percentile(dist[:, k], p)
     return eps
 
 
@@ -154,15 +168,19 @@ def optimize_core(X, k=15, p=90.0, **kwargs):
     # Use 'minkowski', p=2 (i.e. euclidean metric)
     tree = KDTree(X, metric='minkowski', p=2, leaf_size=15)
 
-    # Query k nearest-neighbors for X
+    # Query k nearest-neighbors for X, not including self
     dist, ind = tree.query(X, k=k+1)
 
-    # Find eps s.t. % of points within eps of k nearest-neighbor 
-    eps = np.percentile(dist[:, k], p)
+    # Find max_dist s.t. % of points within max_dist of k nearest-neighbor 
+    max_dist = np.percentile(dist[:, k], p)
 
     # Return a mask over the data based on dist 
-    indices = np.where(dist[:, k] <= eps)
+    indices = np.where(dist[:, k] <= max_dist)
     return indices
+
+
+
+
 
 
 
