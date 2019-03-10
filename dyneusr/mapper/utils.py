@@ -175,7 +175,7 @@ def optimize_scaler(center=True, normalize=True, **kwargs):
 ###############################################################################
 ### Helper functions for performing filtrations 
 ###############################################################################
-def density_filtration(X, k=15, p=90.0, **kwargs):
+def density_filtered_indices(X, k=15, p=90.0, **kwargs):
     """ Get sample indices based on a density filtration. 
 
     Parameters
@@ -209,8 +209,8 @@ def density_filtration(X, k=15, p=90.0, **kwargs):
 
 
 
-def random_filtration(X, size=None, p=None, sort_indices=True, **kwargs):
-    """ Get sample indices based on a random filtration. 
+def random_indices(X, size=None, p=None, sort_indices=True, **kwargs):
+    """ Get indices for a random subset of the data. 
 
     Parameters
     ----------
@@ -277,9 +277,9 @@ def filter_samples(X, method='density', return_indices=False, **kwargs):
     # Get indices based on method
     indices = np.arange(len(X_))
     if 'density' in method: 
-        indices = density_filtration(X_, **kwargs)
+        indices = density_filtered_indices(X_, **kwargs)
     elif 'random' in method:
-        indices = random_filtration(X_, **kwargs)
+        indices = random_indices(X_, **kwargs)
     
     # Extract samples from the data
     samples = X_[indices]
