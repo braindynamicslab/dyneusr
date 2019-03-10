@@ -48,7 +48,7 @@ def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normali
         figs = dict()
 
         ### heatmap of TCM      
-        fig = kwargs.pop('fig', plt.figure(figsize=(20,5)))
+        fig = kwargs.pop('fig') or plt.figure(figsize=(20,5))
         color = kwargs.get('color', 'steelblue')
 
         #ax = plt.subplot2grid((5, 5), (0, 0), rowspan=4, colspan=5)
@@ -120,7 +120,7 @@ def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normali
             if not os.path.exists(os.path.dirname(save_as)):
                 os.makedirs(os.path.dirname(save_as))
             fig.savefig(save_as, transparent=True)#, facecolor='lightgray', edgecolor='w')
-            
+
         # show
         if show is True:
             plt.show()
