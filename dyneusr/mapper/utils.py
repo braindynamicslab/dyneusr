@@ -41,7 +41,7 @@ except ImportError as e:
     
 
 ###############################################################################
-### Helper functions
+### Helper functions for ptimizing various Mapper parameters
 ###############################################################################
 def optimize_cover(X=None, r=30, g=0.67, scale_r=False, scale_g=False, ndim=2, scale_limits=False):
     """ Get optimized cover for data.
@@ -146,8 +146,37 @@ def optimize_eps(X, k=2, p=100.0, **kwargs):
 
 
 
-def optimize_core(X, k=15, p=90.0, **kwargs):
-    """ Perform density filtration to find a core subset of the data points. 
+def optimize_scaler(center=True, normalize=True, **kwargs):
+    """ Initialize and return a StandardScaler (default).
+
+    Parameters
+    ----------
+    center: bool
+        * remove the mean 
+
+    normalize: bool
+        * scale to unit variance
+
+    Returns
+    -------
+    scaler: sklearn.preprocessing.StandardScaler
+        * the initialized scaler
+
+    """
+    from sklearn.preprocessing import StandardScaler
+
+    # Initialize, return the scaler
+    scaler = StandardScaler(with_mean=center, with_std=normalize)
+    return scaler
+
+
+
+
+###############################################################################
+### Helper functions for performing filtrations 
+###############################################################################
+def density_filtration(X, k=15, p=90.0, **kwargs):
+    """ Get sample indices based on a density filtration. 
 
     Parameters
     ----------
@@ -179,6 +208,86 @@ def optimize_core(X, k=15, p=90.0, **kwargs):
     return indices
 
 
+
+def random_filtration(X, size=None, p=None, sort_indices=True, **kwargs):
+    """ Get sample indices based on a random filtration. 
+
+    Parameters
+    ----------
+    size: int
+        * integer size to sample (required if p=None)
+
+    p: float 
+        * threshold percentage to keep (required if size=None)
+
+    Returns
+    -------
+    indices: tuple of np.ndarrays
+        * indices of samples in the data set
+
+    """
+    assert(size or p)
+    
+    # convert p (i.e., percentage of points) to integer size
+    if size is None:
+        size = int(p / 100. * len(X))
+
+    # Get original indices
+    indices = np.arange(len(X))
+
+    # Get randomized indices
+    indices = np.random.choice(indices, int(size), replace=False)
+
+    # Sort indices
+    if sort_indices is True:
+        indices = np.sort(indices)
+    return indices
+
+
+
+###############################################################################
+### Some wrappers around the optimize helper functions
+###############################################################################
+def standardize_features(X, return_scaler=False, **kwargs):
+    """ Standardize features in the data.
+    """
+    # Mean-center and normalize the data
+    scaler = optimize_scaler(**kwargs)
+    features = scaler.fit_transform(X)
+
+    # Return scaled, scaler (optional)
+    if return_scaler is True:
+        return features, scaler
+    return features 
+
+
+
+def filter_samples(X, method='density', return_indices=False, **kwargs):
+    """ Filter core subset of samples.
+    
+    Parameters
+    ----------
+    method: str, (allowed = ['density', 'random'])
+        * how to filter the samples
+
+    """
+    # Make a copy of X
+    X_ = np.copy(X)
+
+    # Get indices based on method
+    indices = np.arange(len(X_))
+    if 'density' in method: 
+        indices = density_filtration(X_, **kwargs)
+    elif 'random' in method:
+        indices = random_filtration(X_, **kwargs)
+    
+    # Extract samples from the data
+    samples = X_[indices]
+
+    # Return samples, indices(optional)
+    if return_indices is True:
+        return samples, indices
+    return samples 
 
 
 
