@@ -541,13 +541,18 @@ function draw_force(data) {
     d3.keys(json.graph.colors).map(function(k, i) {
       color_palettes[k] = json.graph.colors[k];      
     })
-    color_palette = color_palettes[color_by];
   } else if (typeof json.graph.color !== "undefined") {
     d3.keys(json.graph.color).map(function(k, i) {
       color_palettes[k] = json.graph.color[k];      
     })
+  }
+
+  // use color_palette for color_by, if it is valid
+  if (typeof color_palettes[color_by] !== "undefined") {
     color_palette = color_palettes[color_by];
   }
+
+  // define color scale
   var color = d3.scale.linear()
     .domain(groups[color_by])
     .range(color_palette);
