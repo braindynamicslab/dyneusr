@@ -48,32 +48,21 @@ def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normali
         figs = dict()
 
         ### heatmap of TCM      
-        fig = kwargs.pop('fig') or plt.figure(figsize=(20,5))
         color = kwargs.get('color', 'steelblue')
 
-        #ax = plt.subplot2grid((5, 5), (0, 0), rowspan=4, colspan=5)
-        #sns.heatmap(tcm,
-        #    square=True, cbar=False,
-        #    xticklabels=100, yticklabels=100,
-        #    cmap=cmap
-        #    )
-        #draw_axlines(plt.axvline, plt.axhline)
-
-        # finish (e.g. label, etc)
-        #ax = plt.gca()
-        #ax.set_xlabel("Time frame (TR)")
-        # ax.set_ylabel("Time frame (TR)")
-        #ax.set_title('Temporal Connectivity Matrix (TCM)')
-        #fig.tight_layout(rect=(0.0, 0.03, 1.0, 0.98))
-        #figs['heatmap'] = fig
-        #if save:
-        #    save_as = 'TCM_heatmap.png'
-        #    print("Saving figure, save_as:", save_as)
-        #    plt.savefig(save_as, transparent=True)
+        # setup figure, unless already exists
+        fig = kwargs.get('fig')
+        ax = kwargs.get('ax')
+        if ax is not None:
+            fig = ax.get_figure()
+        elif fig is not None:
+            ax = plt.gca()
+        else:
+            fig = plt.figure(figsize=(20,5))
+            ax = plt.subplot2grid((5, 5), (0, 0), rowspan=5, colspan=5)
 
         ### tsplot
         #fig = plt.figure(figsize=(5,2))
-        ax = plt.subplot2grid((5, 5), (0, 0), rowspan=5, colspan=5)
         draw_axlines(plt.axvline)
 
         # normalized degree
@@ -126,7 +115,7 @@ def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normali
             plt.show()
         
         # save
-        return fig
+        return fig, ax
 
 
 
