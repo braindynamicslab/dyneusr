@@ -132,4 +132,38 @@ def optimize_eps(X, threshold=100.0, n_neighbors=2, metric='minkowski', p=2, lea
 
 
 
+def optimize_core(X, k=15, p=90.0, **kwargs):
+    """ Perform density filtration to find a core subset of the data points. 
+
+    Parameters
+    ----------
+    k: int
+        * calculate distance to k-th nearest neighbor
+
+    p: float 
+        * threshold percentage to keep
+
+    Returns
+    -------
+    indices: tuple of np.ndarrays
+        * indices of core points in the data set
+
+    """
+    from sklearn.neighbors import KDTree
+
+    # Use 'minkowski', p=2 (i.e. euclidean metric)
+    tree = KDTree(X, metric='minkowski', p=2, leaf_size=15)
+
+    # Query k nearest-neighbors for X
+    dist, ind = tree.query(X, k=k+1)
+
+    # Find eps s.t. % of points within eps of k nearest-neighbor 
+    eps = np.percentile(dist[:, k], p)
+
+    # Return a mask over the data based on dist 
+    indices = np.where(dist[:, k] <= eps)
+    return indices
+
+
+
 
