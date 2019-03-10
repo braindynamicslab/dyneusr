@@ -536,21 +536,18 @@ function draw_force(data) {
   } 
   console.log("color_palette_key: "+color_palette_key);
 
-  var color_palette = color_palettes[color_palette_key];
-  if (typeof json.graph.colors !== "undefined") {
-    d3.keys(json.graph.colors).map(function(k, i) {
-      color_palettes[k] = json.graph.colors[k];      
-    })
-  } else if (typeof json.graph.color !== "undefined") {
-    d3.keys(json.graph.color).map(function(k, i) {
-      color_palettes[k] = json.graph.color[k];      
+  // check for custom color palettes
+  var custom_colors = json.graph.colors ? json.graph.colors : json.graph.color;
+  if (typeof custom_colors !== "undefined") {
+    d3.keys(custom_colors).map(function(k, i) {
+      color_palettes[k] = custom_colors[k];      
     })
   }
-
-  // use color_palette for color_by, if it is valid
+  // use color_by as color_palette_key, if it is valid
   if (typeof color_palettes[color_by] !== "undefined") {
-    color_palette = color_palettes[color_by];
-  }
+    color_palette_key = color_by;
+  }  
+  var color_palette = color_palettes[color_palette_key];
 
   // define color scale
   var color = d3.scale.linear()
@@ -685,8 +682,9 @@ function draw_force(data) {
   .data(color_by_options)
   .enter().append("option")
     .attr('value', function (d) {console.log(d); return d;})
-    .text(function (d) {console.log(d); return d;});
-
+    .text(function (d) {console.log(d); return d;})
+    .property("selected", function(d){ return d === color_by; });
+    
   // color palettes
   var menu_colors = d3.select('#graph-meta')
       .append("div")
