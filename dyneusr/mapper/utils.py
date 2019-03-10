@@ -108,7 +108,7 @@ def optimize_dbscan(X, k=2, p=100.0, min_samples=2, **kwargs):
     eps = optimize_eps(X, k=k, p=p)
     dbscan = DBSCAN(
         eps=eps, min_samples=min_samples, 
-        metric='minkowski', p=2, leaf_size=15
+        metric='minkowski', p=2, leaf_size=15,
         **kwargs
         )
     return dbscan
@@ -255,6 +255,14 @@ def standardize_features(X, return_scaler=False, **kwargs):
     scaler = optimize_scaler(**kwargs)
     features = scaler.fit_transform(X)
 
+    # Return in same format as X
+    try:
+        features = type(X)(features)
+        features.index = X.index
+        features.columns = X.columns
+    except:
+        pass
+
     # Return scaled, scaler (optional)
     if return_scaler is True:
         return features, scaler
@@ -271,18 +279,20 @@ def filter_samples(X, method='density', return_indices=False, **kwargs):
         * how to filter the samples
 
     """
-    # Make a copy of X
-    X_ = np.copy(X)
-
     # Get indices based on method
-    indices = np.arange(len(X_))
+    indices = np.arange(len(X))
     if 'density' in method: 
-        indices = density_filtered_indices(X_, **kwargs)
+        indices = density_filtered_indices(X, **kwargs)
     elif 'random' in method:
-        indices = random_indices(X_, **kwargs)
+        indices = random_indices(X, **kwargs)
     
     # Extract samples from the data
-    samples = X_[indices]
+    try:
+        # first, assume X is a pd.DataFrame
+        samples = X.iloc[indices].copy()
+    except:
+        # otherwise, just return as np.ndarray
+        samples = np.copy(X)[indices]
 
     # Return samples, indices(optional)
     if return_indices is True:
