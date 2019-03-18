@@ -19,7 +19,7 @@ For now, Jupyter notebooks are available [here](https://bitbucket.org/braindynam
 ## Usage
 --------
 
-The documentation will have an [example gallery](https://bitbucket.org/braindynamicslab/dyneusr/examples/) with short Jupyter notebooks highlighting different aspects of DyNeuSR. (*coming soon*)
+The documentation will have an [example gallery](https://bitbucket.org/braindynamicslab/dyneusr/src/master/examples/) with short Jupyter notebooks highlighting different aspects of DyNeuSR. (*coming soon*)
 
 For more detailed examples, see these [notebook tutorials](https://bitbucket.org/braindynamicslab/dyneusr-notebooks/).
 
@@ -82,7 +82,7 @@ The latest versions of the following packages are required:
 -  [nilearn](nilearn.github.io)
 -  [kmapper](kepler-mapper.scikit-tda.org)
 
-For the full list, see [`requirements.txt`](https://bitbucket.org/braindynamicslab/dyneusr/requirements.txt)
+For the full list, see [`requirements.txt`](https://bitbucket.org/braindynamicslab/dyneusr/src/master/requirements.txt)
 
 
 
@@ -122,9 +122,9 @@ pip install git+git://braindynamics.org/dyneusr/dyneusr.git#egg=dyneusr
 ## Development
 --------------
 
-All development happens here, on [Bitbucket]().
+All development happens here, on [Bitbucket](https://bitbucket.org/braindynamicslab/dyneusr/).
 
-If you're interested in contributing to DyNeuSR, please refer to the [Contributing]() guide. (*coming soon*)
+If you're interested in contributing to DyNeuSR, please refer to the [Contributing](https://bitbucket.org/braindynamicslab/dyneusr/src/master/CONTRIBUTING.md) guide. (*coming soon*)
 
 
 
