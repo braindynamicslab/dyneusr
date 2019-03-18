@@ -1,20 +1,6 @@
 # DyNeuSR: **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
 ----------------------------------------------------------
 
-
-<div class="row">
-  <a href="https://bdl.stanford.edu/projects/dyneusr/Supplemental_Data_1.pdf">
-      <img src="https://commons.wikimedia.org/wiki/File:Blue_Trefoil_Knot_Animated.gif" height="135" width="135">
-  </a>
-  <a href="https://bdl.stanford.edu/projects/dyneusr/Supplemental_Data_2.pdf">
-      <img src="https://bdl.stanford.edu/projects/dyneusr/Supplemental_Movie_1.gif" height="135" width="135">
-  </a>
-  <a href="https://bdl.stanford.edu/blog/tda-cme-paper/">
-      <img src="https://bdl.stanford.edu/images/blog/saggar-tda-mapper-cme.png" height="135" width="135">
-  </a>
-</div>
-
-
 DyNeuSR is a Python visualization library for topological representations 
 of neuroimaging data. It was designed specifically for working with shape 
 graphs produced by the Mapper algorithm from topological data analysis (TDA) 
@@ -43,6 +29,12 @@ For now, Jupyter notebooks are available [here](https://bitbucket.org/braindynam
 
 ## Usage
 --------
+
+The documentation will have an [example gallery](https://bitbucket.org/braindynamicslab/dyneusr/examples/) with short Jupyter notebooks highlighting different aspects of DyNeuSR. (*coming soon*)
+
+For more detailed examples, see these [notebook tutorials](https://bitbucket.org/braindynamicslab/dyneusr-notebooks/).
+
+### Python code 
 
 ```python
 
@@ -79,12 +71,6 @@ dG.visualize('dyneusr_output.html', show=True, port=8000)
 ```
 
 
-### Examples
-
-The documentation will have an [example gallery](https://bitbucket.org/braindynamicslab/dyneusr/examples/) with short Jupyter notebooks highlighting different aspects of DyNeuSR. (*coming soon*)
-
-For more detailed examples, see these [notebook tutorials](https://bitbucket.org/braindynamicslab/dyneusr-notebooks/).
-
 
 
 
@@ -98,21 +84,13 @@ For more detailed examples, see these [notebook tutorials](https://bitbucket.org
 The latest versions of the following packages are required:
 
 -  [numpy](www.numpy.org)
-
 -  [pandas](pandas.pydata.org)
-
 -  [scipy](www.scipy.org)
-
 -  [matplotlib](matplotlib.sourceforge.net)
-
 -  [seaborn](stanford.edu/~mwaskom/software/seaborn)
-
 -  [networkx](networkx.github.io)
-
 -  [scikit-learn](scikit-learn.org)
-
 -  [nilearn](nilearn.github.io)
-
 -  [kmapper](kepler-mapper.scikit-tda.org)
 
 For the full list, see [`requirements.txt`](https://bitbucket.org/braindynamicslab/dyneusr/requirements.txt)
@@ -121,55 +99,30 @@ For the full list, see [`requirements.txt`](https://bitbucket.org/braindynamicsl
 
 ### Environment
 
-The current implementation of `dyneusr` requires Python 3.6+. If your default environment is Python 2, we recommend that you install `dyneusr` in a separate Python 3 environment. 
+If your default environment is Python 2, we recommend that you install `dyneusr` in a separate Python 3 environment. 
 
+To create a new environment and activate it:
 ```bash
 conda create -n py36 python=3.6
-```
-
-To activate the environment, just do:
-
-```bash
 source activate py36
 ```
 
+You can find more information about creating a separate environment for Python 3, [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). 
 
-If you don't have conda, or are new to scientific python, we recommend that you download the [Anaconda scientific python distribution](https://store.continuum.io/cshop/anaconda/). You can find more information about creating a separate environment for Python 3, [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). 
+If you don't have conda, or are new to scientific python, we recommend that you download the [Anaconda scientific python distribution](https://store.continuum.io/cshop/anaconda/). 
 
 
 
 ### Installation
 
-To get the `dyneusr` source code, just clone the Bitbucket repository:
-
+To install from source:
 ```bash
 git clone https://bitbucket.org/braindynamicslab/dyneusr.git
-```
-
-
-Enter the `dyneusr` directory:
-
-```bash
 cd dyneusr
-```
-
-
-To install all required packages, just do:
-
-```bash
-pip install -r requirements.txt
-```
-
-
-Finally, to install `dyneusr` as a Python module, just do:
-
-```bash
 pip install -e .
 ```
 
-
-To instead use the development version from Bitbucket, by running:
-
+Alternatively, to install development version from Bitbucket:
 ```bash
 pip install git+git://braindynamics.org/dyneusr/dyneusr.git#egg=dyneusr
 ```
