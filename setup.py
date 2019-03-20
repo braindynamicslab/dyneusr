@@ -20,6 +20,6 @@ setup(
     url='https://bitbucket.org/braindynamicslab/dyneusr/wiki/Home',
     license='BSD-3',
     packages=find_packages(),
-	install_requires=install_requires,
+    install_requires=install_requires,
     python_requires='>=3.4',
 )
