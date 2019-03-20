@@ -75,10 +75,10 @@ The latest versions of the following packages are required:
 -  [numpy](www.numpy.org)
 -  [pandas](pandas.pydata.org)
 -  [scipy](www.scipy.org)
+-  [scikit-learn](scikit-learn.org)
 -  [matplotlib](matplotlib.sourceforge.net)
 -  [seaborn](stanford.edu/~mwaskom/software/seaborn)
 -  [networkx](networkx.github.io)
--  [scikit-learn](scikit-learn.org)
 -  [nilearn](nilearn.github.io)
 -  [kmapper](kepler-mapper.scikit-tda.org)
 
