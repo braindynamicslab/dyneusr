@@ -1,5 +1,10 @@
 from setuptools import find_packages, setup
 
+# parse dyneusr/_version.py
+with open('dyneusr/_version.py') as f:
+    version = f.read().split('__version__ =')[-1]
+    version = version.replace("'",'"').split('"')[1]
+
 # parse requirements.txt
 with open('requirements.txt') as f:
     install_requires = [_ for _ in f.read().split('\n') 
@@ -12,7 +17,7 @@ with open('README.md') as f:
 # run setup
 setup(
     name='dyneusr',
-    version='0.2.3',
+    version=version,
     description='Dynamical Neural Spatiotemporal Representations.',
     long_description=long_description,
     long_description_content_type="text/markdown",	
