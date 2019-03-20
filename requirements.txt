@@ -8,5 +8,5 @@ matplotlib
 seaborn
 ipython
 networkx==2.2
-nilearn==0.5.0
+nilearn==0.5.0a
 kmapper==1.2.0
