@@ -2,7 +2,8 @@ from setuptools import find_packages, setup
 
 # parse requirements.txt
 with open('requirements.txt') as f:
-    install_requires = [_ for _ in f.read().split('\n') if len(_) and _[0].isalpha()]
+    install_requires = [_ for _ in f.read().split('\n') 
+                        if len(_) and _[0].isalpha()]
 
 # parse README.md
 with open('README.md') as f:
