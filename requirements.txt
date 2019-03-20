@@ -1,6 +1,7 @@
 --index-url https://pypi.python.org/simple/
 
 setuptools
+pytest
 ipython
 numpy
 pandas

@@ -1,6 +1,7 @@
 --index-url https://pypi.python.org/simple/
 
 setuptools
+pytest
 ipython==7.3.0
 numpy==1.15.1
 pandas==0.23.4
