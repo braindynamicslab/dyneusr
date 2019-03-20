@@ -162,6 +162,36 @@ def optimize_scaler(center=True, normalize=True, **kwargs):
 ###############################################################################
 ### Helper functions for performing filtrations 
 ###############################################################################
+def density_filter(X, k=2, **kwargs):
+    """ Return function that filters the data by codensity. 
+
+    Parameters
+    ----------
+    k: int
+        * calculate distance to k-th nearest neighbor
+
+    p: float 
+        * threshold percentage to keep
+
+    Returns
+    -------
+    indices: tuple of np.ndarrays
+        * indices of core points in the data set
+
+    """
+    from sklearn.neighbors import KDTree
+
+    # Use 'minkowski', p=2 (i.e. euclidean metric)
+    tree = KDTree(X, metric='minkowski', p=2, leaf_size=15)
+
+    # Query k nearest-neighbors for X, not including self
+    dist, ind = tree.query(X, k=k+1)
+
+    # Calculate codensity, inverse of k nearest-neighbor dists
+    dens = 1 / dist[:, 1:]
+    return dens
+
+
 def density_filtered_indices(X, k=15, p=90.0, **kwargs):
     """ Get sample indices based on a density filtration. 
 
