@@ -11,7 +11,7 @@ with open('README.md') as f:
 # run setup
 setup(
     name='dyneusr',
-    version='0.2.2',
+    version='0.2.3',
     description='Dynamical Neural Spatiotemporal Representations.',
     long_description=long_description,
     long_description_content_type="text/markdown",	
