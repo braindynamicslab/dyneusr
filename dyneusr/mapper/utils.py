@@ -19,19 +19,6 @@ from sklearn.manifold import TSNE, MDS
 ###############################################################################
 ### Optional imports
 ###############################################################################
-# UMAP
-try:
-    from umap.umap_ import UMAP
-except ImportError as e:
-    print("[warning]", e)
-
-# HDBSCAN
-try:
-    from hdbscan import HDBSCAN
-except ImportError as e:
-    print("[warning]", e)
-    
-
 # External mapper tools
 try:
     from kmapper import KeplerMapper

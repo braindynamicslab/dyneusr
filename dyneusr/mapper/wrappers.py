@@ -21,19 +21,6 @@ from sklearn.cluster import DBSCAN
 ###############################################################################
 ### Optional imports
 ###############################################################################
-# UMAP
-try:
-    from umap.umap_ import UMAP
-except ImportError as e:
-    print("[warning]", e)
-
-# HDBSCAN
-try:
-    from hdbscan import HDBSCAN
-except ImportError as e:
-    print("[warning]", e)
-    
-
 # External mapper tools
 try:
     from kmapper import KeplerMapper
@@ -50,16 +37,16 @@ from dyneusr.mapper.utils import optimize_cover, optimize_dbscan
 ###############################################################################
 ### Helper Functions
 ###############################################################################
-def _transform_lens(X=None, verbose=1, **params):
+def _transform_lens(data=None, verbose=1, **params):
     """ Transform data into a lens using KeplerMapper. """
     mapper = KeplerMapper(verbose=verbose)
-    return mapper.fit_transform(X, **params)
+    return mapper.fit_transform(data, **params)
 
 
-def _map_graph(lens=None, X=None, verbose=1, **params):
+def _map_graph(lens=None, data=None, verbose=1, **params):
     """ Map lens, data into graph using KeplerMapper. """
     mapper = KeplerMapper(verbose=verbose)
-    return mapper.map(lens, X=X, **params)
+    return mapper.map(lens, data, **params)
 
  
 
@@ -116,12 +103,12 @@ class KMapperWrapper(BaseMapperWrapper):
         self.verbose = verbose
 
         # [1] fit params
-        self.projection = projection
+        self.projection = projection or PCA(2)
         self.scaler = scaler or MinMaxScaler()
 
         # [2] map params
-        self.clusterer = clusterer
-        self.cover = cover 
+        self.clusterer = clusterer or DBSCAN(eps=1,min_samples=2)
+        self.cover = cover or Cover(10, 0.5)
 
         # setup memory
         self.memory = Memory(memory, verbose=verbose)
@@ -145,7 +132,7 @@ class KMapperWrapper(BaseMapperWrapper):
          # fit lens
         _transform_lens_cached = self.memory.cache(_transform_lens)
         lens = _transform_lens_cached(
-            X=data,  
+            data=data,  
             projection=self.projection, 
             scaler=self.scaler,
             verbose=self.verbose
@@ -173,7 +160,7 @@ class KMapperWrapper(BaseMapperWrapper):
         # fit graph
         _map_graph_cached = self.memory.cache(_map_graph)
         graph = _map_graph_cached(
-            lens=lens, X=data,
+            lens=lens, data=data,
             clusterer=self.clusterer,
             cover=self.cover,
             verbose=self.verbose
