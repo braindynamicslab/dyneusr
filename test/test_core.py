@@ -1,5 +1,6 @@
 import pytest
 import os
+import tempfile
 import numpy as np
 
 import dyneusr as ds
@@ -34,6 +35,7 @@ class TestDyNeuGraph:
         assert dG.TCM.shape[0] == data.shape[0]
         return 
 
+
     def test_visualize(self):
         mapper = KMapperWrapper(verbose=0)
         data = np.random.rand(100, 3)
@@ -41,11 +43,14 @@ class TestDyNeuGraph:
         y = mapper.lens_
 
         dG = DyNeuGraph(G=graph, y=y)
-        dG.visualize('test.html')
 
-        assert os.path.exists('test.html')
-        os.remove('test.html')        
+        # visualize results in a tempdir
+        with tempfile.TemporaryDirectory() as temp_dir:
+	        temp_html = os.path.join(temp_dir, 'test.html')
+	        dG.visualize(temp_html, path_assets=temp_dir)
+	        assert os.path.exists(temp_html)
         return 
+
 
     def test_visualize_show(self):
         mapper = KMapperWrapper(verbose=0)
@@ -54,8 +59,10 @@ class TestDyNeuGraph:
         y = mapper.lens_
 
         dG = DyNeuGraph(G=graph, y=y)
-        dG.visualize('test.html', show=True)
 
-        assert os.path.exists('test.html')
-        os.remove('test.html')        
+        # visualize results in a tempdir
+        with tempfile.TemporaryDirectory() as temp_dir:
+	        temp_html = os.path.join(temp_dir, 'test.html')
+	        dG.visualize(temp_html, path_assets=temp_dir, show=True)
+	        assert os.path.exists(temp_html)
         return 
