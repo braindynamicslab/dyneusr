@@ -54,6 +54,8 @@ def process_meta(meta_, labels=None, zscore=True, **kwargs):
     for i,meta_col in enumerate(meta_.columns):
         #print("Processing meta column: {}".format(meta_col))
         meta = np.ravel(meta_[meta_col].values.copy())
+        if len(meta) < 1:
+            continue
         # process meta label
         meta_label = None
         if isinstance(labels, dict):
