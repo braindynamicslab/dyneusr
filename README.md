@@ -108,7 +108,7 @@ To install from source:
 ```bash
 git clone https://bitbucket.org/braindynamicslab/dyneusr.git
 cd dyneusr
-pip install -e . -r requirements.txt
+pip install -e .
 ```
 
 Alternatively, to install development version from Bitbucket:
