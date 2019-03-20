@@ -104,18 +104,16 @@ If you don't have conda, or are new to scientific python, we recommend that you 
 
 ### Installation
 
-To install from source:
+To download the source:
 ```bash
 git clone https://bitbucket.org/braindynamicslab/dyneusr.git
 cd dyneusr
+```
+
+To install from source:
+```bash
 pip install -e .
 ```
-
-Alternatively, to install development version from Bitbucket:
-```bash
-pip install git+git://braindynamics.org/dyneusr/dyneusr.git#egg=dyneusr
-```
-
 
 
 
