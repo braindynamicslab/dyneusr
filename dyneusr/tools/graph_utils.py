@@ -152,7 +152,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
 
     # meta stuff
     if meta is None:
-        meta = pd.DataFrame(index=nTR).assign(
+        meta = pd.DataFrame(index=np.arange(nTR)).assign(
             default=0,
             )
     elif not isinstance(meta, pd.DataFrame):
