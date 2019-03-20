@@ -70,7 +70,7 @@ dG.visualize('dyneusr_output.html', show=True, port=8000)
 
 - Python 3.6+
 
-The latest versions of the following packages are required:
+The following Python packages are required:
 
 -  [numpy](www.numpy.org)
 -  [pandas](pandas.pydata.org)
@@ -82,7 +82,7 @@ The latest versions of the following packages are required:
 -  [nilearn](nilearn.github.io)
 -  [kmapper](kepler-mapper.scikit-tda.org)
 
-For the full list, see [`requirements.txt`](https://bitbucket.org/braindynamicslab/dyneusr/src/master/requirements.txt)
+For the full list of packages and required versions, see [`requirements.txt`](https://bitbucket.org/braindynamicslab/dyneusr/src/master/requirements.txt)
 
 
 
