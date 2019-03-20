@@ -1,9 +1,16 @@
 from setuptools import find_packages, setup
+import re
 
 # parse dyneusr/_version.py
-with open('dyneusr/_version.py') as f:
-    version = f.read().split('__version__ =')[-1]
-    version = version.replace("'",'"').split('"')[1]
+try:
+    version_fn = 'dyneusr/_version.py'
+    with open(version_fn) as version_fd:
+        version = version_fd.read()
+    version_re = r"^__version__ = ['\"]([^'\"]*)['\"]"
+    version = re.findall(version_re, version, re.M)[0]
+except:
+    raise RuntimeError("Unable to read version in {}.".format(version_fn))
+
 
 # parse requirements.txt
 with open('requirements.txt') as f:
