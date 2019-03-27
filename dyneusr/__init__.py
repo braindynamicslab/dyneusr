@@ -1,3 +1,10 @@
+import sys
+import warnings
+
+if not sys.warnoptions:
+    warnings.simplefilter("ignore")
+
+
 __all__ = [
     'datasets',
     'mapper',
