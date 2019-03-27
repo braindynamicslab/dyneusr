@@ -3,12 +3,14 @@
 setuptools
 pytest
 ipython
-numpy==1.15.1
+numpy
 pandas
-scipy==1.0.1
-scikit-learn==0.19.1
+scipy
+scikit-learn
 matplotlib
 seaborn
-networkx==2.2
-nilearn==0.5.0a
+networkx
 kmapper==1.1.6
+
+# recommended (uncomment to install)
+#nilearn==0.5.0
