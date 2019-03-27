@@ -120,28 +120,6 @@ def plot_temporal_degree(TCM, y=None, save_as=None, show=False, scalers=[Normali
 
 
 # -----------------------------------------------------------
-
-
-
-
-# -----------------------------------------------------------
-from nilearn.image import iter_img
-from nilearn.plotting import plot_prob_atlas, show
-
-def plot_atlas(img):
-    # Plot all ICA components together
-    plot_prob_atlas(img, title='All ICA components')
-
-    # Plot individual ICA components seperately
-    for i, img_slice in enumerate(iter_img(img)):
-        plot_prob_atlas(
-            [img_slice], 
-            title="Slice {}".format(i),
-        )
-    show()
-    return
-
-
 def plot_scatter(x, y, meta=None, fig=None, **scatter_kw):
     
     # figure
