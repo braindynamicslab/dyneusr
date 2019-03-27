@@ -2,6 +2,7 @@ import pytest
 import os
 import tempfile
 import numpy as np
+np.random.seed(123)
 
 import dyneusr as ds
 from dyneusr.core import DyNeuGraph
