@@ -162,7 +162,7 @@ def optimize_scaler(center=True, normalize=True, **kwargs):
 ###############################################################################
 ### Helper functions for performing filtrations 
 ###############################################################################
-def density_filter(X, k=2, **kwargs):
+def density_filter(X, k=2, inverse=True, **kwargs):
     """ Return function that filters the data by codensity. 
 
     Parameters
@@ -188,7 +188,10 @@ def density_filter(X, k=2, **kwargs):
     dist, ind = tree.query(X, k=k+1)
 
     # Calculate codensity, inverse of k nearest-neighbor dists
-    dens = 1 / dist[:, 1:]
+    dens = dist[:, 1:]
+    if inverse is True:
+        dens = 1.0 / dens
+
     return dens
 
 
