@@ -89,7 +89,7 @@ def optimize_cover(X=None, r=30, g=0.67, scale_r=False, scale_g=False, ndim=2, s
 
 
 
-def optimize_dbscan(X, k=2, p=100.0, min_samples=2, **kwargs):
+def optimize_dbscan(X, k=3, p=100.0, min_samples=2, **kwargs):
     """ Get dbscan based on eps determined by data.
     """
     eps = optimize_eps(X, k=k, p=p)
@@ -102,7 +102,7 @@ def optimize_dbscan(X, k=2, p=100.0, min_samples=2, **kwargs):
 
 
 
-def optimize_eps(X, k=2, p=100.0, **kwargs):
+def optimize_eps(X, k=3, p=100.0, **kwargs):
     """ Get optimized value for eps based on data. 
 
     Parameters

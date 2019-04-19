@@ -103,7 +103,7 @@ class KMapperWrapper(BaseMapperWrapper):
         self.verbose = verbose
 
         # [1] fit params
-        self.projection = projection or PCA(2)
+        self.projection = projection if projection is not None else PCA(2)
         self.scaler = scaler or MinMaxScaler()
 
         # [2] map params
