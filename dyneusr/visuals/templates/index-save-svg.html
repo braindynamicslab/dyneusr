@@ -1032,6 +1032,10 @@ function draw_force(data) {
   d3.select("a#toggle_save_as").on('click', function(){
       toggle_save_as(svg.node(), source, 'svg');
   });
+  // save an svg by default (after loading)
+  setTimeout(function(){
+    toggle_save_as(svg.node(), source, 'svg');
+  }, 1200);
   ////////////////////////////////////////////////////     
   ////////////////////////////////////////////////////
 
