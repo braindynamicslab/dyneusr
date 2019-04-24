@@ -68,7 +68,7 @@ dG.visualize('dyneusr_output.html', show=True, port=8000)
 
 ### Dependencies
 
-- Python 3.6+
+- Python 3.6
 
 The following Python packages are required:
 
@@ -82,7 +82,7 @@ The following Python packages are required:
 -  [nilearn](nilearn.github.io)
 -  [kmapper](kepler-mapper.scikit-tda.org)
 
-For the full list of packages and required versions, see [`requirements.txt`](https://bitbucket.org/braindynamicslab/dyneusr/src/master/requirements.txt)
+For the full list of packages and required versions, see [`requirements.txt`](https://github.com/braindynamicslab/dyneusr/src/master/requirements.txt)
 
 
 
