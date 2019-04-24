@@ -120,9 +120,9 @@ pip install -e .
 ## Development
 --------------
 
-All development happens here, on [Bitbucket](https://bitbucket.org/braindynamicslab/dyneusr/).
+All development happens here, on [GitHub](https://github.com/braindynamicslab/dyneusr/).
 
-If you're interested in contributing to DyNeuSR, please refer to the [Contributing](https://bitbucket.org/braindynamicslab/dyneusr/src/master/CONTRIBUTING.md) guide. (*coming soon*)
+If you're interested in contributing to DyNeuSR, please refer to the [Contributing](https://github.com/braindynamicslab/dyneusr/src/master/CONTRIBUTING.md) guide. 
 
 
 
@@ -130,7 +130,7 @@ If you're interested in contributing to DyNeuSR, please refer to the [Contributi
 ## Support
 ----------
 
-Please [submit](https://bitbucket.org/braindynamicslab/dyneusr/issues/new) any bugs or questions to the Bitbucket issue tracker.
+Please [submit](https://github.com/braindynamicslab/dyneusr/issues/new) any bugs or questions to the GitHub issue tracker.
 
 
 
