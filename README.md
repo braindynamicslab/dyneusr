@@ -144,4 +144,4 @@ Released under a BSD-3 license
 ## Cite
 -------
 
-(*coming soon*)
+(*In Press*)
