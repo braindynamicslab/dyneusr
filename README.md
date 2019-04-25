@@ -117,8 +117,9 @@ pip install -e .
 
 All development happens here, on [GitHub](https://github.com/braindynamicslab/dyneusr/).
 
-If you're interested in contributing to DyNeuSR, please refer to the [Contributing](https://github.com/braindynamicslab/dyneusr/blob/master/CONTRIBUTING.md) guide. 
+Please feel free to report any issues and propose improvements.
 
+If you're interested in contributing to DyNeuSR, please also refer to the [Contributing](https://github.com/braindynamicslab/dyneusr/blob/master/CONTRIBUTING.md) guide. 
 
 
 
@@ -136,4 +137,4 @@ Released under a BSD-3 license
 
 ## Citing DyNeuSR
 
-Geniesse C, Sporns O, Petri G, & Saggar M. "Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis." _In press_, 2019.
+>Geniesse C, Sporns O, Petri G, & Saggar M. [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](). _In press_, 2019.
