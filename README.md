@@ -12,16 +12,16 @@ DyNeuSR connects the Mapper algorithm (e.g., [KeplerMapper](https://kepler-mappe
 
 Online documentation will include detailed API documentation, Jupyter notebook examples and tutorials, and other useful information. (*coming soon*)
 
-For now, Jupyter notebooks are available [here](https://bitbucket.org/braindynamicslab/dyneusr-notebooks/). These should correspond with the latest release of the master branch.
+For now, Jupyter notebooks are available [here](https://github.com/braindynamicslab/dyneusr-notebooks/). These should correspond with the latest release of the master branch.
  
 
 
 ## Usage
 --------
 
-The documentation will have an [example gallery](https://bitbucket.org/braindynamicslab/dyneusr/src/master/examples/) with short Jupyter notebooks highlighting different aspects of DyNeuSR. (*coming soon*)
+The documentation will have an [example gallery](https://github.com/braindynamicslab/dyneusr/blob/master/examples/) with short Jupyter notebooks highlighting different aspects of DyNeuSR. (*coming soon*)
 
-For more detailed examples, see these [notebook tutorials](https://bitbucket.org/braindynamicslab/dyneusr-notebooks/).
+For more detailed examples, see these [notebook tutorials](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 ### Python code 
 
@@ -82,7 +82,7 @@ The following Python packages are required:
 -  [nilearn](nilearn.github.io)
 -  [kmapper](kepler-mapper.scikit-tda.org)
 
-For the full list of packages and required versions, see [`requirements.txt`](https://github.com/braindynamicslab/dyneusr/src/master/requirements.txt)
+For the full list of packages and required versions, see [`requirements.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements.txt)
 
 
 
@@ -106,7 +106,7 @@ If you don't have conda, or are new to scientific python, we recommend that you 
 
 To download the source:
 ```bash
-git clone https://bitbucket.org/braindynamicslab/dyneusr.git
+git clone https://github.com/braindynamicslab/dyneusr.git
 cd dyneusr
 ```
 
@@ -144,4 +144,4 @@ Released under a BSD-3 license
 ## Cite
 -------
 
-(*In Press*)
+(*in press*)
