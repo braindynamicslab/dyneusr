@@ -1,5 +1,4 @@
 # DyNeuSR: **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
---------------------------------------------------------------------------------
 
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data. It was designed specifically for working with shape graphs produced by the Mapper algorithm from topological data analysis (TDA) as described in the paper ["Towards a new approach to reveal dynamical organization of the brain using topological data analysis"](https://www.nature.com/articles/s41467-018-03664-4) (Saggar et al., 2018). See this [blog post](https://bdl.stanford.edu/blog/tda-cme-paper/) for more about the initial work that inspired the development of DyNeuSR.  
 
@@ -8,7 +7,6 @@ DyNeuSR connects the Mapper algorithm (e.g., [KeplerMapper](https://kepler-mappe
 
 
 ## Documentation
-----------------
 
 Online documentation will include detailed API documentation, Jupyter notebook examples and tutorials, and other useful information. (*coming soon*)
 
@@ -17,7 +15,6 @@ For now, Jupyter notebooks are available [here](https://github.com/braindynamics
 
 
 ## Usage
---------
 
 The documentation will have an [example gallery](https://github.com/braindynamicslab/dyneusr/blob/master/examples/) with short Jupyter notebooks highlighting different aspects of DyNeuSR. (*coming soon*)
 
@@ -64,7 +61,6 @@ dG.visualize('dyneusr_output.html', show=True, port=8000)
 
 
 ## Install
-----------
 
 ### Dependencies
 
@@ -118,7 +114,6 @@ pip install -e .
 
 
 ## Development
---------------
 
 All development happens here, on [GitHub](https://github.com/braindynamicslab/dyneusr/).
 
@@ -128,20 +123,17 @@ If you're interested in contributing to DyNeuSR, please refer to the [Contributi
 
 
 ## Support
-----------
 
 Please [submit](https://github.com/braindynamicslab/dyneusr/issues/new) any bugs or questions to the GitHub issue tracker.
 
 
 
 ## License
-----------
 
 Released under a BSD-3 license
 
 
 
 ## Citing DyNeuSR
------------------
 
 Geniesse C, Sporns O, Petri G, & Saggar M. "Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis." _In press_, 2019.
