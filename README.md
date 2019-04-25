@@ -8,6 +8,7 @@ DyNeuSR connects the Mapper algorithm (e.g., [KeplerMapper](https://kepler-mappe
 
 
 ## Documentation
+----------------
 
 Online documentation will include detailed API documentation, Jupyter notebook examples and tutorials, and other useful information. (*coming soon*)
 
@@ -16,6 +17,7 @@ For now, Jupyter notebooks are available [here](https://github.com/braindynamics
 
 
 ## Usage
+--------
 
 The documentation will have an [example gallery](https://github.com/braindynamicslab/dyneusr/blob/master/examples/) with short Jupyter notebooks highlighting different aspects of DyNeuSR. (*coming soon*)
 
@@ -62,6 +64,7 @@ dG.visualize('dyneusr_output.html', show=True, port=8000)
 
 
 ## Install
+----------
 
 ### Dependencies
 
@@ -115,6 +118,7 @@ pip install -e .
 
 
 ## Development
+--------------
 
 All development happens here, on [GitHub](https://github.com/braindynamicslab/dyneusr/).
 
@@ -124,17 +128,20 @@ If you're interested in contributing to DyNeuSR, please refer to the [Contributi
 
 
 ## Support
+----------
 
 Please [submit](https://github.com/braindynamicslab/dyneusr/issues/new) any bugs or questions to the GitHub issue tracker.
 
 
 
 ## License
+----------
 
 Released under a BSD-3 license
 
 
 
 ## Cite
+-------
 
 (*in press*)
