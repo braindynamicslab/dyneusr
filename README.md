@@ -141,7 +141,7 @@ Released under a BSD-3 license
 
 
 
-## Cite
--------
+## Citing DyNeuSR
+-----------------
 
-(*in press*)
+Geniesse C, Sporns O, Petri G, & Saggar M. "Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis." _In press_, 2019.
