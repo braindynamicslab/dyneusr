@@ -10,7 +10,8 @@ scikit-learn
 matplotlib
 seaborn
 networkx
-kmapper==1.1.6
+kmapper
 
 # recommended (uncomment to install)
 #nilearn==0.5.0
+#kmapper==1.1.6
