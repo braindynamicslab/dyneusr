@@ -82,7 +82,7 @@ The following Python packages are required:
 -  [nilearn](nilearn.github.io)
 -  [kmapper](kepler-mapper.scikit-tda.org)
 
-For the full list of packages and required versions, see [`requirements.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements.txt)
+For the full list of packages and required versions, see [`requirements.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements.txt) and [`requirements-versions.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements-versions.txt)
 
 
 
