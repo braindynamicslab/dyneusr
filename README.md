@@ -115,7 +115,7 @@ pip install -e .
 
 ## Development
 
-Please feel free to report any issues and propose improvements. All development happens here, on [GitHub](https://github.com/braindynamicslab/dyneusr/). 
+All development happens here, on [GitHub](https://github.com/braindynamicslab/dyneusr/). Please feel free to report any issues and propose improvements. 
 
 If you're interested in contributing to DyNeuSR, please also refer to the [Contributing](https://github.com/braindynamicslab/dyneusr/blob/master/CONTRIBUTING.md) guide. 
 
