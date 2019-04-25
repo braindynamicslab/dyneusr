@@ -68,7 +68,7 @@ dG.visualize('dyneusr_output.html', show=True, port=8000)
 
 
 
-## Install
+## Setup
 
 ### Dependencies
 
