@@ -48,8 +48,8 @@ y = dataset.target
 
 # Generate shape graph using KeplerMapper
 mapper = KeplerMapper(verbose=1)
-lens = mapper.fit_transform(X, projection=[0, 1])
-graph = mapper.map(lens, X, nr_cubes=4, overlap_perc=0.3)
+lens = mapper.fit_transform(X, projection=[0])
+graph = mapper.map(lens, X, nr_cubes=6, overlap_perc=0.2)
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph                          
 dG = DyNeuGraph(G=graph, y=y)
