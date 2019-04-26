@@ -1,13 +1,14 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/logo.png" height="250">
+<img src="./docs/assets/logo.png" height="250">
 </p>
 
 # **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
 
 <p align="center">
-<img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/mapper_stages.png">
+<img src="./examples/haxby_decoding/mapper_stages.png">
 </p>
 
+ 
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data. 
 
 [DyNeuSR](https://braindynamicslab.github.io/dyneusr/) connects the Mapper algorithm (e.g. [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g. [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g. [Nilearn](https://nilearn.github.io/)). It provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
@@ -20,16 +21,15 @@ This package was designed specifically for working with shape graphs produced by
 
 Online documentation will include detailed API documentation, Jupyter notebook examples and tutorials, and other useful information. (*coming soon*)
 
-For now, Jupyter notebooks are available [here](https://github.com/braindynamicslab/dyneusr-notebooks/). These should correspond with the latest release of the master branch.
- 
+The documentation will include several [examples](./examples/) that introduce and highlight different aspects of DyNeuSR. 
+
+For more detailed tutorials, see the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
+
 
 
 ## Examples
 
-The documentation will include several [examples](https://github.com/braindynamicslab/dyneusr/blob/master/examples/) that introduce and highlight different aspects of DyNeuSR. For more detailed tutorials, see the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
-
-
-### Basic usage ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot))
+### Basic usage ([trefoil knot](./examples/trefoil_knot))
 
 ```python
 
@@ -54,13 +54,13 @@ dG.visualize('dyneusr_output.html')
 
 ```
 
-<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
-<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/dyneusr_trefoil_knot.png">
+<p align="center"><a href="./examples/trefoil_knot">
+<img src="./examples/trefoil_knot/dyneusr_trefoil_knot.png">
 </a></p>
 
 
 
-### Advanced usage ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot))
+### Advanced usage ([trefoil knot](./examples/trefoil_knot))
 
 ```python
 # Define projections to compare
@@ -81,17 +81,17 @@ for projection in projections:
 		
 ```
 
-<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
-<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_lens_0.png">
-<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_lens_0_1.png">
-<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_lens_0_2.png">
-<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_lens_1_2.png">
+<p align="center"><a href="./examples/trefoil_knot">
+<img src="./examples/trefoil_knot/mapper_lens_0.png">
+<img src="./examples/trefoil_knot/mapper_lens_0_1.png">
+<img src="./examples/trefoil_knot/mapper_lens_0_2.png">
+<img src="./examples/trefoil_knot/mapper_lens_1_2.png">
 </a></p>
 
 
 
 
-### Neuroimaging examples ([haxby decoding](https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding))
+### Neuroimaging examples ([haxby decoding](./examples/haxby_decoding))
 
 ```python
 
@@ -130,8 +130,8 @@ dG.visualize('dyneusr_output.html')
 
 ```
 
-<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding">
-<img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/dyneusr_haxby_decoding.png">
+<p align="center"><a href="./examples/haxby_decoding">
+<img src="./examples/haxby_decoding/dyneusr_haxby_decoding.png">
 </a></p>
 
 
@@ -156,7 +156,7 @@ The following Python packages are required:
 -  [nilearn](nilearn.github.io)
 -  [kmapper](kepler-mapper.scikit-tda.org)
 
-For the full list of packages and required versions, see [`requirements.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements.txt) and [`requirements-versions.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements-versions.txt)
+For the full list of packages and required versions, see [`requirements.txt`](./requirements.txt) and [`requirements-versions.txt`](./requirements-versions.txt)
 
 
 
@@ -195,7 +195,7 @@ pip install -e .
 
 All development happens here, on [GitHub](https://github.com/braindynamicslab/dyneusr/). Please feel free to report any issues and propose improvements. 
 
-If you're interested in contributing to DyNeuSR, please also refer to the [Contributing](https://github.com/braindynamicslab/dyneusr/blob/master/CONTRIBUTING.md) guide. 
+If you're interested in contributing to DyNeuSR, please also refer to the [Contributing](./CONTRIBUTING.md) guide. 
 
 
 
