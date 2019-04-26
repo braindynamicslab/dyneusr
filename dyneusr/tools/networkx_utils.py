@@ -297,11 +297,21 @@ def draw_cover(ax=None, cover_cubes=None, draw_all=False, max_draw=2, **kwargs):
     axspan_funcs = [ax.axvspan, ax.axhspan]
     axline_funcs = [ax.axvline, ax.axhline]
 
-    xbins,ybins = np.vstack([_ for cube,_ in cover_cubes.items()]).T
-    xbins = np.ravel(sorted(set(xbins)))
-    ybins = np.ravel(sorted(set(ybins)))
-    hypercubes = np.c_[xbins, ybins]
+    # extract bins (TODO: probably a better way to do this)
+    bins = np.vstack([_ for cube,_ in cover_cubes.items()])
+    if len(bins.T) < 2:
+        ybins = np.ravel(sorted(set(bins[:, 0])))
+        bins = np.c_[ybins].reshape(-1, 1)
+    else:
+        # assume 2D
+        xbins = np.ravel(sorted(set(bins[:, 0])))
+        ybins = np.ravel(sorted(set(bins[:, 1])))
+        bins = np.c_[xbins, ybins]
 
+    # save as hypercubes
+    hypercubes = np.copy(bins)
+
+    # draw
     max_draw = 2
     if draw_all is True:
         max_draw = len(hypercubes)
@@ -312,6 +322,8 @@ def draw_cover(ax=None, cover_cubes=None, draw_all=False, max_draw=2, **kwargs):
     hypercubes = np.vstack([hypercubes, hypercubes[-1:, :] + d])
     for i, hypercube in enumerate(hypercubes[:]):
         for di, (axspan, axline) in enumerate(zip(axspan_funcs,axline_funcs)):
+            if di >= len(hypercubes[i]):
+                continue
             c = cmaps[di](norm(0.4+0.3*int(i%2>0)))
             alpha = 1.0
             zo = i + 1
@@ -378,21 +390,28 @@ def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
 
     
     #### Draw
+    # ensure the lens is 2D
+    lens2D = lens.copy()
+    if len(lens2D.T) < 2:
+        lens2D = np.c_[np.zeros_like(lens2D), lens2D] 
+    elif len(lens2D.T) > 2:
+        lens2D = lens2D[:, :2]
+
     # 1. draw lens (axes: 1-3)
     for ax in axes[:3]:
-        ax.scatter(*lens.T, c=c)
+        ax.scatter(*lens2D.T, c=c)
 
     # 2. draw cover (axes: 2)
-    draw_cover(ax=axes[1], graph=graph, lens=lens, cover=cover)
+    draw_cover(ax=axes[1], graph=graph, lens=lens2D, cover=cover)
 
     # 3. draw clusters (axes: 3)
-    draw_networkx(G, lens=lens, pos="inverse", layout=None, 
+    draw_networkx(G, lens=lens2D, pos="inverse", layout=None, 
             node_color=node_color, node_size=node_size, 
             edge_color=edge_color, width=edge_size, 
             alpha=0.5, edges=False, ax=axes[2])
 
     # 4. draw graph (axes: 4)
-    draw_networkx(G, lens=lens, pos="inverse", layout=None, 
+    draw_networkx(G, lens=lens2D, pos="inverse", layout=None, 
                 node_color=node_color, node_size=node_size, 
                 edge_color=edge_color, width=edge_size, 
                 alpha=1.0, ax=axes[3])
