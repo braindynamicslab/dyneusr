@@ -50,7 +50,7 @@ graph = mapper.map(lens, X, nr_cubes=6, overlap_perc=0.2)
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph                          
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_output.html')
+dG.visualize('dyneusr_trefoil_knot.html')
 
 # Explore/interact with the visualization in your browser                       
 webbrowser.open(dG.HTTP.url)
@@ -90,9 +90,9 @@ mapper = KeplerMapper(verbose=1)
 lens = mapper.fit_transform(X, projection=PCA(3))
 graph = mapper.map(lens, X, cover=Cover(10, 0.5), clusterer=DBSCAN(eps=30.))
 
-# Visualize shape graph with DyNeuSR's DyNeuGraph 
+# Visualize the shape graph using DyNeuSR's DyNeuGraph                          
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_output.html', port=8000)   
+dG.visualize('dyneusr_haxby_decoding.html', port=8000)   
 
 # Explore/interact with the visualization in your browser                       
 webbrowser.open(dG.HTTP.url)
