@@ -28,8 +28,13 @@ for projection in projections:
 		dataset, lens=lens, 
 		graph=graph, cover=mapper.cover, 
 		node_size=300, edge_size=0.5, edge_color='gray',
-		layout="spectral", figsize=(16, 4),
+		layout="spectral", figsize=(16, 3),
 		)
+
+	# Save 
+	plt.savefig("mapper_lens_{}.png".format(
+		"_".join(str(_) for _ in projection)
+		))
 
 # Show 
 plt.show()
