@@ -28,6 +28,12 @@ import networkx as nx
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+def in_notebook():
+    """ Returns ``True`` if the module is running in IPython kernel,
+      ``False`` if in IPython shell or other Python shell.
+    """
+    from IPython import get_ipython
+    return get_ipython() is not None
 
 
 def _agg_proportions(df, members=slice(0, -1)):
@@ -198,7 +204,10 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
                         float_format='{:0.2f}'.format,
                         )
     if kwargs.get('verbose', 1) > 0:
-        display(HTML(tooltip))
+        if in_notebook():
+            display(HTML(tooltip))
+        else:
+            print(df_multiclass)
 
     # color functions
     color_functions = kwargs.get('color_functions', {})

@@ -37,7 +37,7 @@ def get_layout_pos(G, layout="spring", layout_kws={}, pos=None, lens=None, **kwa
         try:
             pos = layout(G, pos=pos, **layout_kws)
         except Exception as e:
-            print(e)
+            #print(e)
             pos = layout(G,  **layout_kws)
     if not isinstance(pos, dict):
         pos = {n:_ for n,_ in zip(G, pos)}
