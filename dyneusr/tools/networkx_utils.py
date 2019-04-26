@@ -384,6 +384,13 @@ def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
         edge_targets = [G.nodes[v]['members'] for u,v in G.edges()]
         edge_color = [Counter(c_hex[s + t]).most_common()[0][0] for s,t in zip(edge_sources, edge_targets)]
 
+
+    # layout (for last stage only)
+    layout = kwargs.get('layout', None)
+    pos = kwargs.get('pos', None)
+    if layout is None:
+        pos = "inverse"
+
     # init figure, subplots
     figsize = kwargs.get('figsize', (20,4))
     fig, axes = plt.subplots(1, 4, figsize=figsize)
@@ -411,12 +418,13 @@ def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
             alpha=0.5, edges=False, ax=axes[2])
 
     # 4. draw graph (axes: 4)
-    draw_networkx(G, lens=lens2D, pos="inverse", layout=None, 
+    draw_networkx(G, lens=lens2D, pos=pos, layout=layout, 
                 node_color=node_color, node_size=node_size, 
                 edge_color=edge_color, width=edge_size, 
                 alpha=1.0, ax=axes[3])
-    axes[3].set_xlim(axes[2].get_xlim())
-    axes[3].set_ylim(axes[2].get_ylim())
+    if layout is None:
+        axes[3].set_xlim(axes[2].get_xlim())
+        axes[3].set_ylim(axes[2].get_ylim())
     axes[3].axis('off')
 
 
