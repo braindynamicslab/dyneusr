@@ -4,18 +4,19 @@
 <img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/logo.png" height="250">
 </p>
 
-
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data. 
 
 [DyNeuSR](https://braindynamicslab.github.io/dyneusr/) connects the Mapper algorithm (e.g., [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g., [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g., [Nilearn](https://nilearn.github.io/)). It provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
-
-This package was designed specifically for working with shape graphs produced by the Mapper algorithm from topological data analysis (TDA) as described in the paper ["Towards a new approach to reveal dynamical organization of the brain using topological data analysis"](https://www.nature.com/articles/s41467-018-03664-4) (Saggar et al., 2018). See this [blog post](https://bdl.stanford.edu/blog/tda-cme-paper/) for more about the initial work that inspired the development of DyNeuSR.  
 
 <p align="center">
 <img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/mapper_stages.png">
 </p>
 
+This package was designed specifically for working with shape graphs produced by the Mapper algorithm from topological data analysis (TDA) as described in the paper ["Towards a new approach to reveal dynamical organization of the brain using topological data analysis"](https://www.nature.com/articles/s41467-018-03664-4) (Saggar et al., 2018). See this [blog post](https://bdl.stanford.edu/blog/tda-cme-paper/) for more about the initial work that inspired the development of DyNeuSR. 
 
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding/haxby_decoding.py">
+<img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/dyneusr_haxby_decoding.png">
+</a></p>
 
 ## Documentation
 
@@ -55,8 +56,7 @@ graph = mapper.map(lens, X, nr_cubes=4, overlap_perc=0.3)
 # Visualize the stages of Mapper
 fig, axes = visualize_mapper_stages(
 	dataset, y=y, lens=lens, graph=graph, cover=mapper.cover, 
-	layout="spectral"
- )
+	layout="spectral")
  
 # Visualize the shape graph using DyNeuSR's DyNeuGraph                          
 dG = DyNeuGraph(G=graph, y=y)
@@ -64,18 +64,15 @@ dG.visualize('dyneusr_trefoil_knot.html')
 
 ```
 
-<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
-<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_stages.png">
-</a></p>
-
-<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
-<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/dyneusr_trefoil_knot.png">
-</a></p>
-
-
-
 
 ### Mapper comparisons ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot))
+
+```python
+# Visualize the stages of Mapper
+fig, axes = visualize_mapper_stages(
+	dataset, y=y, lens=lens, graph=graph, cover=mapper.cover, 
+	layout="spectral")
+```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
 <img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_lens_0.png">
@@ -88,9 +85,11 @@ dG.visualize('dyneusr_trefoil_knot.html')
 
 ### Neuroimaging examples ([haxby decoding](https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding))
 
-<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding/visualize_stages.py">
-<img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/mapper_stages.png">
-</a></p>
+```python
+# Visualize the shape graph using DyNeuSR's DyNeuGraph                          
+dG = DyNeuGraph(G=graph, y=y)
+dG.visualize('dyneusr_output.html')
+```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding/haxby_decoding.py">
 <img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/dyneusr_haxby_decoding.png">
