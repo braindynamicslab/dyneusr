@@ -44,7 +44,7 @@ X = dataset.data
 y = dataset.target
 
 # Generate shape graph using KeplerMapper                                       
-mapper = KeplerMapper(verbose=1)
+mapper = KeplerMapper()
 lens = mapper.fit_transform(X, projection=[0])
 graph = mapper.map(lens, X, nr_cubes=6, overlap_perc=0.2)
 
@@ -71,7 +71,7 @@ from nilearn.datasets import fetch_haxby
 from nilearn.input_data import NiftiMasker
 
 from kmapper import KeplerMapper, Cover
-from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 from sklearn.cluster import DBSCAN
 
 from dyneusr import DyNeuGraph
@@ -87,14 +87,14 @@ y = pd.DataFrame({_:y.labels.eq(_) for _ in np.unique(y.labels)})
 
 # Generate shape graph using KeplerMapper
 mapper = KeplerMapper(verbose=1)
-lens = mapper.fit_transform(X, projection=PCA(3))
-graph = mapper.map(lens, X, cover=Cover(10, 0.5), clusterer=DBSCAN(eps=30.))
+lens = mapper.fit_transform(X, projection=TSNE(2))
+graph = mapper.map(lens, X, cover=Cover(10, 0.5), clusterer=DBSCAN(eps=5.))
 
-# Visualize the shape graph using DyNeuSR's DyNeuGraph                          
+# Visualize the shape graph using DyNeuSR's DyNeuGraph
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_haxby_decoding.html', port=8000)   
+dG.visualize('dyneusr_haxby_decoding.html', port=8800)   
 
-# Explore/interact with the visualization in your browser                       
+# Explore/interact with the visualization in your browser
 webbrowser.open(dG.HTTP.url)
 
 ```
