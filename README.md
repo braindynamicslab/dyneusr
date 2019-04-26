@@ -24,9 +24,9 @@ For now, Jupyter notebooks are available [here](https://github.com/braindynamics
 
 ## Examples
 
-The documentation will have an [example gallery](https://github.com/braindynamicslab/dyneusr/blob/master/examples/) with short Jupyter notebooks highlighting different aspects of DyNeuSR.
+The documentation will include several [examples](https://github.com/braindynamicslab/dyneusr/blob/master/examples/) that introduce and highlight different aspects of DyNeuSR. 
 
-For more detailed examples, see these [notebook tutorials](https://github.com/braindynamicslab/dyneusr-notebooks/).
+For more detailed tutorials, see the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 
 ### Basic usage ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot))
