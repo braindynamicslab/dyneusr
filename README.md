@@ -22,7 +22,7 @@ For now, Jupyter notebooks are available [here](https://github.com/braindynamics
  
 
 
-## Usage
+## Examples
 
 The documentation will have an [example gallery](https://github.com/braindynamicslab/dyneusr/blob/master/examples/) with short Jupyter notebooks highlighting different aspects of DyNeuSR.
 
