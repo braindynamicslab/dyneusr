@@ -1,13 +1,7 @@
-import numpy as np 
-import pandas as pd
-
-from kmapper import KeplerMapper, Cover
-from sklearn.cluster import DBSCAN
-
+import webbrowser
 from dyneusr import DyNeuGraph
 from dyneusr.datasets import make_trefoil
-
-import webbrowser
+from kmapper import KeplerMapper
 
 # Generate synthetic dataset
 dataset = make_trefoil(size=100)
