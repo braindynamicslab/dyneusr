@@ -1,5 +1,5 @@
 import matplotlib as mpl
-mpl.use("TkAgg")
+mpl.use("WebAgg")
 import matplotlib.pyplot as plt
 
 from dyneusr import DyNeuGraph
@@ -28,7 +28,7 @@ for projection in projections:
 		dataset, lens=lens, 
 		graph=graph, cover=mapper.cover, 
 		node_size=300, edge_size=0.5, edge_color='gray',
-		layout="kamada_kawai", figsize=(20, 4),
+		layout="spectral", figsize=(16, 4),
 		)
 
 # Show 
