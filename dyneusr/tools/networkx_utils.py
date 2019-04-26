@@ -343,7 +343,7 @@ def draw_cover(ax=None, cover_cubes=None, draw_all=False, max_draw=2, **kwargs):
 
     
 
-def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
+def visualize_mapper_stages(data, y=None, lens=None, cover=None, graph=None, dG=None, **kwargs):
     """ Visualize stages of MAPPER.
 
     TODO
@@ -354,15 +354,35 @@ def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
     """
 
     #### Setup
-    try:
+    if y is None and hasattr(data, "y"):
         y = data.y.copy()
-    except:
+    elif y is None and hasattr(data, "target"):
         y = data.target.copy()
 
-    G = dG.G_.copy()
+    try:
+        G = dG.G_.copy()
+    except:
+        from .graph_utils import process_graph
+        G = process_graph(graph, meta=y)
+
+    
+    # member color cmap
+    cmap = kwargs.get('cmap') 
+    if hasattr(data, "cmap"):
+        cmap = data.cmap
+    else:
+        cmap = "nipy_spectral_r"
+    cmap = cmap if callable(cmap) else plt.get_cmap(cmap)
+
+    # member color norm
+    norm = kwargs.get('norm') 
+    if hasattr(data, "norm"):
+        norm = data.norm
+    else:
+        norm = mpl.colors.Normalize(y.min(), y.max())
     
     # member_color 
-    c = data.cmap(data.norm(y))
+    c = cmap(norm(y))
     c_hex = np.array([mpl.colors.to_hex(_) for _ in c])
 
     # node color, size
