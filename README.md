@@ -9,6 +9,7 @@ DyNeuSR is a Python visualization library for topological representations of neu
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
 <img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/mapper_stages.png">
+</a>
 </p>
 	
 
