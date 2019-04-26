@@ -225,19 +225,40 @@ def get_cover_cubes(lens=None, graph=None, cover=None, scale=False, **kwargs):
     cover = cover
     ids = np.arange(len(lens)).reshape(-1, 1)
     ilens = np.c_[ids, lens]
-    bins = [tuple(_) for _ in cover.define_bins(ilens)]
+
+    try:
+        # new Cover API from kmapper==1.2.0
+        bins = [tuple(_) for _ in cover.centers_]
+        chunk_dist = cover.radius_
+        overlap_dist = cover.inset_
+        d = cover.bounds_
+
+        # transform each node
+        cover_cubes = {}
+        for i, cube in enumerate(bins):
+            # Compute bounds
+            lower = d + (cube * chunk_dist)
+            upper = lower + chunk_dist + overlap_dist
+            cover_cubes[tuple(cube)] = np.r_['0,2', lower, upper]
+
+    except:
+        # support deprecated Cover API from kmapper==1.1.6
+        bins = [tuple(_) for _ in cover.define_bins(ilens)]
+        chunk_dist = cover.chunk_dist
+        overlap_dist = cover.overlap_dist
+        d = cover.d
     
-    chunk_dist = cover.chunk_dist
-    overlap_dist = cover.overlap_dist
-    d = cover.d
-    
-    # plot for testing
-    cover_cubes = {}
-    for i, cube in enumerate(bins):
-        # Compute bounds
-        lower = d + (cube * chunk_dist)
-        upper = lower + chunk_dist + overlap_dist
-        cover_cubes[tuple(cube)] = np.r_['0,2', lower, upper]
+        # plot for testing
+        cover_cubes = {}
+        for i, cube in enumerate(bins):
+            # Compute bounds
+            lower = d + (cube * chunk_dist)
+            upper = lower + chunk_dist + overlap_dist
+            cover_cubes[tuple(cube)] = np.r_['0,2', lower, upper]
+
+        # reindex by node
+        coords = {n: tuple(graph['meta_nodes'][n]["coordinates"]) for n in graph["nodes"]}
+        cover_cubes = {n: cover_cubes[coords[n]] for n in graph["nodes"]}
 
     if scale:
         try:
@@ -251,12 +272,6 @@ def get_cover_cubes(lens=None, graph=None, cover=None, scale=False, **kwargs):
             _ = scaler.transform(cover_cubes[cube])
             cover_cubes[cube] = _
 
-    # cubes
-    cover_cubes = cover_cubes
-    
-    # reindex by node
-    coords = {n: tuple(graph['meta_nodes'][n]["coordinates"]) for n in graph["nodes"]}
-    cover_cubes = {n: cover_cubes[coords[n]] for n in graph["nodes"]}
     return cover_cubes
 
 
@@ -381,6 +396,8 @@ def visualize_mapper_stages(data, lens, cover, graph, dG, **kwargs):
                 node_color=node_color, node_size=node_size, 
                 edge_color=edge_color, width=edge_size, 
                 alpha=1.0, ax=axes[3])
+    axes[3].set_xlim(axes[2].get_xlim())
+    axes[3].set_ylim(axes[2].get_ylim())
     axes[3].axis('off')
 
 
