@@ -1,4 +1,7 @@
 import webbrowser
+import matplotlib
+matplotlib.use("WebAgg")
+import matplotlib.pyplot as plt
 
 import numpy as np 
 import pandas as pd
@@ -11,6 +14,7 @@ from sklearn.manifold import TSNE
 from sklearn.cluster import DBSCAN
 
 from dyneusr import DyNeuGraph
+from dyneusr.tools import visualize_mapper_stages
 
 # Fetch dataset, extract time-series from ventral temporal (VT) mask
 dataset = fetch_haxby()
@@ -23,8 +27,9 @@ masker = NiftiMasker(
 X = masker.fit_transform(dataset.func[0])
 
 # Encode labels as integers
-y = pd.read_csv(dataset.session_target[0], sep=" ")
-y = pd.DataFrame({_:y.labels.eq(_) for _ in np.unique(y.labels)})
+df = pd.read_csv(dataset.session_target[0], sep=" ")
+target, labels = pd.factorize(df.labels.values)
+y = pd.DataFrame({l:(target==i).astype(int) for i,l in enumerate(labels)})
 
 # Generate shape graph using KeplerMapper
 mapper = KeplerMapper(verbose=1)
@@ -35,9 +40,16 @@ graph = mapper.map(
     clusterer=DBSCAN(eps=20.)
     )
 
+# Visualize the stages of Mapper
+fig, axes = visualize_mapper_stages(
+	dataset, y=target, lens=lens, graph=graph, cover=mapper.cover, 
+	node_size=20, edge_size=0.5, edge_color='gray',
+	layout="kamada_kawai",  figsize=(16, 3)
+	)
+plt.savefig("mapper_stages.png")
+plt.show()
+
 # Visualize the shape graph using DyNeuSR's DyNeuGraph
 dG = DyNeuGraph(G=graph, y=y)
 dG.visualize('dyneusr_haxby_decoding.html', port=8800)   
-
-# Explore/interact with the visualization in your browser
 webbrowser.open(dG.HTTP.url)

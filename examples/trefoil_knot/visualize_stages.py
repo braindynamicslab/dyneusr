@@ -1,5 +1,5 @@
-import matplotlib as mpl
-mpl.use("WebAgg")
+import matplotlib
+matplotlib.use("WebAgg")
 import matplotlib.pyplot as plt
 
 from dyneusr import DyNeuGraph
@@ -18,16 +18,9 @@ lens = mapper.fit_transform(X, projection=[0, 1])
 graph = mapper.map(lens, X, nr_cubes=4, overlap_perc=0.3)
 
 # Visualize the stages of Mapper
-_ = visualize_mapper_stages(
-	dataset, lens=lens, 
-	graph=graph, cover=mapper.cover, 
-	node_size=300, edge_size=0.5, edge_color='gray',
-	layout="spectral",  figsize=(16, 3),
-	)
-
-# Save
+fig, axes = visualize_mapper_stages(
+	dataset, y=y, lens=lens, graph=graph, cover=mapper.cover, 
+	layout="spectral")
 plt.savefig("mapper_stages.png")
-
-# Show 
 plt.show()
 
