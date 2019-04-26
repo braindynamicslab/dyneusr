@@ -228,20 +228,17 @@ def get_cover_cubes(lens=None, graph=None, cover=None, scale=False, **kwargs):
 
     try:
         # new Cover API from kmapper==1.2.0
-        bins = [tuple(_) for _ in cover.centers_]
-        chunk_dist = cover.radius_
-        overlap_dist = cover.inset_
-        d = cover.bounds_
-
+        bins = np.copy(cover.centers_)
+    
         # transform each node
         cover_cubes = {}
-        for i, cube in enumerate(bins):
-            # Compute bounds
-            lower = d + (cube * chunk_dist)
-            upper = lower + chunk_dist + overlap_dist
-            cover_cubes[tuple(cube)] = np.r_['0,2', lower, upper]
+        for i, center in enumerate(cover.centers_):
+            lower = center - cover.radius_
+            upper = center + cover.radius_
+            cover_cubes[tuple(center)] = np.r_['0,2', lower, upper]
 
-    except:
+    except Exception as e:
+
         # support deprecated Cover API from kmapper==1.1.6
         bins = [tuple(_) for _ in cover.define_bins(ilens)]
         chunk_dist = cover.chunk_dist
@@ -275,7 +272,7 @@ def get_cover_cubes(lens=None, graph=None, cover=None, scale=False, **kwargs):
     return cover_cubes
 
 
-def draw_cover(ax=None, cover_cubes=None, draw_all=False, max_draw=2, **kwargs):
+def draw_cover(ax=None, cover_cubes=None, draw_all=True, max_draw=2, **kwargs):
     """ Add cover to scatter plot of projection/lens.
     """
     if ax is None:
@@ -288,14 +285,6 @@ def draw_cover(ax=None, cover_cubes=None, draw_all=False, max_draw=2, **kwargs):
 
     if cover_cubes is None:
         cover_cubes = get_cover_cubes(**kwargs)
-
-    # plot
-    cmaps = [#lambda _: "cyan", lambda _: "deeppink"]
-            #plt.get_cmap("Purples_r"), plt.get_cmap("Purples_r")]
-            plt.get_cmap("bone")]*2# forDark2"), plt.get_cmap("Dark2")]
-
-    axspan_funcs = [ax.axvspan, ax.axhspan]
-    axline_funcs = [ax.axvline, ax.axhline]
 
     # extract bins (TODO: probably a better way to do this)
     bins = np.vstack([_ for cube,_ in cover_cubes.items()])
@@ -312,27 +301,35 @@ def draw_cover(ax=None, cover_cubes=None, draw_all=False, max_draw=2, **kwargs):
     hypercubes = np.copy(bins)
 
     # draw
-    max_draw = 2
     if draw_all is True:
         max_draw = len(hypercubes)
-    norm = mpl.colors.Normalize(0, 1)
+    #if max_draw >= len(hypercubes)-2:
+    #    max_draw = len(hypercubes)
+    cmaps = [plt.get_cmap("jet")] * 2
+    axspan_funcs = [ax.axhspan, ax.axvspan]
+    axline_funcs = [ax.axhline, ax.axvline]
+
+    norm = mpl.colors.Normalize(hypercubes.min(), hypercubes.max())
     #norm = mpl.colors.Normalize(-0.3*max_draw, 0.3*max_draw)
     #norm = mpl.colors.Normalize(0, len(hypercubes)-2)#max_draw)
-    d = hypercubes[1,:] - hypercubes[0,:]
-    hypercubes = np.vstack([hypercubes, hypercubes[-1:, :] + d])
+    d = (hypercubes[1,:] - hypercubes[0,:]) 
+    #hypercubes = np.vstack([hypercubes, hypercubes[-1:, :] + d])
     for i, hypercube in enumerate(hypercubes[:]):
+        if i+1 == len(hypercubes):
+            continue
         for di, (axspan, axline) in enumerate(zip(axspan_funcs,axline_funcs)):
             if di >= len(hypercubes[i]):
                 continue
-            c = cmaps[di](norm(0.4+0.3*int(i%2>0)))
-            alpha = 1.0
+            #c = cmaps[di](norm(0.4+0.3*int(i%2>0)))
+            c = cmaps[di](norm(hypercubes[i, di]))
+            alpha = 0.25 + (.5 * int((i+1)%2==0))
             zo = i + 1
-            if max_draw == 2 and (i < 2 or i > 3):
-                alpha=0.2 
-                zo = 0
-            axspan(hypercubes[i,di], hypercubes[i,di]+d[di], alpha=0.1*alpha, fc=c, zorder=zo)
+            #if max_draw == 2 and (i < 2 or i > 3):
+            #    alpha=0.2 
+            #    zo = 0
+            axspan(hypercubes[i,di], hypercubes[i+1,di], alpha=0.25*alpha, fc=c, zorder=zo)
             axline(hypercubes[i,di], alpha=alpha, c=c, zorder=zo**2)
-            axline(hypercubes[i,di]+d[di], alpha=alpha, c=c, zorder=zo**2+zo)
+            axline(hypercubes[i+1,di], alpha=alpha, c=c, zorder=zo**2+zo)
     
 
 
@@ -426,7 +423,7 @@ def visualize_mapper_stages(data, y=None, lens=None, cover=None, graph=None, dG=
 
     # 1. draw lens (axes: 1-3)
     for ax in axes[:3]:
-        ax.scatter(*lens2D.T, c=c)
+        ax.scatter(*lens2D.T, c=c, zorder=100)
 
     # 2. draw cover (axes: 2)
     draw_cover(ax=axes[1], graph=graph, lens=lens2D, cover=cover)
