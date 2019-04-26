@@ -45,32 +45,6 @@ dataset = make_trefoil(size=100)
 X = dataset.data
 y = dataset.target
 
-# Generate shape graph using KeplerMapper
-mapper = KeplerMapper(verbose=1)
-lens = mapper.fit_transform(X, projection=[0, 1])
-graph = mapper.map(lens, X, nr_cubes=4, overlap_perc=0.3)
-
-# Visualize the stages of Mapper
-fig, axes = visualize_mapper_stages(
-	dataset, y=y, lens=lens, graph=graph, cover=mapper.cover, 
-	layout="spectral")
- 
-# Visualize the shape graph using DyNeuSR's DyNeuGraph                          
-dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_output.html')
-
-```
-
-<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
-<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_stages.png">
-</a></p>
-
-
-
-### Mapper comparisons ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot))
-
-```python
-
 # Define projections to compare
 projections = ([0], [0,1], [1,2], [0, 2])
 
@@ -94,6 +68,25 @@ for projection in projections:
 <img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_lens_0_1.png">
 <img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_lens_0_2.png">
 <img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_lens_1_2.png">
+</a></p>
+
+
+
+```python
+
+# Generate shape graph using KeplerMapper
+mapper = KeplerMapper(verbose=1)
+lens = mapper.fit_transform(X, projection=[0, 1])
+graph = mapper.map(lens, X, nr_cubes=4, overlap_perc=0.3)
+
+# Visualize the shape graph using DyNeuSR's DyNeuGraph                          
+dG = DyNeuGraph(G=graph, y=y)
+dG.visualize('dyneusr_output.html')
+
+```
+
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/dyneusr_trefoil_knot.png">
 </a></p>
 
 
