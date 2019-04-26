@@ -4,13 +4,13 @@
 
 # **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
 
-DyNeuSR is a Python visualization library for topological representations of neuroimaging data. 
-
-[DyNeuSR](https://braindynamicslab.github.io/dyneusr/) connects the Mapper algorithm (e.g. [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g. [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g. [Nilearn](https://nilearn.github.io/)). It provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
-
 <p align="center">
 <img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/mapper_stages.png">
 </p>
+
+DyNeuSR is a Python visualization library for topological representations of neuroimaging data. 
+
+[DyNeuSR](https://braindynamicslab.github.io/dyneusr/) connects the Mapper algorithm (e.g. [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g. [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g. [Nilearn](https://nilearn.github.io/)). It provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
 
 This package was designed specifically for working with shape graphs produced by the Mapper algorithm from topological data analysis (TDA) as described in the paper ["Towards a new approach to reveal dynamical organization of the brain using topological data analysis"](https://www.nature.com/articles/s41467-018-03664-4) (Saggar et al., 2018). See this [blog post](https://bdl.stanford.edu/blog/tda-cme-paper/) for more about the initial work that inspired the development of DyNeuSR. 
 
@@ -26,10 +26,7 @@ For now, Jupyter notebooks are available [here](https://github.com/braindynamics
 
 ## Examples
 
-The documentation will include several [examples](https://github.com/braindynamicslab/dyneusr/blob/master/examples/) that introduce and highlight different aspects of DyNeuSR. 
-
-For more detailed tutorials, see the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
-
+The documentation will include several [examples](https://github.com/braindynamicslab/dyneusr/blob/master/examples/) that introduce and highlight different aspects of DyNeuSR. For more detailed tutorials, see the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 
 ### Basic usage ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot))
