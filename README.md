@@ -6,17 +6,15 @@
 
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data. 
 
-[DyNeuSR](https://braindynamicslab.github.io/dyneusr/) connects the Mapper algorithm (e.g., [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g., [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g., [Nilearn](https://nilearn.github.io/)). It provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
-
 <p align="center">
 <img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/mapper_stages.png">
 </p>
 
+[DyNeuSR](https://braindynamicslab.github.io/dyneusr/) connects the Mapper algorithm (e.g., [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g., [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g., [Nilearn](https://nilearn.github.io/)). It provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
+
 This package was designed specifically for working with shape graphs produced by the Mapper algorithm from topological data analysis (TDA) as described in the paper ["Towards a new approach to reveal dynamical organization of the brain using topological data analysis"](https://www.nature.com/articles/s41467-018-03664-4) (Saggar et al., 2018). See this [blog post](https://bdl.stanford.edu/blog/tda-cme-paper/) for more about the initial work that inspired the development of DyNeuSR. 
 
-<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding/haxby_decoding.py">
-<img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/dyneusr_haxby_decoding.png">
-</a></p>
+
 
 ## Documentation
 
@@ -34,7 +32,6 @@ For more detailed tutorials, see the [dyneusr-notebooks](https://github.com/brai
 
 
 ### Basic usage ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot))
-
 
 ```python
 
@@ -60,18 +57,36 @@ fig, axes = visualize_mapper_stages(
  
 # Visualize the shape graph using DyNeuSR's DyNeuGraph                          
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_trefoil_knot.html')
+dG.visualize('dyneusr_output.html')
 
 ```
+
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/mapper_stages.png">
+</a></p>
+
 
 
 ### Mapper comparisons ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot))
 
 ```python
-# Visualize the stages of Mapper
-fig, axes = visualize_mapper_stages(
-	dataset, y=y, lens=lens, graph=graph, cover=mapper.cover, 
-	layout="spectral")
+
+# Define projections to compare
+projections = ([0], [0,1], [1,2], [0, 2])
+
+# Compare different sets of columns as lenses
+for projection in projections:
+
+	# Generate shape graph using KeplerMapper
+	mapper = KeplerMapper(verbose=1)
+	lens = mapper.fit_transform(X, projection=projection)
+	graph = mapper.map(lens, X, nr_cubes=4, overlap_perc=0.3)
+
+	# Visualize the stages of Mapper
+	fig, axes = visualize_mapper_stages(
+		dataset, lens=lens, graph=graph, cover=mapper.cover, 
+		layout="spectral")
+		
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
@@ -86,9 +101,40 @@ fig, axes = visualize_mapper_stages(
 ### Neuroimaging examples ([haxby decoding](https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding))
 
 ```python
+
+import numpy as np 
+import pandas as pd
+
+from nilearn.datasets import fetch_haxby
+from nilearn.input_data import NiftiMasker
+
+from kmapper import KeplerMapper, Cover
+from sklearn.manifold import TSNE
+from sklearn.cluster import DBSCAN
+
+# Fetch dataset, extract time-series from ventral temporal (VT) mask
+dataset = fetch_haxby()
+masker = NiftiMasker(
+    dataset.mask_vt[0], 
+    standardize=True, detrend=True, smoothing_fwhm=4.0,
+    low_pass=0.09, high_pass=0.008, t_r=2.5,
+    memory="nilearn_cache")
+X = masker.fit_transform(dataset.func[0])
+
+# Encode labels as integers
+df = pd.read_csv(dataset.session_target[0], sep=" ")
+target, labels = pd.factorize(df.labels.values)
+y = pd.DataFrame({l:(target==i).astype(int) for i,l in enumerate(labels)})
+
+# Generate shape graph using KeplerMapper
+mapper = KeplerMapper(verbose=1)
+lens = mapper.fit_transform(X, projection=TSNE(2))
+graph = mapper.map(lens, X, cover=Cover(20, 0.5), clusterer=DBSCAN(eps=20.))
+
 # Visualize the shape graph using DyNeuSR's DyNeuGraph                          
 dG = DyNeuGraph(G=graph, y=y)
 dG.visualize('dyneusr_output.html')
+
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding/haxby_decoding.py">
