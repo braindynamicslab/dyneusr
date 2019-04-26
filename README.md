@@ -57,6 +57,10 @@ webbrowser.open(dG.HTTP.url)
 
 ```
 
+<p align="center">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/trefoil_knot/dyneusr_trefoil_knot.png">
+</p>
+
 
 ### Neuroimaging example ([haxby decoding](https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding))
 
@@ -107,6 +111,10 @@ dG.visualize('dyneusr_haxby_decoding.html', port=8800)
 webbrowser.open(dG.HTTP.url)
 
 ```
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/dyneusr_haxby_decoding.png">
+</p>
 
 
 
