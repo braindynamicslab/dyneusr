@@ -29,7 +29,7 @@ The documentation will have an [example gallery](https://github.com/braindynamic
 For more detailed examples, see these [notebook tutorials](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 
-### Basic usage (trefoil knot)
+### Basic usage ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot))
 
 ```python
 
@@ -58,7 +58,7 @@ webbrowser.open(dG.HTTP.url)
 ```
 
 
-### Neuroimaging example (haxby decoding)
+### Neuroimaging example ([haxby decoding](https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding))
 
 ```python
 
@@ -78,7 +78,12 @@ from dyneusr import DyNeuGraph
 
 # Fetch dataset, extract time-series from ventral temporal (VT) mask
 dataset = fetch_haxby()
-masker = NiftiMasker(dataset.mask_vt[0], memory="nilearn_cache")
+masker = NiftiMasker(
+    dataset.mask_vt[0], 
+    standardize=True, detrend=True, smoothing_fwhm=4.0,
+    low_pass=0.09, high_pass=0.008, t_r=2.5,
+    memory="nilearn_cache"
+    )
 X = masker.fit_transform(dataset.func[0])
 
 # Encode labels as integers
@@ -88,7 +93,11 @@ y = pd.DataFrame({_:y.labels.eq(_) for _ in np.unique(y.labels)})
 # Generate shape graph using KeplerMapper
 mapper = KeplerMapper(verbose=1)
 lens = mapper.fit_transform(X, projection=TSNE(2))
-graph = mapper.map(lens, X, cover=Cover(10, 0.5), clusterer=DBSCAN(eps=5.))
+graph = mapper.map(
+    lens, X=X, 
+    cover=Cover(20, 0.5), 
+    clusterer=DBSCAN(eps=20.)
+    )
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph
 dG = DyNeuGraph(G=graph, y=y)
