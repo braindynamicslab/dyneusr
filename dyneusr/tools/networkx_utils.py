@@ -423,7 +423,7 @@ def visualize_mapper_stages(data, y=None, lens=None, cover=None, graph=None, dG=
 
     # 1. draw lens (axes: 1-3)
     for ax in axes[:3]:
-        ax.scatter(*lens2D.T, c=c, s=node_size*.1, zorder=100)
+        ax.scatter(*lens2D.T, c=c, s=np.max(node_size)*.1, zorder=100)
 
     # 2. draw cover (axes: 2)
     draw_cover(ax=axes[1], graph=graph, lens=lens2D, cover=cover)
