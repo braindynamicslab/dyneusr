@@ -78,7 +78,7 @@ from dyneusr import DyNeuGraph
 
 # Fetch dataset, extract time-series from ventral temporal (VT) mask
 dataset = fetch_haxby()
-masker = NiftiMasker(dataset.mask_vt[0], standardize=True)
+masker = NiftiMasker(dataset.mask_vt[0], memory="nilearn_cache")
 X = masker.fit_transform(dataset.func[0])
 
 # Encode labels as integers
