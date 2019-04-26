@@ -6,7 +6,7 @@
 
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data. 
 
-<p align="center">
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot">
 <img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/mapper_stages.png">
 </p>
 
@@ -29,6 +29,7 @@ For now, Jupyter notebooks are available [here](https://github.com/braindynamics
 The documentation will include several [examples](https://github.com/braindynamicslab/dyneusr/blob/master/examples/) that introduce and highlight different aspects of DyNeuSR. 
 
 For more detailed tutorials, see the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
+
 
 
 ### Basic usage ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot))
@@ -91,6 +92,8 @@ for projection in projections:
 </a></p>
 
 
+
+
 ### Neuroimaging examples ([haxby decoding](https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding))
 
 ```python
@@ -130,7 +133,7 @@ dG.visualize('dyneusr_output.html')
 
 ```
 
-<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding/haxby_decoding.py">
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding">
 <img src="https://raw.github.com/braindynamicslab/dyneusr/master/examples/haxby_decoding/dyneusr_haxby_decoding.png">
 </a></p>
 
