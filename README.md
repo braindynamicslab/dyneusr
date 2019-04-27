@@ -18,8 +18,7 @@ This package was designed specifically for working with shape graphs produced by
 
 
 
-
-## References:
+## References
 
 > Geniesse, C., Sporns, O., Petri, G., Saggar, M. (in press). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://web.stanford.edu/group/bdl/papers/geniesse-dyneusr/). *Network Neuroscience*.
 >
@@ -145,7 +144,7 @@ Online documentation (*coming soon*) will include more details about how to inst
 
 ### Dependencies
 
-- Python 3.6 (*This package has only been tested with Python 3.6!*)
+- Python 3.6
 
 The following Python packages are required:
 
@@ -166,8 +165,6 @@ For the full list of packages and required versions, see [`requirements.txt`](./
 
 If your default environment is Python 2, we recommend that you install `dyneusr` in a separate Python 3 environment. 
 
-You can find more information about creating a separate environment for Python 3, [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). If you don't have conda, or are new to scientific python, we recommend that you download the [Anaconda scientific python distribution](https://store.continuum.io/cshop/anaconda/). 
-
 To create a new conda environment and install from source:
 ```bash
 conda create -n dyneusr python=3.6
@@ -184,10 +181,13 @@ pytest
 
 This creates a new conda environment `dyneusr` and installs in it the dependencies that are needed. To access it, use the `conda activate dyneusr` command (if your conda version >= 4.4) and use `source activate dyneusr` command (if your conda version < 4.4).
 
+You can find more information about creating a separate environment for Python 3, [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). If you don't have conda, or are new to scientific python, we recommend that you download the [Anaconda scientific python distribution](https://store.continuum.io/cshop/anaconda/). 
+
+
+
 ### Installing from source with pip
 
 Installing from source with pip is simple. In a command prompt:
-
 ```bash
 git clone https://github.com/braindynamicslab/dyneusr.git
 cd dyneusr
