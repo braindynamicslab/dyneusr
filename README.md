@@ -18,7 +18,19 @@ This package was designed specifically for working with shape graphs produced by
 
 
 
+### References
+
+> Geniesse, C., Sporns, O., Petri, G., Saggar, M. (in press). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://web.stanford.edu/group/bdl/papers/geniesse-dyneusr/). *Network Neuroscience*.
+
+> Saggar, M., Sporns, O., Gonzalez-Castillo, J., Bandettini, P.A., Carlsson, G., Glover, G., Reiss, A.L. (2018). [Towards a new approach to reveal dynamical organization of the brain using topological data analysis](https://www.nature.com/articles/s41467-018-03664-4). *Nature Communications*. doi:10.1038/s41467-018-03664-4
+
+
+
 ## Examples
+
+This package includes several [examples](./examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. 
+
+For more detailed tutorials, checkout the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 ### Basic usage ([trefoil knot](./examples/trefoil_knot))
 
@@ -127,19 +139,9 @@ dG.visualize('dyneusr_output.html')
 
 
 
-
-
-## Documentation
+## Setup
 
 Online documentation (*coming soon*) will include more details about how to install and get started with DyNeuSR.
-
-The documentation will include several [examples](./examples/) to introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. 
-
-For more detailed tutorials, checkout the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
-
-
-
-## Setup
 
 ### Dependencies
 
