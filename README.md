@@ -132,7 +132,9 @@ dG.visualize('dyneusr_output.html')
 
 ## Documentation
 
-Online documentation (*coming soon*) will include more details about how to install and get started with DyNeuSR. The documentation will include several [examples](./examples/) to introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. 
+Online documentation (*coming soon*) will include more details about how to install and get started with DyNeuSR.
+
+The documentation will include several [examples](./examples/) to introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. 
 
 For more detailed tutorials, checkout the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
