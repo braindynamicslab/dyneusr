@@ -19,16 +19,6 @@ This package was designed specifically for working with shape graphs produced by
 
 
 
-## Documentation
-
-Online documentation will include detailed API documentation, Jupyter notebook examples and tutorials, and other useful information. (*coming soon*)
-
-The documentation will include several [examples](./examples/) that introduce and highlight different aspects of DyNeuSR. 
-
-For more detailed tutorials, see the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
-
-
-
 ## Examples
 
 ### Basic usage ([trefoil knot](./examples/trefoil_knot))
@@ -137,6 +127,14 @@ dG.visualize('dyneusr_output.html')
 </a></p>
 
 
+
+
+
+## Documentation
+
+Online documentation (*coming soon*) will include more details about how to install and get started with DyNeuSR. The documentation will include several [examples](./examples/) to introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. 
+
+For more detailed tutorials, checkout the [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 
 
