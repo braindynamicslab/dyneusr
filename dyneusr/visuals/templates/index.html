@@ -9,7 +9,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
-
+  <script src="https://cdn.rawgit.com/eligrey/canvas-toBlob.js/f1a01896135ab378aa5c0118eadd81da55e698d8/canvas-toBlob.js"></script>
+  <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
 <style>   
   body {
     font-family: "Roboto Mono", "Helvetica", sans-serif;
@@ -269,7 +270,7 @@
     background-color: transparent;
     width:100%;
   }
-
+  
   #node-meta table,
   #node-meta tr,
   #node-meta td {
@@ -294,8 +295,9 @@
       </div>
     </div>
     <ul class="nav navbar-nav navbar-right">
-        <li><a href="#" onclick="toggle_display_mode();">DARK</a></li>
-        <li><a href="#" onclick="toggle_meta();">META</span></a></li>
+        <li><a href="#" id="toggle_save_as">SAVE</a></li>
+        <li><a href="#" id="toggle_display_mode" onclick="toggle_display_mode();">MODE</a></li>
+        <li><a href="#" id="toggle_meta" onclick="toggle_meta();">META</span></a></li>
     </ul>
   </div>
 
@@ -347,7 +349,7 @@ function zoom() {
 };
   
 
-var color_palettes = {    
+var color_palettes = {
     'kepler3': ['#0500ff', '#65ff00', '#ff0000'],
     'kepler5': ['#0500ff', '#00a4ff', '#65ff00', '#ff8c00', '#ff0000'],
     'kepler15': ['#0500ff', '#0100ff', '#0022ff', '#0064ff', '#00a4ff', 
@@ -432,6 +434,7 @@ function draw_force(data) {
 
   
   var svg = div.append("svg")
+    .attr("id", "svg")
     .attr("class", "graph")
     .attr("width", "100%")
     .attr("height", height)
@@ -479,7 +482,6 @@ function draw_force(data) {
   ////////////////////////////////////////////////////
   var w = Math.round(width * 1);
   var h = Math.round(height * 1);
-  console.log(w, h);
 
   var force = d3.layout.force()
       .gravity(0.2)
@@ -577,6 +579,7 @@ function draw_force(data) {
       color_labels[k] = json.graph.label[k]
     })
   }
+
   var color_label = d3.scale.ordinal()
             .domain(color_labels[color_by])
             .range(color.range());
@@ -706,17 +709,16 @@ function draw_force(data) {
       .text(function (d) {console.log(d); return d;})
       .property("selected", function(d){ return d === color_palette_key; });
 
-  // TODO: Un-comment below to add movie button
-  //
-  //var button_movie = d3.select('#graph-meta')
-  //  .append("div")
-  //    .html("<h4>Movie</h4>")
-  //  .append("div")
-  //    .attr("class", "well")
-  //    .attr('id', 'button-movie')
-  //.append('button')
-  //  .attr('class', 'menu-button')
-  //  .text('Play')
+  // TODO: use something like this to select from csv the graph to display
+  var button_movie = d3.select('#graph-meta')
+    .append("div")
+      .html("<h4>Movie</h4>")
+    .append("div")
+      .attr("class", "well")
+      .attr('id', 'button-movie')
+  .append('button')
+    .attr('class', 'menu-button')
+    .text('Play')
 
   
   
@@ -964,7 +966,7 @@ function draw_force(data) {
     button_movie.text('Pause');
 
     // movie length
-    var n_nodes = d3.max(node.each(function(d,i) {return i+1}));
+    var n_nodes = data_size; //d3.max(node.each(function(d,i) {return i+1}));
     var frame_duration = 0.2 * 1000; // 1 fps = 20 / 2
     var duration = frame_duration * n_nodes;
 
@@ -978,10 +980,13 @@ function draw_force(data) {
       
       // loop over nodes and focus the focus node
       node.each(function(d, i) {
-        if (i == focus_i) {
-          set_highlight(d);
-          set_focus(d);
-        }
+        d.members.map(function(dd, ii) {
+          if (focus_i == dd) {
+            console.log("[movie] TR="+dd+", NodeID="+d.index);
+            set_highlight(d);
+            set_focus(d);
+          }
+        })
       })
     
       if (movie_playing === false) {
@@ -1004,14 +1009,14 @@ function draw_force(data) {
 
   }
   
-
+  
   ////////////////////////////////////////////////////
   //// SVG width/heigh
   ////////////////////////////////////////////////////     
   svg.width = function(value) {
       if (!arguments.length) return width;
       width = value;
-      return self;
+      return svg;
   };
 
   svg.height = function(value) {
@@ -1020,19 +1025,54 @@ function draw_force(data) {
       return svg;
   };
 
+
+  ////////////////////////////////////////////////////
+  //// SVG saving
+  ////////////////////////////////////////////////////     
+  d3.select("a#toggle_save_as").on('click', function(){
+      toggle_save_as(svg.node(), source, 'svg');
+  });
+  ////////////////////////////////////////////////////     
+  ////////////////////////////////////////////////////
+
   return svg;
 };
 
 
 
+////////////////////////////////////////////////////
+//// SVG saving
+//////////////////////////////////////////////////// 
+function toggle_save_as(svg, source, format) {  
+  // check inputs
+  var format = format ? format : 'svg';
+  var save_as = source.replace(/.*\//, '')       // basename
+                      .replace(/json/g, format); // ext
+  // save as svg
+  console.log("Saving...");
+  console.log("format: "+format);
+  save_as_svg(svg, save_as);
+  console.log("saved: "+save_as);
+}
 
+function save_as_svg(svg, save_as){
+  var svg_head = '<svg title="graph" version="1.1" xmlns="http://www.w3.org/2000/svg">';
+  var svg_style = '<style>.node, circle {cursor: pointer;stroke-width: 1.5px;}.link, path {stroke: #000;stroke-width: 1.5px;}</style>';
+  var svg_save = svg_head + svg_style + svg.innerHTML + "</svg>"
+  var blob = new Blob([svg_save], {type: "image/svg+xml"});  
+  saveAs(blob, save_as);
+};
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
 
 
 function toggle_display_mode() {
   if (d3.select("body").attr('id')=="dark") {
     d3.select("body").attr('id', null).attr('id', "light");
+    //d3.select("a#toggle_display_mode").html("NIGHT")
   } else {
     d3.select("body").attr('id', null).attr('id', "dark");
+    //d3.select("a#toggle_display_mode").html("LIGHT"); 
   }
 }
 

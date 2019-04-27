@@ -123,7 +123,7 @@ def http_server(port=None, host='localhost'):
 
 
     
-def visualize_force(js, template='movie', path_html='index.html', path_csv=None, path_json=None, path_graphs='graphs', path_assets=None, reset=True, static=False, show=True, figure=None, port=8000, **kwargs):
+def visualize_force(js, template=None, path_html='index.html', path_csv=None, path_json=None, path_graphs='graphs', path_assets=None, reset=True, static=False, show=True, figure=None, port=8000, **kwargs):
     """ Create index.html, index.csv, graphs/*.json
     """
     ### check for deprecated options
@@ -136,7 +136,7 @@ def visualize_force(js, template='movie', path_html='index.html', path_csv=None,
 
     ### Read template HTML
     file_template = 'index.html'
-    if template is not None:
+    if template and template not in ('movie',): 
         file_template = file_template.replace('.html', '-{}.html'.format(template))
     path_template = Path(__file__).resolve().parents[0] / 'templates' / file_template
     with open(str(path_template), 'r') as f:
