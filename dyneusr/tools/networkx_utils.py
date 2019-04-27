@@ -448,6 +448,7 @@ def visualize_mapper_stages(data, y=None, lens=None, cover=None, graph=None, dG=
     #### Finish
     for _ in axes:
         despine(_)
+    plt.tight_layout()
 
     return fig, axes
 

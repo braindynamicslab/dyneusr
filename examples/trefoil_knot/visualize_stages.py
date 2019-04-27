@@ -21,6 +21,6 @@ graph = mapper.map(lens, X, nr_cubes=4, overlap_perc=0.3)
 fig, axes = visualize_mapper_stages(
 	dataset, y=y, lens=lens, graph=graph, cover=mapper.cover, 
 	layout="spectral")
-plt.savefig("mapper_stages.png")
+plt.savefig("mapper_stages.png", dpi=600, background="transparent")
 plt.show()
 

@@ -33,7 +33,7 @@ y = pd.DataFrame({l:(target==i).astype(int) for i,l in enumerate(labels)})
 
 # Generate shape graph using KeplerMapper
 mapper = KeplerMapper(verbose=1)
-lens = mapper.fit_transform(X, projection=TSNE(2))
+lens = mapper.fit_transform(X, projection=TSNE(2, random_state=1))
 graph = mapper.map(
     lens, X=X, 
     cover=Cover(20, 0.5), 
@@ -44,9 +44,9 @@ graph = mapper.map(
 fig, axes = visualize_mapper_stages(
 	dataset, y=target, lens=lens, graph=graph, cover=mapper.cover, 
 	node_size=20, edge_size=0.5, edge_color='gray',
-	layout="kamada_kawai",  figsize=(16, 3)
+	layout="kamada_kawai",  figsize=(16, 4)
 	)
-plt.savefig("mapper_stages.png")
+plt.savefig("mapper_stages.png", dpi=600, background='transparent')
 plt.show()
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph

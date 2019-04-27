@@ -26,11 +26,12 @@ for projection in projections:
 	# Visualize the stages of Mapper
 	fig, axes = visualize_mapper_stages(
 		dataset, lens=lens, graph=graph, cover=mapper.cover, 
-		layout="spectral", figsize=(16, 3))
+		layout="spectral", figsize=(16, 4))
 
 	# Save each figure
-	plt.savefig("mapper_lens_{}.png".format(
-		"_".join(str(_) for _ in projection)))
+	plt.savefig(
+		"mapper_lens_{}.png".format("_".join(str(_) for _ in projection),
+		dpi=600, background='transparent')
 
 # Show all figures
 plt.show()
