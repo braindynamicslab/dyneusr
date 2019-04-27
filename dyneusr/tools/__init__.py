@@ -1,13 +1,11 @@
 __all__ = [
     'graph_utils', 
     'mixture', 
-    'metrics',
     'networkx_utils', 
 ]
 
 from . import graph_utils
 from . import mixture
-from . import metrics
 from . import networkx_utils
 
 from .graph_utils import process_graph, extract_matrices
