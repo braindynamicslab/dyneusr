@@ -8,7 +8,7 @@
 </p>
 
 
-<h2 align="center"><b>Dy</b>namical <b>Neu</b>roimaging <b>S</b>patiotemporal <b>R</b>epresentations</h2>
+<h1 align="center"><b>Dy</b>namical <b>Neu</b>roimaging <b>S</b>patiotemporal <b>R</b>epresentations</h1>
 
 
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data. 
