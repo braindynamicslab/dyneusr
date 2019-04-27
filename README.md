@@ -163,7 +163,7 @@ For the full list of packages and required versions, see [`requirements.txt`](./
 
 ### Installing from source with conda
 
-If your default environment is Python 2, we recommend that you install `dyneusr` in a separate Python 3 environment. 
+If your default environment is Python 2, we recommend that you install `dyneusr` in a separate Python 3 environment. You can find more information about creating a separate environment for Python 3, [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). If you don't have conda, or are new to scientific python, we recommend that you download the [Anaconda scientific python distribution](https://store.continuum.io/cshop/anaconda/). 
 
 To create a new conda environment and install from source:
 ```bash
@@ -180,9 +180,6 @@ pytest
 ```
 
 This creates a new conda environment `dyneusr` and installs in it the dependencies that are needed. To access it, use the `conda activate dyneusr` command (if your conda version >= 4.4) and use `source activate dyneusr` command (if your conda version < 4.4).
-
-You can find more information about creating a separate environment for Python 3, [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). If you don't have conda, or are new to scientific python, we recommend that you download the [Anaconda scientific python distribution](https://store.continuum.io/cshop/anaconda/). 
-
 
 
 ### Installing from source with pip
