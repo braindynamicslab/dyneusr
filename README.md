@@ -216,7 +216,7 @@ Released under a BSD-3 license
 
 If you use DyNeuSR in your published work, please cite:
 
-> Geniesse, C., Sporns, O., Petri, G., Saggar, M. (in-press). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://web.stanford.edu/group/bdl/papers/geniesse-dyneusr/). *Network Neuroscience*.
+> Geniesse, C., Sporns, O., Petri, G., Saggar, M. (in press). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://web.stanford.edu/group/bdl/papers/geniesse-dyneusr/). *Network Neuroscience*.
 
 
 DyNeuSR was inspired by (and re-implements) the following papers:
