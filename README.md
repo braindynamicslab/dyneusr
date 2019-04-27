@@ -1,8 +1,9 @@
-## **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
-
 <p align="center">
 <img src="./docs/assets/logo.png" height="250">
 </p>
+
+
+<h2 align="center"><b>Dy</b>namical <b>Neu</b>roimaging <b>S</b>patiotemporal <b>R</b>epresentations</h2>
 
 
 <p align="center">
