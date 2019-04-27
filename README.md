@@ -4,11 +4,10 @@
 <img src="./docs/assets/logo.png" height="250">
 </p>
 
-<p align="center">
-<img src="./examples/haxby_decoding/mapper_stages.png">
-</p>
 
 # **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
+
+> ![]("./examples/haxby_decoding/mapper_stages.png")
 
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data.
 
@@ -209,4 +208,3 @@ If you're interested in contributing to DyNeuSR, please also refer to the [Contr
 If you use DyNeuSR in your published work, please cite:
 
 > Geniesse, C., Sporns, O., Petri, G., Saggar, M. (in press). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://web.stanford.edu/group/bdl/papers/geniesse-dyneusr/). *Network Neuroscience*.
-
