@@ -192,23 +192,11 @@ pip install -e .
 
 
 
-## Development
-
-All development happens here, on [GitHub](https://github.com/braindynamicslab/dyneusr/). Please feel free to report any issues and propose improvements. 
-
-If you're interested in contributing to DyNeuSR, please also refer to the [Contributing](./CONTRIBUTING.md) guide. 
-
-
-
 ## Support
 
-Please [submit](https://github.com/braindynamicslab/dyneusr/issues/new) any bugs or questions to the GitHub issue tracker.
+Please feel free to [report](https://github.com/braindynamicslab/dyneusr/issues/new) any issues, [request] (https://github.com/braindynamicslab/dyneusr/issues/new) new features, or [propose](https://github.com/braindynamicslab/dyneusr/compare) improvements.
 
-
-
-## License
-
-Released under a BSD-3 license
+If you're interested in contributing to DyNeuSR, please also refer to the [Contributing](./CONTRIBUTING.md) guide. 
 
 
 
