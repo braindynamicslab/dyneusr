@@ -20,7 +20,7 @@ graph = mapper.map(lens, X, nr_cubes=4, overlap_perc=0.3)
 # Visualize the stages of Mapper
 fig, axes = visualize_mapper_stages(
 	dataset, y=y, lens=lens, graph=graph, cover=mapper.cover, 
-	layout="spectral")
+	layout="spectral", figsize=(16, 4))
 plt.savefig("mapper_stages.png", dpi=600, background="transparent")
 plt.show()
 

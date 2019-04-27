@@ -6,7 +6,7 @@
 
 
 <p align="center">
-<img src="./docs/assets/mapper_stages.png">
+<img src="./examples/haxby_decoding/mapper_stages.png">
 </p>
 
 

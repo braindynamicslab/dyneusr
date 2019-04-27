@@ -30,7 +30,7 @@ for projection in projections:
 
 	# Save each figure
 	plt.savefig(
-		"mapper_lens_{}.png".format("_".join(str(_) for _ in projection),
+		"mapper_lens_{}.png".format("_".join(str(_) for _ in projection)),
 		dpi=600, background='transparent')
 
 # Show all figures

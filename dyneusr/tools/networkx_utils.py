@@ -447,8 +447,9 @@ def visualize_mapper_stages(data, y=None, lens=None, cover=None, graph=None, dG=
 
     #### Finish
     for _ in axes:
+        _.set_aspect('equal')
         despine(_)
-    plt.tight_layout()
+        fig.tight_layout(w_pad=2.0)
 
     return fig, axes
 
