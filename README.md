@@ -23,8 +23,7 @@ This package was designed specifically for working with shape graphs produced by
 
 
 ## References
-
-> Geniesse, C., Sporns, O., Petri, G., Saggar, M. (in press). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://web.stanford.edu/group/bdl/papers/geniesse-dyneusr/). *Network Neuroscience*.
+> Geniesse, C., Sporns, O., Petri, G., & Saggar, M. (2019). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093). *Network Neuroscience*. Advance publication. [doi:10.1162/netn_a_00093](https://doi.org/10.1162/netn_a_00093) 
 >
 > Saggar, M., Sporns, O., Gonzalez-Castillo, J., Bandettini, P.A., Carlsson, G., Glover, G., Reiss, A.L. (2018). [Towards a new approach to reveal dynamical organization of the brain using topological data analysis](https://www.nature.com/articles/s41467-018-03664-4). *Nature Communications*. doi:10.1038/s41467-018-03664-4
 
@@ -212,4 +211,4 @@ If you're interested in contributing to DyNeuSR, please also refer to the [Contr
 
 If you use DyNeuSR in your published work, please cite:
 
-> Geniesse, C., Sporns, O., Petri, G., Saggar, M. (in press). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://web.stanford.edu/group/bdl/papers/geniesse-dyneusr/). *Network Neuroscience*.
+> Geniesse, C., Sporns, O., Petri, G., & Saggar, M. (2019). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093). *Network Neuroscience*. Advance publication. [doi:10.1162/netn_a_00093](https://doi.org/10.1162/netn_a_00093)
