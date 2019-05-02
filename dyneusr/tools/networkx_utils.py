@@ -290,12 +290,12 @@ def draw_cover(ax=None, cover_cubes=None, draw_all=True, max_draw=2, **kwargs):
     bins = np.vstack([_ for cube,_ in cover_cubes.items()])
     if len(bins.T) < 2:
         ybins = np.ravel(sorted(set(bins[:, 0])))
-        bins = np.c_[ybins].reshape(-1, 1)
+        bins = ybins.reshape(1, -1)
     else:
         # assume 2D
         xbins = np.ravel(sorted(set(bins[:, 0])))
         ybins = np.ravel(sorted(set(bins[:, 1])))
-        bins = np.c_[xbins, ybins]
+        bins = np.asarray([xbins, ybins])
 
     # save as hypercubes
     hypercubes = np.copy(bins)
@@ -303,36 +303,32 @@ def draw_cover(ax=None, cover_cubes=None, draw_all=True, max_draw=2, **kwargs):
     # draw
     if draw_all is True:
         max_draw = len(hypercubes)
-    #if max_draw >= len(hypercubes)-2:
-    #    max_draw = len(hypercubes)
+    
+    # cmap, norm for each dimension
     cmaps = [plt.get_cmap("jet")] * 2
     axspan_funcs = [ax.axhspan, ax.axvspan]
     axline_funcs = [ax.axhline, ax.axvline]
+    norm = mpl.colors.Normalize(
+        np.min([np.min(_) for _ in hypercubes]), 
+        np.max([np.max(_) for _ in hypercubes])
+        ) 
 
-    norm = mpl.colors.Normalize(hypercubes.min(), hypercubes.max())
-    #norm = mpl.colors.Normalize(-0.3*max_draw, 0.3*max_draw)
-    #norm = mpl.colors.Normalize(0, len(hypercubes)-2)#max_draw)
-    d = (hypercubes[1,:] - hypercubes[0,:]) 
-    #hypercubes = np.vstack([hypercubes, hypercubes[-1:, :] + d])
-    for i, hypercube in enumerate(hypercubes[:]):
-        if i+1 == len(hypercubes):
+    # loop over dimensions
+    for di, (axspan, axline) in enumerate(zip(axspan_funcs,axline_funcs)):
+        if di >= len(hypercubes):
             continue
-        for di, (axspan, axline) in enumerate(zip(axspan_funcs,axline_funcs)):
-            if di >= len(hypercubes[i]):
+
+        # draw bounds of each cube along this dimension
+        for i, hypercube in enumerate(hypercubes[di]):
+            if i+1 >= len(hypercubes[di]):
                 continue
-            #c = cmaps[di](norm(0.4+0.3*int(i%2>0)))
-            c = cmaps[di](norm(hypercubes[i, di]))
+            c = cmaps[di](norm(hypercubes[di][i]))
             alpha = 0.25 + (.5 * int((i+1)%2==0))
             zo = i + 1
-            #if max_draw == 2 and (i < 2 or i > 3):
-            #    alpha=0.2 
-            #    zo = 0
-            axspan(hypercubes[i,di], hypercubes[i+1,di], alpha=0.25*alpha, fc=c, zorder=zo)
-            axline(hypercubes[i,di], alpha=alpha, c=c, zorder=zo**2)
-            axline(hypercubes[i+1,di], alpha=alpha, c=c, zorder=zo**2+zo)
+            axspan(hypercubes[di][i], hypercubes[di][i+1], alpha=0.25*alpha, fc=c, zorder=zo)
+            axline(hypercubes[di][i], alpha=alpha, c=c, zorder=zo**2)
+            axline(hypercubes[di][i+1], alpha=alpha, c=c, zorder=zo**2+zo)
     
-
-
     # finish
     ax.set_xlim(xlim)
     ax.set_ylim(ylim)
@@ -385,15 +381,15 @@ def visualize_mapper_stages(data, y=None, lens=None, cover=None, graph=None, dG=
     # node color, size
     node_size = kwargs.get('node_size')
     if node_size is None:
-        node_scale_by = kwargs.get('node_scale_by', 20)
-        node_size = [node_scale_by*len(y[_]) for n,_ in G.nodes(data='members')]
+        node_scale_by = kwargs.get('node_scale_by', 5000)
+        node_size = [node_scale_by*(len(_) / len(y)) for n,_ in G.nodes(data='members')]
     node_color = [Counter(c_hex[_]).most_common()[0][0] for n,_ in G.nodes(data='members')]
 
 
     # edge color, size
     edge_size = kwargs.get('edge_size')
     if edge_size is None:
-        edge_scale_by = kwargs.get('edge_scale_by', 1)
+        edge_scale_by = kwargs.get('edge_scale_by', 0.5)
         edge_size = [edge_scale_by*_ for u,v,_ in G.edges(data='size')]
     edge_color = kwargs.get('edge_color')
     if edge_color is None:
@@ -416,14 +412,18 @@ def visualize_mapper_stages(data, y=None, lens=None, cover=None, graph=None, dG=
     #### Draw
     # ensure the lens is 2D
     lens2D = lens.copy()
-    if len(lens2D.T) < 2:
-        lens2D = np.c_[np.zeros_like(lens2D), lens2D] 
-    elif len(lens2D.T) > 2:
+    if len(lens.T) < 2:
+        lens2D = np.c_[np.zeros_like(lens) + lens.mean(), lens] 
+    elif len(lens.T) > 2:
         lens2D = lens2D[:, :2]
 
     # 1. draw lens (axes: 1-3)
     for ax in axes[:3]:
-        ax.scatter(*lens2D.T, c=c, s=np.max(node_size)*.1, zorder=100)
+        ax.scatter(*lens2D.T, c=c, s=np.max(node_size)*.05)
+        
+        # adjust xlim if 1D
+        if len(lens.T) < 2:
+            ax.set_xlim(lens.min(), lens.max())
 
     # 2. draw cover (axes: 2)
     draw_cover(ax=axes[1], graph=graph, lens=lens2D, cover=cover)
@@ -446,9 +446,16 @@ def visualize_mapper_stages(data, y=None, lens=None, cover=None, graph=None, dG=
 
 
     #### Finish
-    for _ in axes:
-        _.set_aspect('equal')
-        despine(_)
+    for ax in axes:
+
+        # despine, based on number of dimensions
+        if len(lens.T) > 1:
+            despine(ax, spines=['top','right'])
+        else:
+            despine(ax, spines=['top', 'right', 'bottom', 'left'])
+
+        # tight layout
+        ax.set_aspect('equal')
         fig.tight_layout(w_pad=2.0)
 
     return fig, axes
