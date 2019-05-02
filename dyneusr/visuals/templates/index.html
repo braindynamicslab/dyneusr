@@ -1030,7 +1030,7 @@ function draw_force(data) {
   //// SVG saving
   ////////////////////////////////////////////////////     
   d3.select("a#toggle_save_as").on('click', function(){
-      toggle_save_as(svg.node(), source, 'svg');
+      toggle_save_as(svg, source, 'svg');
   });
   ////////////////////////////////////////////////////     
   ////////////////////////////////////////////////////
@@ -1056,9 +1056,18 @@ function toggle_save_as(svg, source, format) {
 }
 
 function save_as_svg(svg, save_as){
-  var svg_head = '<svg title="graph" version="1.1" xmlns="http://www.w3.org/2000/svg">';
-  var svg_style = '<style>.node, circle {cursor: pointer;stroke-width: 1.5px;}.link, path {stroke: #000;stroke-width: 1.5px;}</style>';
-  var svg_save = svg_head + svg_style + svg.innerHTML + "</svg>"
+  var svg_head = '<svg'
+     + ' title="graph" version="1.1" xmlns="http://www.w3.org/2000/svg"'
+     + ' width="' + svg.width() + '" height="' + svg.height() + '"'
+     + ' style="margin:20%; overflow:visible;"'
+     + '>';
+  var svg_style = '<style>'
+     + ' .node, circle {cursor: pointer;stroke-width: 1.5px;}'
+     + ' .link, path {stroke: #000;stroke-width: 1.5px;}'
+     + '</style>';
+  var svg_save = '<svg>' 
+    + svg_head + svg_style + svg.node().innerHTML + '</svg>'
+    +'</svg>';
   var blob = new Blob([svg_save], {type: "image/svg+xml"});  
   saveAs(blob, save_as);
 };
