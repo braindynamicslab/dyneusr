@@ -79,7 +79,7 @@
       };
       const settings = new Settings();
       const gui = new dat.GUI();
-      const controller1 = gui.add(settings, 'num_dimensions',[1,2,3]);
+      const controller1 = gui.add(settings, 'num_dimensions',[0,1,2,3]);
       const controller2 = gui.add(settings, 'link_distance', [1,5,10,50,100]);
       const controller3 = gui.add(settings, 'color_by', color_by_options);
       controller1.onChange(updateNumDimensions);
