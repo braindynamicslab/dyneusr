@@ -60,7 +60,8 @@
           //.nodeColor(d => d.group[color_by] ? d.group[color_by] :0)
           .nodeOpacity(1)
           //.linkAutoColorBy('value')
-          .linkOpacity(1);
+          .linkOpacity(1)
+          .linkDirectionalParticles(2);
 
       const linkForce = force 
         .d3Force('link')
