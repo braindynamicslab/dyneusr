@@ -51,45 +51,96 @@
       var color_by = data.graph.color_by ? data.graph.color_by : color_by_options[0];
       console.log('color_by_options:', color_by_options);
       console.log('color_by:', color_by);
+ 
+      // empty
+      let highlightNodes = [];
+      let highlightLinks = [];
+      let highlightLink = null;
 
       // init graph
       const force = ForceGraph3D()
         (document.getElementById('3d-graph'))
           .graphData(data)
           .nodeAutoColorBy(d => d.group[color_by])
-          //.nodeColor(d => d.group[color_by] ? d.group[color_by] :0)
           .nodeOpacity(1)
-          //.linkAutoColorBy('value')
-          .linkOpacity(1);
+          .linkOpacity(.5)
+          .linkWidth(link => highlightLinks.indexOf(link) !== -1 ? 1 : 0.1)
+          .linkDirectionalParticles(link => highlightLinks.indexOf(link) !== -1 ? 3 : 0)
+          .linkDirectionalParticleWidth(1)
+          .onNodeHover(node => {
+            // no state change
+            if ((!node && !highlightNodes.length) || (highlightNodes.length === 1 && highlightNodes[0] === node)) return;
+            highlightNodes = node ? [node] : [];
+            highlightLinks = data.links.map(link => { 
+              if ((link.source === node) || (link.target === node)) {
+                return link;
+              }
+            })
+            updateGeometries();
+          })
+          .onLinkHover(link => {
+            // no state change
+            if (highlightLink === link) return;
+            highlightLink = link;
+            highlightLinks = [link];
+            highlightNodes = link ? [link.source, link.target] : [];
+            updateGeometries();
+          });
+
+      function updateGeometries() {
+        force.nodeRelSize(4); // trigger update of 3d objects in scene
+      }
 
       const linkForce = force 
         .d3Force('link')
         .distance(link => link.distance);
 
       
-
-
-
       //Define GUI
       const Settings = function() {
         this.num_dimensions = 3;
         this.link_distance = 1;
+        this.link_width = 0.1;
+        this.link_particles = 0;
         this.color_by = color_by; //'data_id';
       };
       const settings = new Settings();
       const gui = new dat.GUI();
       const controller1 = gui.add(settings, 'num_dimensions',[0,1,2,3]);
       const controller2 = gui.add(settings, 'link_distance', [1,5,10,50,100]);
-      const controller3 = gui.add(settings, 'color_by', color_by_options);
+      const controller3 = gui.add(settings, 'link_width', 0.1, 3);
+      const controller4 = gui.add(settings, 'link_particles',[0,1,2,3,4,5]);
+      const controller5 = gui.add(settings, 'color_by', color_by_options);
       controller1.onChange(updateNumDimensions);
       controller2.onChange(updateLinkDistance);
-      controller3.onChange(updateNodeColorBy);
+      controller3.onChange(updateLinkWidth);
+      controller4.onChange(updateLinkParticles);
+      controller5.onChange(updateNodeColorBy);
       function updateNumDimensions() {
         force.numDimensions(settings.num_dimensions); // Re-heat simulation
       }
       function updateLinkDistance() {
         linkForce.distance(link => link.distance ? settings.link_distance : 1);
         force.numDimensions(settings.num_dimensions); // Re-heat simulation
+      }
+      function updateLinkWidth() {
+        var lw = settings.link_width;
+        var np = settings.link_particles;
+        force.linkWidth(
+            link => highlightLinks.indexOf(link) !== -1 ? lw*2+1 : lw
+          )
+          .linkDirectionalParticleWidth(
+            link => highlightLinks.indexOf(link) !== -1 ? lw*2+1 : lw
+          )
+          .linkDirectionalParticles(
+            link => highlightLinks.indexOf(link) !== -1 ? np*2+1 : np
+          );
+      }
+      function updateLinkParticles() {
+        var np = settings.link_particles;
+        force.linkDirectionalParticles(
+          link => highlightLinks.indexOf(link) !== -1 ? np*2+1 : np
+        );
       }
       function updateNodeColorBy() {
         color_by = settings.color_by;
