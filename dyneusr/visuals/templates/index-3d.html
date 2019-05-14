@@ -1,0 +1,98 @@
+<head>
+  <style> body { margin: 0; } </style>
+  <script src="//unpkg.com/dat.gui"></script>
+  <script src="//unpkg.com/3d-force-graph"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+
+  <!--<script src="../../dist/3d-force-graph.js"></script>-->
+</head>
+
+<body>
+  <div id="3d-graph"></div>
+
+  <script> 
+    ///////////////////////////////////////////////
+    // Helpers
+    ///////////////////////////////////////////////
+    load_force_graphs_csv("index.csv");
+
+    // Load a list of JSON files
+    function load_force_graphs_csv(csv) {
+        d3.csv(csv, function(error, data) {
+          data.forEach(function(d, i) {
+            console.log(i, data.length, d);
+            load_force_graph(d.json, data.length);
+        }); 
+      });
+    }
+
+    function load_force_graph(json, n) {
+        d3.json(json, function(error, data) {
+          var inputs = {data:data, source:json, total:n};
+          console.log(inputs);
+          draw_force(inputs);
+      });
+    }
+
+    ///////////////////////////////////////////////
+    // main
+    ///////////////////////////////////////////////
+    // var 
+    function draw_force(inputs) {
+      var data = inputs.data;
+      var source = inputs.source;
+      var color_by = 'data_id';
+
+      // hack to load data
+      // get some things
+      console.log(data);
+      var color = data.graph.colors;
+      var color_by_options = d3.keys(data.graph.groups);
+      var color_by = data.graph.color_by ? data.graph.color_by : color_by_options[0];
+      console.log('color_by_options:', color_by_options);
+      console.log('color_by:', color_by);
+
+      // init graph
+      const force = ForceGraph3D()
+        (document.getElementById('3d-graph'))
+          .graphData(data)
+          //.nodeAutoColorBy(d => d.group[color_by])
+          .nodeColor(d => d.group[color_by] ? d.group[color_by] :0)
+          .nodeOpacity(1)
+          //.linkAutoColorBy('value')
+          .linkOpacity(1);
+
+      const linkForce = force 
+        .d3Force('link')
+        .distance(link => link.distance);
+
+      
+      
+
+
+      //Define GUI
+      const Settings = function() {
+        this.link_distance = 1;
+        this.color_by = color_by; //'data_id';
+      };
+      const settings = new Settings();
+      const gui = new dat.GUI();
+      const controllerOne = gui.add(settings, 'link_distance', 0, 100);
+      const controllerTwo = gui.add(settings, 'color_by', color_by_options);
+      controllerOne.onChange(updateLinkDistance);
+      controllerTwo.onChange(updateNodeColorBy);
+      function updateLinkDistance() {
+        linkForce.distance(link => link.distance ? settings.link_distance : 1);
+        force.numDimensions(3); // Re-heat simulation
+      }
+      function updateNodeColorBy() {
+        //force.nodeAutoColorBy(d => d.group[settings.color_by]);
+        color_by = settings.color_by;
+        force.nodeColor(d => d.group[color_by] ? d.group[color_by]:0);
+
+        //nodeForce.fill(d => d.group[color_by]);
+        //orce.numDimensions(3); // Re-heat simulation
+      }
+    };
+  </script>
+</body>
