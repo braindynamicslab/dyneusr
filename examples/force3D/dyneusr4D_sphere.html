@@ -1,0 +1,154 @@
+<head>
+  <style> body { margin: 0; } </style>
+  <script src="//unpkg.com/dat.gui"></script>
+  <script src="//unpkg.com/3d-force-graph"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+
+  <!--<script src="../../dist/3d-force-graph.js"></script>-->
+</head>
+
+<body>
+  <div id="3d-graph"></div>
+
+  <script> 
+    ///////////////////////////////////////////////
+    // Helpers
+    ///////////////////////////////////////////////
+    load_force_graphs_csv("dyneusr4D_sphere.csv");
+
+    // Load a list of JSON files
+    function load_force_graphs_csv(csv) {
+        d3.csv(csv, function(error, data) {
+          data.forEach(function(d, i) {
+            console.log(i, data.length, d);
+            load_force_graph(d.json, data.length);
+        }); 
+      });
+    }
+
+    function load_force_graph(json, n) {
+        d3.json(json, function(error, data) {
+          var inputs = {data:data, source:json, total:n};
+          console.log(inputs);
+          draw_force(inputs);
+      });
+    }
+
+    ///////////////////////////////////////////////
+    // main
+    ///////////////////////////////////////////////
+    // var 
+    function draw_force(inputs) {
+      var data = inputs.data;
+      var source = inputs.source;
+      var color_by = 'data_id';
+
+      // hack to load data
+      // get some things
+      console.log(data);
+      var color = data.graph.colors;
+      var color_by_options = d3.keys(data.graph.groups);
+      var color_by = data.graph.color_by ? data.graph.color_by : color_by_options[0];
+      console.log('color_by_options:', color_by_options);
+      console.log('color_by:', color_by);
+ 
+      // empty
+      let highlightNodes = [];
+      let highlightLinks = [];
+      let highlightLink = null;
+
+      // init graph
+      const force = ForceGraph3D()
+        (document.getElementById('3d-graph'))
+          .graphData(data)
+          .nodeAutoColorBy(d => d.group[color_by])
+          .nodeOpacity(1)
+          .linkOpacity(.5)
+          .linkWidth(link => highlightLinks.indexOf(link) !== -1 ? 1 : 0.1)
+          .linkDirectionalParticles(link => highlightLinks.indexOf(link) !== -1 ? 3 : 1)
+          .linkDirectionalParticleWidth(1)
+          .onNodeHover(node => {
+            // no state change
+            if ((!node && !highlightNodes.length) || (highlightNodes.length === 1 && highlightNodes[0] === node)) return;
+            highlightNodes = node ? [node] : [];
+            highlightLinks = data.links.map(link => { 
+              if ((link.source === node) || (link.target === node)) {
+                return link;
+              }
+            })
+            updateGeometries();
+          })
+          .onLinkHover(link => {
+            // no state change
+            if (highlightLink === link) return;
+            highlightLink = link;
+            highlightLinks = [link];
+            highlightNodes = link ? [link.source, link.target] : [];
+            updateGeometries();
+          });
+
+      function updateGeometries() {
+        force.nodeRelSize(4); // trigger update of 3d objects in scene
+      }
+
+      const linkForce = force 
+        .d3Force('link')
+        .distance(link => link.distance);
+
+      
+      //Define GUI
+      const Settings = function() {
+        this.num_dimensions = 3;
+        this.link_distance = 1;
+        this.link_width = 0.1;
+        this.link_particles = 1;
+        this.color_by = color_by; //'data_id';
+      };
+      const settings = new Settings();
+      const gui = new dat.GUI();
+      const controller1 = gui.add(settings, 'num_dimensions',[0,1,2,3]);
+      const controller2 = gui.add(settings, 'link_distance', [1,5,10,50,100]);
+      const controller3 = gui.add(settings, 'link_width', 0.1, 3);
+      const controller4 = gui.add(settings, 'link_particles',[0,1,2,3,4,5]);
+      const controller5 = gui.add(settings, 'color_by', color_by_options);
+      controller1.onChange(updateNumDimensions);
+      controller2.onChange(updateLinkDistance);
+      controller3.onChange(updateLinkWidth);
+      controller4.onChange(updateLinkParticles);
+      controller5.onChange(updateNodeColorBy);
+      function updateNumDimensions() {
+        force.numDimensions(settings.num_dimensions); // Re-heat simulation
+      }
+      function updateLinkDistance() {
+        linkForce.distance(link => link.distance ? settings.link_distance : 1);
+        force.numDimensions(settings.num_dimensions); // Re-heat simulation
+      }
+      function updateLinkWidth() {
+        var lw = settings.link_width;
+        var np = settings.link_particles;
+        force.linkWidth(
+            link => highlightLinks.indexOf(link) !== -1 ? lw*2+1 : lw
+          )
+          .linkDirectionalParticleWidth(
+            link => highlightLinks.indexOf(link) !== -1 ? lw*2+1 : lw
+          )
+          .linkDirectionalParticles(
+            link => highlightLinks.indexOf(link) !== -1 ? np*2+1 : np
+          );
+      }
+      function updateLinkParticles() {
+        var np = settings.link_particles;
+        force.linkDirectionalParticles(
+          link => highlightLinks.indexOf(link) !== -1 ? np*2+1 : np
+        );
+      }
+      function updateNodeColorBy() {
+        color_by = settings.color_by;
+        force.nodeColor(d => d.group[color_by] ? d.group[color_by]:1);
+      }
+      
+      
+
+    };
+  </script>
+</body>
