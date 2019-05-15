@@ -29,14 +29,15 @@ If you find DyNeuSR useful in your research, please consider citing:
 > Geniesse, C., Sporns, O., Petri, G., & Saggar, M. (2019). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093). *Network Neuroscience*. Advance publication. doi:10.1162/netn_a_00093
 
 
-For more details about the Mapper approach, please also checkout:
+For more details about the Mapper approach, please see:
 
 > Saggar, M., Sporns, O., Gonzalez-Castillo, J., Bandettini, P.A., Carlsson, G., Glover, G., Reiss, A.L. (2018). [Towards a new approach to reveal dynamical organization of the brain using topological data analysis](https://www.nature.com/articles/s41467-018-03664-4). *Nature Communications*. doi:10.1038/s41467-018-03664-4
 
 
 ## **Examples**
+* * *
 
-This package includes several [examples](./examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, checkout [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
+This package includes several [examples](./examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, check out [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 
 ### **Basic Usage** ([trefoil knot](./examples/trefoil_knot))
@@ -148,34 +149,33 @@ dG.visualize('dyneusr_output.html')
 
 ## **Setup**
 
-Online documentation (*coming soon*) will include more details about how to install and get started with DyNeuSR.
+Online documentation (*coming soon*) will include more details about how to install and use DyNeuSR.
 
 ### **Dependencies**
 
-- Python 3.6
+#### [Python 3.6](https://www.python.org/)
 
-The following Python packages are required:
+#### Required Python Packages
+* [numpy](www.numpy.org)
+* [pandas](pandas.pydata.org)
+* [scipy](www.scipy.org)
+* [scikit-learn](scikit-learn.org)
+* [matplotlib](matplotlib.sourceforge.net)
+* [seaborn](stanford.edu/~mwaskom/software/seaborn)
+* [networkx](networkx.github.io)
+* [nilearn](nilearn.github.io)
+* [kmapper](kepler-mapper.scikit-tda.org)
 
--  [numpy](www.numpy.org)
--  [pandas](pandas.pydata.org)
--  [scipy](www.scipy.org)
--  [scikit-learn](scikit-learn.org)
--  [matplotlib](matplotlib.sourceforge.net)
--  [seaborn](stanford.edu/~mwaskom/software/seaborn)
--  [networkx](networkx.github.io)
--  [nilearn](nilearn.github.io)
--  [kmapper](kepler-mapper.scikit-tda.org)
-
-For the full list of packages and required versions, see [`requirements.txt`](./requirements.txt) and [`requirements-versions.txt`](./requirements-versions.txt)
+_For a full list of packages and required versions, see [`requirements.txt`](./requirements.txt) and [`requirements-versions.txt`](./requirements-versions.txt)._
 
 
-### **Installing from Source** 
+### **Install with Conda**
 
-#### with conda
+If your default environment is Python 2, we recommend that you install `dyneusr` in a separate Python 3 environment. You can find more information about creating a separate environment for Python 3 [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). 
 
-If your default environment is Python 2, we recommend that you install `dyneusr` in a separate Python 3 environment. You can find more information about creating a separate environment for Python 3, [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). If you don't have conda, or are new to scientific python, we recommend that you download the [Anaconda scientific python distribution](https://store.continuum.io/cshop/anaconda/). 
+If you don't have conda, or if you are new to scientific python, we recommend that you download the [Anaconda scientific python distribution](https://store.continuum.io/cshop/anaconda/). 
 
-To create a new conda environment and install from source:
+_To create a new conda environment and install from source:_
 ```bash
 conda create -n dyneusr python=3.6
 conda activate dyneusr
@@ -192,9 +192,9 @@ pytest
 This creates a new conda environment `dyneusr` and installs in it the dependencies that are needed. To access it, use the `conda activate dyneusr` command (if your conda version >= 4.4) and use `source activate dyneusr` command (if your conda version < 4.4).
 
 
-#### with pip
+### **Install with PIP**
 
-To install from source with pip:
+_To install from source with pip:_
 ```bash
 git clone https://github.com/braindynamicslab/dyneusr.git
 cd dyneusr
