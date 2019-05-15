@@ -4,4 +4,4 @@
 * [Manish Saggar](https://github.com/manishsaggar1)
 * [Rafi Ayub](https://github.com/RdoubleA)
 
-_**If you contribute to DyNeuSR, feel free to add your name and email to this list!** For more information on how to contribute, please refer to the "Support" section of the [README.md](https://github.com/braindynamicslab/dyneusr/blob/master/README.md)._
+_**If you contribute to DyNeuSR, feel free to add your name and email to this list!** For more information on how to contribute, please refer to the [README.md](https://github.com/braindynamicslab/dyneusr/blob/master/README.md#Support)._
