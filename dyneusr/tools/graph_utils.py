@@ -324,19 +324,54 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
             source_node = G.node[source]
             target_node = G.node[target]
 
-            # find member intersection
-            members_index = [i for i,_ in enumerate(target_node['members'])
-                             if _ in source_node['members']]
+            # add directional edges
+            s_members = np.sort(source_node['members'])
+            t_members = np.sort(target_node['members'])
+
+            # temporal connections (i.e. (t, t+1))
+            members = set(s_members).intersection(t_members)
+            st_members = set(s_members + 1).intersection(t_members) - members
+            ts_members = set(t_members + 1).intersection(s_members) - members
+
+            # add forward edge
+            #if len(st_members):
+            #    G.add_edge(source, target, 
+            #        value=len(st_members),
+            #        size=len(st_members),
+            #        kind='directed'
+            #    )
+
+            # add reverse edge
+            #if len(ts_members):
+            #    G.add_edge(target, source, 
+            #        value=len(ts_members),
+            #        size=len(ts_members),
+            #        kind='directed'
+            #    )
+            # compute direction (net flow)
+            n_directional = len(st_members) - len(ts_members)
+            direction = np.min(t_members) - np.min(s_members)
 
             # define edge dict
             edge_dict = dict(
-                value=len(members_index),
-                size=len(members_index)
+                value=len(members),
+                size=len(members),
+                kind='intersection',
+                n_directional=n_directional
                 # edge color, size
             )
 
             # update G
-            G.add_edge(source, target, **edge_dict)
+            if ((n_directional < 0) or
+                (n_directional == 0 and direction < 0)):
+                # net flow target to source
+                G.add_edge(target, source, **edge_dict)
+            else:
+                # net flow source to target
+                G.add_edge(source, target, **edge_dict)
+                
+
+
 
     # more attribues
     for n, nbrs in G.adj.items():
@@ -384,7 +419,10 @@ def extract_matrices(G, index=None, **kwargs):
         #node_degrees = dict(G.degree(TR_nodes)).values()
 
         # find TRs for each edge sharing node
-        node_index = [node_to_index[_] for _ in TR_nodes]  
+        node_index = [node_to_index[_] for _ in TR_nodes] 
+        M[TR, node_index] += 1.0
+        continue
+        """
         source_TRs = [node_to_members[n] for n in TR_nodes]
         target_TRs = [node_to_members[nbr] for n in TR_nodes for nbr in G.neighbors(n)]
         #similar_TRs = list(set(__ for _ in source_TRs+target_TRs for __ in _))
@@ -401,8 +439,9 @@ def extract_matrices(G, index=None, **kwargs):
         # normalized node degrees 
         M[TR, node_index] += 1.0
         T[TR, similar_TRs] += TRs_counted
-
+        """
     # normalize
+    T = M.dot(M.T)
     T /= T.max() 
     
     # return 

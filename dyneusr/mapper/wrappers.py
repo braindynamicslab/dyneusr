@@ -78,6 +78,7 @@ class KMapperWrapper(BaseMapperWrapper):
             self, 
             projection=None, scaler=None, 
             cover=None, clusterer=None, 
+            remove_duplicate_nodes=False,
             memory='dyneusr_cache', 
             verbose=1
             ):
@@ -107,8 +108,9 @@ class KMapperWrapper(BaseMapperWrapper):
         self.scaler = scaler or MinMaxScaler()
 
         # [2] map params
-        self.clusterer = clusterer or DBSCAN(eps=1,min_samples=2)
+        self.clusterer = clusterer or DBSCAN(eps=1, min_samples=2)
         self.cover = cover or Cover(10, 0.5)
+        self.remove_duplicate_nodes = remove_duplicate_nodes
 
         # setup memory
         self.memory = Memory(memory, verbose=verbose)
@@ -163,7 +165,8 @@ class KMapperWrapper(BaseMapperWrapper):
             lens=lens, data=data,
             clusterer=self.clusterer,
             cover=self.cover,
-            verbose=self.verbose
+            verbose=self.verbose, 
+            remove_duplicate_nodes=self.remove_duplicate_nodes
             )
 
         # save variables

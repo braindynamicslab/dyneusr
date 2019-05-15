@@ -1,5 +1,6 @@
 import webbrowser
 import numpy as np
+np.random.seed(123)
 from dyneusr import DyNeuGraph
 from dyneusr.datasets import make_trefoil
 from kmapper import KeplerMapper
@@ -21,16 +22,21 @@ graph = mapper.map(lens, X, nr_cubes=6, overlap_perc=0.5)
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph 
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_sphere.html')
+dG.visualize('dyneusr_sphere.html', static=True)
 webbrowser.open(dG.HTTP.url)
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph 
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr3D_sphere.html', template='3D')
+dG.visualize('dyneusr2D_sphere.html', template='2D', static=True)
 webbrowser.open(dG.HTTP.url)
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph 
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr4D_sphere.html', template='4D')
+dG.visualize('dyneusr3D_sphere.html', template='3D', static=True)
+webbrowser.open(dG.HTTP.url)
+
+# Visualize the shape graph using DyNeuSR's DyNeuGraph 
+dG = DyNeuGraph(G=graph, y=y)
+dG.visualize('dyneusr4D_sphere.html', template='4D', static=True)
 webbrowser.open(dG.HTTP.url)
 

@@ -303,19 +303,16 @@
 
 </nav>
 
-    <div id="main" class="col-sm-8">
-    </div>
+    <div id="main" class="col-sm-8"></div>
     <div id="meta" class="col-sm-4">
           <div class="well">
             <div id="graph-meta"></div>
           </div>
           <div class="well">
             <div id="node-meta"></div>
-      </div>
+          </div>
     </div>
-  </div>
-</div>
-
+ 
 </body>
 
 
@@ -328,27 +325,6 @@
 ///////////////////////////////////////////////
 // Main
 ///////////////////////////////////////////////
-if (!d3.select("#json_graph").empty()) {
-    load_force_graphs();
-} else {
-    load_force_graphs_csv("index.csv");
-}
-  
-
-//allow 10 times zoom in or out
-var zoomer = d3.behavior.zoom()
-    .scaleExtent([0.1,7])
-    .on("zoom", zoom);
-
-//define the event handler function
-function zoom() {
-    //console.log("zoom", d3.event.translate, d3.event.scale);
-    d3.selectAll("g.zoomable").attr("transform", 
-             "translate(" + d3.event.translate + ")" 
-         + " scale(" + d3.event.scale + ")" );
-};
-  
-
 var color_palettes = {
     'kepler3': ['#0500ff', '#65ff00', '#ff0000'],
     'kepler5': ['#0500ff', '#00a4ff', '#65ff00', '#ff8c00', '#ff0000'],
@@ -375,14 +351,21 @@ var color_palettes = {
 ///////////////////////////////////////////////
 // Helpers
 ///////////////////////////////////////////////
+if (!d3.select("#json_graph").empty()) {
+    load_force_graphs();
+} else {
+    load_force_graphs_csv("index.csv");
+}
+
 // Load a list of JSON files
 function load_force_graphs() {
-    var data = JSON.parse(
-        document.getElementById("json_graph").dataset.json
-        );
+  d3.select("#json_graph").forEach(function(element) {
+    console.log(element[0]);
+    var data = JSON.parse(element[0].dataset.json);
     var inputs = {data:data, source:"default", total:1};
     console.log(inputs);
     draw_force(inputs);
+  });
 }
 
 // Load a list of JSON files
@@ -402,6 +385,24 @@ function load_force_graph(json, n) {
       draw_force(inputs);
   });
 }
+
+
+
+//allow 10 times zoom in or out
+function zoomer () {
+  return d3.behavior.zoom()
+    .scaleExtent([0.1,7])
+    .on("zoom", zoom);
+}
+
+//define the event handler function
+function zoom() {
+    //console.log("zoom", d3.event.translate, d3.event.scale);
+    d3.selectAll("g.zoomable").attr("transform", 
+             "translate(" + d3.event.translate + ")" 
+         + " scale(" + d3.event.scale + ")" );
+};
+
 
 // Draw json
 function draw_force(data) {
@@ -438,7 +439,7 @@ function draw_force(data) {
     .attr("class", "graph")
     .attr("width", "100%")
     .attr("height", height)
-        .call(zoomer)
+        .call(zoomer())
       .append("g")
         .attr("class", "zoomable");
 

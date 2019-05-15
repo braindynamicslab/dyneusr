@@ -168,7 +168,8 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
 
     ### Write index.csv
     if path_csv is None:
-        path_csv =  path_html.parents[0] / path_assets / path_html.name.replace('.html', '.csv')
+        #path_csv =  path_html.parents[0] / path_assets / path_html.name.replace('.html', '.csv')
+        path_csv = graphs_dir / path_html.name.replace('.html', '.csv')
     # clean up paths
     path_csv = Path(path_csv)
     path_csv_rel = path_csv.relative_to(path_html.parents[0])
@@ -194,7 +195,7 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
         ### Add js directly to HTML
         with open(str(path_json), 'r') as f:
             json_str = json.load(f)
-            json_str = json.dumps(json_str)
+            json_str = json.dumps(json_str).replace("\"", "\"")
             div = """\n\t<div id="json_graph" data-json='{json_graph}' style="display:none"></div>"""
             div = div.format(json_graph=json_str)    
             html = html.replace('</head>', div+'\n\n</head>')

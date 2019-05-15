@@ -21,6 +21,6 @@ graph = mapper.map(lens, X, nr_cubes=6, overlap_perc=0.5)
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph 
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr4D_sphere.html', template='4D')
+dG.visualize('dyneusr4D_sphere.html', template='4D', static=True)
 webbrowser.open(dG.HTTP.url)
 

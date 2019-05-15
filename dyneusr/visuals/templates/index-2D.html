@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>DyNeuSR (3D)</title>
+  <title>DyNeuSR (2D)</title>
   <style> body { margin: 0; } </style>
   <script src="https://unpkg.com/dat.gui"></script>
   <script src="https://unpkg.com/3d-force-graph"></script>
@@ -76,11 +76,11 @@
 
       // settings
       const Settings = function() {
-        this.num_dimensions = 3;
+        this.num_dimensions = 2;
         this.link_distance = 'default';
         this.link_width = 0.1;
         this.link_particles = 0;
-        this.color_by = color_by;
+        this.color_by = color_by; 
       };
       const settings = new Settings();
 
@@ -197,3 +197,5 @@
     };
   </script>
 </html>
+
+      

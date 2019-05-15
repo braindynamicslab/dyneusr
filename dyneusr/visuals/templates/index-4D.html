@@ -1,7 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
+  <title>DyNeuSR (4D)</title>
   <style> body { margin: 0; } </style>
-  <script src="//unpkg.com/dat.gui"></script>
-  <script src="//unpkg.com/3d-force-graph"></script>
+  <script src="https://unpkg.com/dat.gui"></script>
+  <script src="https://unpkg.com/3d-force-graph"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
 
   <!--<script src="../../dist/3d-force-graph.js"></script>-->
@@ -9,12 +12,27 @@
 
 <body>
   <div id="3d-graph"></div>
+</body>
 
   <script> 
     ///////////////////////////////////////////////
     // Helpers
     ///////////////////////////////////////////////
-    load_force_graphs_csv("index.csv");
+    if (!d3.select("#json_graph").empty()) {
+        load_force_graphs();
+    } else {
+        load_force_graphs_csv("index.csv");
+    }
+      
+    // Load a list of JSON files
+    function load_force_graphs() {
+        var data = JSON.parse(
+            document.getElementById("json_graph").dataset.json
+            );
+        var inputs = {data:data, source:"default", total:1};
+        console.log(inputs);
+        draw_force(inputs);
+    }
 
     // Load a list of JSON files
     function load_force_graphs_csv(csv) {
@@ -33,7 +51,6 @@
           draw_force(inputs);
       });
     }
-
     ///////////////////////////////////////////////
     // main
     ///////////////////////////////////////////////
@@ -57,6 +74,16 @@
       let highlightLinks = [];
       let highlightLink = null;
 
+      // settings
+      const Settings = function() {
+        this.num_dimensions = 3;
+        this.link_distance = 'default';
+        this.link_width = 0.1;
+        this.link_particles = 'net';
+        this.color_by = color_by; 
+      };
+      const settings = new Settings();
+
       // init graph
       const force = ForceGraph3D()
         (document.getElementById('3d-graph'))
@@ -64,17 +91,22 @@
           .nodeAutoColorBy(d => d.group[color_by])
           .nodeOpacity(1)
           .linkOpacity(.5)
-          .linkWidth(link => highlightLinks.indexOf(link) !== -1 ? 1 : 0.1)
-          .linkDirectionalParticles(link => highlightLinks.indexOf(link) !== -1 ? 3 : 1)
-          .linkDirectionalParticleWidth(1)
+          .linkWidth(link => {
+            return highlightLinks.indexOf(link) !== -1 ? 1 : 0.1
+          })
+          .linkDirectionalParticles(link => {
+            return highlightLinks.indexOf(link) !== -1 ? link.n_directional : 0;        
+          })
+          .linkDirectionalParticleWidth(link => {
+            return highlightLinks.indexOf(link) !== -1 ? 3 : 1.2;        
+          })
           .onNodeHover(node => {
             // no state change
             if ((!node && !highlightNodes.length) || (highlightNodes.length === 1 && highlightNodes[0] === node)) return;
             highlightNodes = node ? [node] : [];
             highlightLinks = data.links.map(link => { 
-              if ((link.source === node) || (link.target === node)) {
-                return link;
-              }
+            if ((link.source === node) || (link.target === node)) 
+              return link;
             })
             updateGeometries();
           })
@@ -85,7 +117,8 @@
             highlightLinks = [link];
             highlightNodes = link ? [link.source, link.target] : [];
             updateGeometries();
-          });
+          })
+          .numDimensions(settings.num_dimensions); 
 
       function updateGeometries() {
         force.nodeRelSize(4); // trigger update of 3d objects in scene
@@ -93,23 +126,15 @@
 
       const linkForce = force 
         .d3Force('link')
-        .distance(link => link.distance);
-
+        .distance(link => link.distance ? link.distance : 1);
+ 
       
       //Define GUI
-      const Settings = function() {
-        this.num_dimensions = 3;
-        this.link_distance = 1;
-        this.link_width = 0.1;
-        this.link_particles = 1;
-        this.color_by = color_by; //'data_id';
-      };
-      const settings = new Settings();
       const gui = new dat.GUI();
       const controller1 = gui.add(settings, 'num_dimensions',[0,1,2,3]);
-      const controller2 = gui.add(settings, 'link_distance', [1,5,10,50,100]);
+      const controller2 = gui.add(settings, 'link_distance', [0,0.5,1,5,10,50,100, 'default']);
       const controller3 = gui.add(settings, 'link_width', 0.1, 3);
-      const controller4 = gui.add(settings, 'link_particles',[0,1,2,3,4,5]);
+      const controller4 = gui.add(settings, 'link_particles',['net',0,1,2,3,4,5]);
       const controller5 = gui.add(settings, 'color_by', color_by_options);
       controller1.onChange(updateNumDimensions);
       controller2.onChange(updateLinkDistance);
@@ -120,35 +145,57 @@
         force.numDimensions(settings.num_dimensions); // Re-heat simulation
       }
       function updateLinkDistance() {
-        linkForce.distance(link => link.distance ? settings.link_distance : 1);
+        var ld = settings.link_distance;
+        linkForce.distance(link => {
+          if (ld === 'default') {
+            return link.distance ? link.distance : 1;
+          } 
+          // assign constant link_distance
+          return settings.link_distance;
+        });
         force.numDimensions(settings.num_dimensions); // Re-heat simulation
       }
       function updateLinkWidth() {
         var lw = settings.link_width;
         var np = settings.link_particles;
-        force.linkWidth(
-            link => highlightLinks.indexOf(link) !== -1 ? lw*2+1 : lw
-          )
-          .linkDirectionalParticleWidth(
-            link => highlightLinks.indexOf(link) !== -1 ? lw*2+1 : lw
-          )
-          .linkDirectionalParticles(
-            link => highlightLinks.indexOf(link) !== -1 ? np*2+1 : np
-          );
+        force.linkWidth(link => {
+          return highlightLinks.indexOf(link) !== -1 ? lw*2+1 : lw;
+        });
+        force.linkDirectionalParticleWidth(link => {
+          return highlightLinks.indexOf(link) !== -1 ? lw*2+1 : lw*2+1;
+        });
+        updateLinkParticles();
       }
       function updateLinkParticles() {
         var np = settings.link_particles;
-        force.linkDirectionalParticles(
-          link => highlightLinks.indexOf(link) !== -1 ? np*2+1 : np
-        );
+        force.linkDirectionalParticles(link => {
+          if (np === 'net') {
+            return link.n_directional;
+          }
+          return highlightLinks.indexOf(link) !== -1 ? np*2+1 : np;
+        });
+        
       }
       function updateNodeColorBy() {
         color_by = settings.color_by;
-        force.nodeColor(d => d.group[color_by] ? d.group[color_by]:1);
+        force.nodeColor(d => d.group[color_by] ? d.group[color_by] : 1);
       }
-      
-      
 
+      // initialize force graph with settings
+      function initialize() {
+        console.log('Initializing ForceGraph3D...')
+        console.log('settings:', settings);
+        console.log('force (before):', force);
+        updateNumDimensions();
+        updateLinkDistance();
+        updateLinkWidth();
+        updateLinkParticles();
+        console.log('force (after):', force);
+      }
+      initialize();
+      
     };
   </script>
-</body>
+</html>
+
+      
