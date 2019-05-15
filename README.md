@@ -63,7 +63,7 @@ dG.visualize('dyneusr_output.html')
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/trefoil_knot">
-<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/dyneusr_trefoil_knot.png">
+<img src="./examples/trefoil_knot/dyneusr_trefoil_knot.png">
 </a></p>
 
 
@@ -90,10 +90,10 @@ for projection in projections:
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/trefoil_knot">
-<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_0.png">
-<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_0_1.png">
-<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_0_2.png">
-<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_1_2.png">
+<img src="./examples/trefoil_knot/mapper_lens_0.png">
+<img src="./examples/trefoil_knot/mapper_lens_0_1.png">
+<img src="./examples/trefoil_knot/mapper_lens_0_2.png">
+<img src="./examples/trefoil_knot/mapper_lens_1_2.png">
 </a></p>
 
 
@@ -139,7 +139,7 @@ dG.visualize('dyneusr_output.html')
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding">
-<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding/dyneusr_haxby_decoding.png">
+<img src="./examples/haxby_decoding/dyneusr_haxby_decoding.png">
 </a></p>
 
 
