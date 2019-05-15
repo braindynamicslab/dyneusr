@@ -11,7 +11,7 @@
 
 
 
-# **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
+## **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
 
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data.
 
