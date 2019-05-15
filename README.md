@@ -37,7 +37,7 @@ For more information about the Mapper approach, please see:
 This package includes several [examples](./examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, check out [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 
-### **_Basic Usage_** ([trefoil knot](./examples/trefoil_knot))
+### **_Basic Usage_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/trefoil_knot.py))
 
 ```python
 
@@ -62,13 +62,13 @@ dG.visualize('dyneusr_output.html')
 
 ```
 
-<p align="center"><a href="./examples/trefoil_knot">
-<img src="./examples/trefoil_knot/dyneusr_trefoil_knot.png">
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/trefoil_knot">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/dyneusr_trefoil_knot.png">
 </a></p>
 
 
 
-### **_Advanced Usage_** ([trefoil knot](./examples/trefoil_knot))
+### **_Advanced Usage_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/compare_lenses.py))
 
 ```python
 # Define projections to compare
@@ -89,17 +89,17 @@ for projection in projections:
 		
 ```
 
-<p align="center"><a href="./examples/trefoil_knot">
-<img src="./examples/trefoil_knot/mapper_lens_0.png">
-<img src="./examples/trefoil_knot/mapper_lens_0_1.png">
-<img src="./examples/trefoil_knot/mapper_lens_0_2.png">
-<img src="./examples/trefoil_knot/mapper_lens_1_2.png">
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/trefoil_knot">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_0.png">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_0_1.png">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_0_2.png">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_1_2.png">
 </a></p>
 
 
 
 
-### **_Neuroimaging Examples_** ([haxby decoding](./examples/haxby_decoding))
+### **_Neuroimaging Examples_** ([haxby decoding](https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding))
 
 ```python
 
@@ -138,8 +138,8 @@ dG.visualize('dyneusr_output.html')
 
 ```
 
-<p align="center"><a href="./examples/haxby_decoding">
-<img src="./examples/haxby_decoding/dyneusr_haxby_decoding.png">
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding/dyneusr_haxby_decoding.png">
 </a></p>
 
 
