@@ -205,9 +205,9 @@ pytest
 
 ## **Support**
 
-Please feel free to [report](https://github.com/braindynamicslab/dyneusr/issues/new) any issues, [request](https://github.com/braindynamicslab/dyneusr/issues/new) new features, or [propose](https://github.com/braindynamicslab/dyneusr/compare) improvements.
+Please feel free to [report](https://github.com/braindynamicslab/dyneusr/issues/new) any issues, [request](https://github.com/braindynamicslab/dyneusr/issues/new) new features, or [propose](https://github.com/braindynamicslab/dyneusr/compare) improvements. You can also contact Caleb Geniesse at geniesse [at] stanford.edu.
 
-If you contribute to DyNeuSR, please refer to the [Contributing Guide](https://github.com/braindynamicslab/dyneusr/blob/master/CONTRIBUTING.md). 
+If you contribute to DyNeuSR, please feel free to add your name to the [list of contributors] (https://github.com/braindynamicslab/dyneusr/blob/master/contributors.md). 
 
 ## **Citation**
 
