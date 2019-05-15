@@ -11,7 +11,7 @@
 
 
 
-## **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
+## **Dynamical Neuroimaging Spatiotemporal Representations**
 
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data.
 
@@ -37,7 +37,7 @@ For more information about the Mapper approach, please see:
 This package includes several [examples](./examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, check out [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 
-### **Basic Usage** ([trefoil knot](./examples/trefoil_knot))
+### **_Basic Usage_** ([trefoil knot](./examples/trefoil_knot))
 
 ```python
 
@@ -68,7 +68,7 @@ dG.visualize('dyneusr_output.html')
 
 
 
-### **Advanced Usage** ([trefoil knot](./examples/trefoil_knot))
+### **_Advanced Usage_** ([trefoil knot](./examples/trefoil_knot))
 
 ```python
 # Define projections to compare
@@ -99,7 +99,7 @@ for projection in projections:
 
 
 
-### **Neuroimaging Examples** ([haxby decoding](./examples/haxby_decoding))
+### **_Neuroimaging Examples_** ([haxby decoding](./examples/haxby_decoding))
 
 ```python
 
@@ -148,7 +148,7 @@ dG.visualize('dyneusr_output.html')
 
 Online documentation (*coming soon*) will include more details about how to install and use DyNeuSR.
 
-### **Dependencies**
+### **_Dependencies_**
 
 #### [Python 3.6](https://www.python.org/)
 
@@ -166,7 +166,7 @@ Online documentation (*coming soon*) will include more details about how to inst
 _For a full list of packages and required versions, see [`requirements.txt`](./requirements.txt) and [`requirements-versions.txt`](./requirements-versions.txt)._
 
 
-### **Install with Conda**
+### **_Install with Conda_**
 
 If your default environment is Python 2, we recommend that you install `dyneusr` in a separate Python 3 environment. You can find more information about creating a separate environment for Python 3 [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). 
 
@@ -189,7 +189,7 @@ pytest
 This creates a new conda environment `dyneusr` and installs in it the dependencies that are needed. To access it, use the `conda activate dyneusr` command (if your conda version >= 4.4) and use `source activate dyneusr` command (if your conda version < 4.4).
 
 
-### **Install with PIP**
+### **_Install with PIP_**
 
 _To install from source with pip:_
 ```bash
