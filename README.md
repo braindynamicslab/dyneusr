@@ -1,7 +1,7 @@
 
 
 <p align="center">
-<img src="./docs/assets/logo.png" height="250">
+<img src="./docs/assets/logo.png" height="100">
 </p>
 
 
@@ -12,15 +12,12 @@
 
 
 # **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
-
-
+<small>
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data.
 
 [DyNeuSR](https://braindynamicslab.github.io/dyneusr/) connects the Mapper algorithm (e.g. [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g. [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g. [Nilearn](https://nilearn.github.io/)). DyNeuSR provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
 
 This package was designed specifically for working with shape graphs produced by the Mapper algorithm from topological data analysis (TDA), as described in the papers "[Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093)" (Geniesse et al., 2019) and "[Towards a new approach to reveal dynamical organization of the brain using topological data analysis](https://www.nature.com/articles/s41467-018-03664-4)" (Saggar et al., 2018). Check out this [blog post](https://bdl.stanford.edu/blog/tda-cme-paper/) for more about the initial work that inspired the development of DyNeuSR. 
-
-
 
 ## **References**
 
