@@ -207,10 +207,8 @@ pytest
 
 Please feel free to [report](https://github.com/braindynamicslab/dyneusr/issues/new) any issues, [request](https://github.com/braindynamicslab/dyneusr/issues/new) new features, or [propose](https://github.com/braindynamicslab/dyneusr/compare) improvements.
 
-If you're interested in contributing to DyNeuSR, please also refer to the [Contributing](./CONTRIBUTING.md) guide. 
+If you contribute to DyNeuSR, please refer to the [Contributing Guide](https://github.com/braindynamicslab/dyneusr/blob/master/CONTRIBUTING.md). 
 
-
-
-## **Citing DyNeuSR**
+## **Citation**
 
 > Geniesse, C., Sporns, O., Petri, G., & Saggar, M. (2019). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093). *Network Neuroscience*. Advance publication. doi:10.1162/netn_a_00093
