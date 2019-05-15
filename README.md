@@ -11,35 +11,33 @@
 
 
 
-# **Dy**namical **Neu**roimaging **S**patiotemporal **R**epresentations
-
+## **Dynamical Neuroimaging Spatiotemporal Representations**
 
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data.
 
-[DyNeuSR](https://braindynamicslab.github.io/dyneusr/) connects the Mapper algorithm (e.g. [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g. [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g. [Nilearn](https://nilearn.github.io/)). It provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
+[DyNeuSR](https://braindynamicslab.github.io/dyneusr/) connects the Mapper algorithm (e.g. [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g. [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g. [Nilearn](https://nilearn.github.io/)). DyNeuSR provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
 
-This package was designed specifically for working with shape graphs produced by the Mapper algorithm from topological data analysis (TDA) as described in the papers "[Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093)" (Geniesse et al., 2019) and "[Towards a new approach to reveal dynamical organization of the brain using topological data analysis](https://www.nature.com/articles/s41467-018-03664-4)" (Saggar et al., 2018). Checkout this [blog post](https://bdl.stanford.edu/blog/tda-cme-paper/) for more about the initial work that inspired the development of DyNeuSR. 
+This package was designed specifically for working with shape graphs produced by the Mapper algorithm from topological data analysis (TDA), as described in the papers "[Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093)" (Geniesse et al., 2019) and "[Towards a new approach to reveal dynamical organization of the brain using topological data analysis](https://www.nature.com/articles/s41467-018-03664-4)" (Saggar et al., 2018). Check out this [blog post](https://bdl.stanford.edu/blog/tda-cme-paper/) for more about the initial work that inspired the development of DyNeuSR. 
 
+## **References**
 
-
-## References
-
-If you find DyNeuSR useful in your research, please consider citing:
+If you find DyNeuSR useful, please consider citing:
 
 > Geniesse, C., Sporns, O., Petri, G., & Saggar, M. (2019). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093). *Network Neuroscience*. Advance publication. doi:10.1162/netn_a_00093
 
 
-For more details about the Mapper approach, please also checkout:
+For more information about the Mapper approach, please see:
 
-> Saggar, M., Sporns, O., Gonzalez-Castillo, J., Bandettini, P.A., Carlsson, G., Glover, G., Reiss, A.L. (2018). [Towards a new approach to reveal dynamical organization of the brain using topological data analysis](https://www.nature.com/articles/s41467-018-03664-4). *Nature Communications*. doi:10.1038/s41467-018-03664-4
-
-
-## Examples
-
-This package includes several [examples](./examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, checkout [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
+> Saggar, M., Sporns, O., Gonzalez-Castillo, J., Bandettini, P.A., Carlsson, G., Glover, G., & Reiss, A.L. (2018). [Towards a new approach to reveal dynamical organization of the brain using topological data analysis](https://www.nature.com/articles/s41467-018-03664-4). *Nature Communications, 9*(1). doi:10.1038/s41467-018-03664-4
 
 
-### Basic usage ([trefoil knot](./examples/trefoil_knot))
+## **Examples**
+
+
+This package includes several [examples](./examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, check out [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
+
+
+### **_Basic Usage_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/trefoil_knot.py))
 
 ```python
 
@@ -64,13 +62,13 @@ dG.visualize('dyneusr_output.html')
 
 ```
 
-<p align="center"><a href="./examples/trefoil_knot">
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/trefoil_knot">
 <img src="./examples/trefoil_knot/dyneusr_trefoil_knot.png">
 </a></p>
 
 
 
-### Advanced usage ([trefoil knot](./examples/trefoil_knot))
+### **_Advanced Usage_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/compare_lenses.py))
 
 ```python
 # Define projections to compare
@@ -91,7 +89,7 @@ for projection in projections:
 		
 ```
 
-<p align="center"><a href="./examples/trefoil_knot">
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/trefoil_knot">
 <img src="./examples/trefoil_knot/mapper_lens_0.png">
 <img src="./examples/trefoil_knot/mapper_lens_0_1.png">
 <img src="./examples/trefoil_knot/mapper_lens_0_2.png">
@@ -101,7 +99,7 @@ for projection in projections:
 
 
 
-### Neuroimaging examples ([haxby decoding](./examples/haxby_decoding))
+### **_Neuroimaging Examples_** ([haxby decoding](https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding))
 
 ```python
 
@@ -140,40 +138,41 @@ dG.visualize('dyneusr_output.html')
 
 ```
 
-<p align="center"><a href="./examples/haxby_decoding">
+<p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding">
 <img src="./examples/haxby_decoding/dyneusr_haxby_decoding.png">
 </a></p>
 
 
 
-## Setup
+## **Setup**
 
-Online documentation (*coming soon*) will include more details about how to install and get started with DyNeuSR.
+Online documentation (*coming soon*) will include more details about how to install and use DyNeuSR.
 
-### Dependencies
+### **_Dependencies_**
 
-- Python 3.6
+#### [Python 3.6](https://www.python.org/)
 
-The following Python packages are required:
+#### Required Python Packages
+* [numpy](www.numpy.org)
+* [pandas](pandas.pydata.org)
+* [scipy](www.scipy.org)
+* [scikit-learn](scikit-learn.org)
+* [matplotlib](matplotlib.sourceforge.net)
+* [seaborn](stanford.edu/~mwaskom/software/seaborn)
+* [networkx](networkx.github.io)
+* [nilearn](nilearn.github.io)
+* [kmapper](kepler-mapper.scikit-tda.org)
 
--  [numpy](www.numpy.org)
--  [pandas](pandas.pydata.org)
--  [scipy](www.scipy.org)
--  [scikit-learn](scikit-learn.org)
--  [matplotlib](matplotlib.sourceforge.net)
--  [seaborn](stanford.edu/~mwaskom/software/seaborn)
--  [networkx](networkx.github.io)
--  [nilearn](nilearn.github.io)
--  [kmapper](kepler-mapper.scikit-tda.org)
-
-For the full list of packages and required versions, see [`requirements.txt`](./requirements.txt) and [`requirements-versions.txt`](./requirements-versions.txt)
+_For a full list of packages and required versions, see [`requirements.txt`](./requirements.txt) and [`requirements-versions.txt`](./requirements-versions.txt)._
 
 
-### Installing from source with conda
+### **_Install with Conda_**
 
-If your default environment is Python 2, we recommend that you install `dyneusr` in a separate Python 3 environment. You can find more information about creating a separate environment for Python 3, [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). If you don't have conda, or are new to scientific python, we recommend that you download the [Anaconda scientific python distribution](https://store.continuum.io/cshop/anaconda/). 
+If your default environment is Python 2, we recommend that you install `dyneusr` in a separate Python 3 environment. You can find more information about creating a separate environment for Python 3 [here](https://salishsea-meopar-docs.readthedocs.io/en/latest/work_env/python3_conda_environment.html). 
 
-To create a new conda environment and install from source:
+If you don't have conda, or if you are new to scientific python, we recommend that you download the [Anaconda scientific python distribution](https://store.continuum.io/cshop/anaconda/). 
+
+_To create a new conda environment and install from source:_
 ```bash
 conda create -n dyneusr python=3.6
 conda activate dyneusr
@@ -190,9 +189,9 @@ pytest
 This creates a new conda environment `dyneusr` and installs in it the dependencies that are needed. To access it, use the `conda activate dyneusr` command (if your conda version >= 4.4) and use `source activate dyneusr` command (if your conda version < 4.4).
 
 
-### Installing from source with pip
+### **_Install with PIP_**
 
-To install from source with pip:
+_To install from source with pip:_
 ```bash
 git clone https://github.com/braindynamicslab/dyneusr.git
 cd dyneusr
@@ -204,14 +203,12 @@ pytest
 ```
 
 
-## Support
+## **Support**
 
-Please feel free to [report](https://github.com/braindynamicslab/dyneusr/issues/new) any issues, [request](https://github.com/braindynamicslab/dyneusr/issues/new) new features, or [propose](https://github.com/braindynamicslab/dyneusr/compare) improvements.
+Please feel free to [report](https://github.com/braindynamicslab/dyneusr/issues/new) any issues, [request](https://github.com/braindynamicslab/dyneusr/issues/new) new features, or [propose](https://github.com/braindynamicslab/dyneusr/compare) improvements. You can also contact Caleb Geniesse at geniesse [at] stanford.edu.
 
-If you're interested in contributing to DyNeuSR, please also refer to the [Contributing](./CONTRIBUTING.md) guide. 
+If you contribute to DyNeuSR, please feel free to add your name to the [list of contributors](https://github.com/braindynamicslab/dyneusr/blob/master/contributors.md). 
 
-
-
-## Citing DyNeuSR
+## **Citation**
 
 > Geniesse, C., Sporns, O., Petri, G., & Saggar, M. (2019). [Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093). *Network Neuroscience*. Advance publication. doi:10.1162/netn_a_00093
