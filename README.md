@@ -35,7 +35,7 @@ For more details about the Mapper approach, please see:
 
 
 ## **Examples**
-* * *
+
 
 This package includes several [examples](./examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, check out [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
