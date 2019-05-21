@@ -1,7 +1,7 @@
 setuptools
 pytest
 ipython
-numpy
+numpy>=1.16
 pandas
 scipy
 scikit-learn
@@ -9,4 +9,4 @@ matplotlib
 seaborn
 networkx
 nilearn
-kmapper
+kmapper>=1.2

@@ -3,7 +3,7 @@
 setuptools
 pytest
 ipython==7.3.0
-numpy==1.15.1
+numpy>=1.16
 pandas==0.23.4
 scipy==1.0.1
 scikit-learn==0.19.1
@@ -11,4 +11,4 @@ matplotlib==2.2.2
 seaborn==0.9.0
 networkx==2.2
 nilearn==0.5.0a
-kmapper==1.1.6
+kmapper==1.2.0
