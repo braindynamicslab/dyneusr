@@ -285,7 +285,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         return self
 
 
-    def visualize(self, path_html='index.html', json_graph=None, color_functions=None, custom_data=None, plot_tcm=False, static=True, show=True, **kwargs):
+    def visualize(self, path_html='index.html', json_graph=None, color_functions=None, custom_data=None, plot_tcm=False, static=True, show=True, port=None, **kwargs):
         """ Visualize DyNeuGraph.
 
         TODO: this needs some work...
@@ -310,7 +310,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
             figs = visuals.plot_temporal_matrix(self.tcm_, y=None, show=show, **kwargs)
 
         # [2] visualize force
-        HTTP = visuals.visualize_force(self.node_link_data_, path_html=path_html, static=static, **kwargs)
+        HTTP = visuals.visualize_force(self.node_link_data_, path_html=path_html, static=static, port=port, **kwargs)
         self.HTTP = HTTP
 
         # [3] open in browser (optional)

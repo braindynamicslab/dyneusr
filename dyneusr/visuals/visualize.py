@@ -90,8 +90,8 @@ def http_server(port=None, host='localhost'):
     # open next available
     port = open_port(None)
 
-    """    
-    if port is None:
+    """     
+    if port is not None and port < 0:
         # open http.server on port, or next available
         p = http_server(port=8000, host=host) 
 
@@ -144,7 +144,7 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
 
     ### Define path to output HTML
     path_html = Path(path_html)
-    url = 'http://localhost:{}/{}'.format(HTTP.port, str(path_html))
+    url = 'http://{}:{}/{}'.format(HTTP.host, HTTP.port, str(path_html))
 
     ### Path to save assests
     if path_assets is None:
