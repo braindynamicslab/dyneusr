@@ -285,7 +285,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         return self
 
 
-    def visualize(self, path_html='index.html', json_graph=None, color_functions=None, custom_data=None, plot_tcm=False, **kwargs):
+    def visualize(self, path_html='index.html', json_graph=None, color_functions=None, custom_data=None, plot_tcm=False, show=False, **kwargs):
         """ Visualize DyNeuGraph.
 
         TODO: this needs some work...
@@ -307,11 +307,28 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
 
         # [1] plot TCM
         if plot_tcm:
-            figs = visuals.plot_temporal_matrix(self.tcm_, y=None, show=True, **kwargs)
+            figs = visuals.plot_temporal_matrix(self.tcm_, y=None, show=show, **kwargs)
 
         # [2] visualize force
         HTTP = visuals.visualize_force(self.node_link_data_, path_html=path_html, **kwargs)
         self.HTTP = HTTP
+
+        # [3] open in browser (optional)
+        if show is True:
+            self.show()
+        return self
+
+
+    def show(self):
+        """ Open the HTTP url using webbrowser
+
+        """
+        try:
+            import webbrowser
+            webbrowser.open(self.HTTP.url)
+        except ImportError as e:
+            print(e)
+            print('Hint: requires Python webbrowser module...')
         return self
 
 

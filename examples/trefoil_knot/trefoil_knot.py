@@ -1,4 +1,3 @@
-import webbrowser
 from dyneusr import DyNeuGraph
 from dyneusr.datasets import make_trefoil
 from kmapper import KeplerMapper
@@ -15,7 +14,4 @@ graph = mapper.map(lens, X, nr_cubes=6, overlap_perc=0.2)
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph 
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_trefoil_knot.html', static=True)  
-
-# Explore/interact with the visualization in your browser
-webbrowser.open(dG.HTTP.url)
+dG.visualize('dyneusr_trefoil_knot.html', static=True, show=True)  
