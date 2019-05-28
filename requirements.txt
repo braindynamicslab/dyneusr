@@ -10,4 +10,3 @@ seaborn
 networkx
 nilearn
 kmapper>=1.2
-webbrowser
