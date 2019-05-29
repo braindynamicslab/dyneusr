@@ -60,6 +60,12 @@ def display_HTML(src="", figure=None, static=False):
     IPython.display.display(html)
     return html
 
+def in_notebook():
+    """ Returns ``True`` if the module is running in IPython kernel,
+      ``False`` if in IPython shell or other Python shell.
+    """
+    from IPython import get_ipython
+    return get_ipython() is not None
 
 def json_dump(obj, fp):
     """ Converts np.int64 to ints
@@ -207,8 +213,15 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
         f.write(html)    
 
     ### Show HTML
-    if show:
+    if show and in_notebook():
         display_HTML(str(url), figure=figure, static=static)
+    elif show is True:
+        try:
+            import webbrowser
+            webbrowser.open(str(url))
+        except ImportError as e:
+            print(e)
+            print('Hint: requires Python webbrowser module...')
 
     # cache some things
     HTTP.url = str(url)
