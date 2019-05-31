@@ -660,6 +660,7 @@ function draw_force(data) {
   var pos_functions = {
     "force": function(d) {return {x:d.x, y:d.y};},
     "center": function(d) {return {x:w/2, y:h/2};},
+    "node": function(d) {return {x:d.index, y:d.index};},
     "members (median)": function(d) {var xy = d3.median(d.members); return {x:xy, y:xy};},
     "members (min)": function(d) {var xy = d3.min(d.members); return {x:xy, y:xy};},
     "members (max)": function(d) {var xy = d3.max(d.members); return {x:xy, y:xy};},
@@ -983,48 +984,31 @@ function draw_force(data) {
   ////////////////////////////////////////////////////
   //// Node position selection
   ////////////////////////////////////////////////////  
-  var pos_initial = {};
   function update_pos() {
     // get selected 
     pos_by_x = option_pos_by_x.property("value");
-    pos_by_y = option_pos_by_y.property("value");
-    console.log('pos_by_x: '+pos_by_x);
-    console.log('pos_by_y: '+pos_by_y);
-
-    // set positions
-  //force.on("tick", function() {
-  // store initial positions (on first tick)
-  if (pos_initial.length < node.length) {
-    node.map(d => {
-      var xy = pos_initial[d.index];
-        pos_initial[d.index] = xy ? xy : {x:d.x, y:d.y};
-    });
-      console.log("pos_initial:", pos_initial);
-        // update force position function
-        pos_functions["force"] = function(d) {return pos_initial[d.index];};  
+    pos_by_y = option_pos_by_y.property("value");  
+    console.log("\npos_by_x: "+pos_by_x+
+                "\npos_by_y: "+pos_by_y);
+    update_pos_force();
   }
-
-  // set positions
-  link.attr("x1", function(d) { return pos_functions[pos_by_x](d.source).x; })
+  function update_pos_force() {
+    // set positions
+    link.attr("x1", function(d) { return pos_functions[pos_by_x](d.source).x; })
       .attr("y1", function(d) { return pos_functions[pos_by_y](d.source).y; })
       .attr("x2", function(d) { return pos_functions[pos_by_x](d.target).x; })
       .attr("y2", function(d) { return pos_functions[pos_by_y](d.target).y; })
-  node.attr("x", function(d) { return pos_functions[pos_by_x](d).x; })
+    node.attr("x", function(d) { return pos_functions[pos_by_x](d).x; })
       .attr("y", function(d) { return pos_functions[pos_by_y](d).y; })
       .attr("transform", function(d) { 
-        //console.log(d); 
         var dx = pos_functions[pos_by_x](d).x;
         var dy = pos_functions[pos_by_y](d).y;
         return "translate(" + dx + "," + dy + ")"
       });
-  
-  // simulate a tick
-  //force.tick();
   }
-  force.on("tick", update_pos);
 
   // initialize position
-  //update_pos();
+  force.on("tick", update_pos_force);
 
 
 
