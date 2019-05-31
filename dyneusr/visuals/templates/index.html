@@ -660,7 +660,8 @@ function draw_force(data) {
   var pos_functions = {
     "force": function(d) {return {x:d.x, y:d.y};},
     "center": function(d) {return {x:w/2, y:h/2};},
-    "node": function(d) {return {x:d.index, y:d.index};},
+    "node (index)": function(d) {var xy = d.index*50;  return {x:xy, y:xy};},
+    "node (degree)": function(d) {var xy = d.degree*50; return {x:xy, y:xy};},
     "members (median)": function(d) {var xy = d3.median(d.members); return {x:xy, y:xy};},
     "members (min)": function(d) {var xy = d3.min(d.members); return {x:xy, y:xy};},
     "members (max)": function(d) {var xy = d3.max(d.members); return {x:xy, y:xy};},
