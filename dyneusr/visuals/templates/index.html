@@ -657,16 +657,33 @@ function draw_force(data) {
   //// Node Position functions / settings
   ////////////////////////////////////////////////////
   // position by
+  var w = 750;
+  var h = 750;
   var pos_functions = {
     "force": function(d) {return {x:d.x, y:d.y};},
-    "center": function(d) {return {x:w/2, y:h/2};},
-    "node (index)": function(d) {var xy = d.index*50;  return {x:xy, y:xy};},
-    "node (degree)": function(d) {var xy = d.degree*50; return {x:xy, y:xy};},
-    "node (size)": function(d) {var xy = d.size*50; return {x:xy, y:xy};},
-    "members (median)": function(d) {var xy = d3.median(d.members)*10; return {x:xy, y:xy};},
-    "members (min)": function(d) {var xy = d3.min(d.members)*10; return {x:xy, y:xy};},
-    "members (max)": function(d) {var xy = d3.max(d.members)*10; return {x:xy, y:xy};},
-    "members (mean)": function(d) {var xy = d3.mean(d.members)*10; return {x:xy, y:xy};},
+    "center": function(d) {return {x:(w/2), y:h-(h/2)};},
+    "node (index)": function(d) {
+      var xy = d.index / d3.values(json.nodes).length;
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    },
+    "node (degree)": function(d) {var xy = d.degree*50; return {x:xy, y:h-xy};},
+    "node (size)": function(d) {var xy = d.size*50; return {x:xy, y:h-xy};},
+    "members (min)": function(d) {
+      var xy = d3.min(d.members) / data_size; 
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    },
+    "members (max)": function(d) {
+      var xy = d3.max(d.members) / data_size; 
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    },
+    "members (mean)": function(d) {
+      var xy = d3.mean(d.members) / data_size; 
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    },
+    "members (median)": function(d) {
+      var xy = d3.median(d.members) / data_size; 
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    },
   };
   // quick encoding for groups to ints
   var groups_to_int = {};
@@ -678,42 +695,28 @@ function draw_force(data) {
   });
   // some more func options based on colorings
   color_by_options.map(function(k) {
-    if (k === "uniform") {
+    if (k==="uniform" || k==="degree" || k==="multiclass") {
       return;
-    } else if (k === "multiclass") {
-      groups[k].map(function(i, g) {
-        pos_functions[k + " ("+i+")"] = function(d) {
-          var v = 0;
-          d.proportions[k].map(function(p) {
-            if (parseInt(p.group) === parseInt(i)) {
-              v = p.value;
-            } 
-          });
-          var xy = (1 + v) * 10; 
-          if (d.index < 5) console.log(xy);
-          return {x: xy, y: xy};
-        };
-      });
-    } else {
-      pos_functions[k] = function(d) {
-        var g = parseInt(d.group[k]);
-        var v = groups_to_int[k][g];
-        var xy = (1 + v) * 200; 
-        return {x: xy, y: xy};
-      };
-      pos_functions[k + " (% group)"] = function(d) {
-        var p = d.proportions[k][0];
-        var v = (p.row_count / p.value);
-        var xy = (1 + v) * 200; 
-        return {x: xy, y: xy};
-      };
-      pos_functions[k + " (# groups)"] = function(d) {
-        var p = d.proportions[k];
-        var v = d3.keys(p).length;
-        var xy = (1 + v) * 200;
-        return {x: xy, y: xy};
-      };
     }
+    pos_functions[k] = function(d) {
+      var g = parseInt(d.group[k]);
+      var xy = groups_to_int[k][g] / d3.max(d3.values(groups_to_int[k]));
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    };
+    pos_functions[k + ' (weighted)'] = function(d) {
+      var xy = 0;
+      d.proportions["multiclass"].map(function(p) {
+        if (p.label === k) { 
+          xy = p.value / p.row_count;
+        } 
+      });
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    };
+    pos_functions[k + " (diversity)"] = function(d) {
+      var p = d.proportions[k];
+      var xy = d3.keys(p).length / d3.keys(groups[k]).length;
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    };
   });
   var pos_by_x = "force";
   var pos_by_y = "force";
