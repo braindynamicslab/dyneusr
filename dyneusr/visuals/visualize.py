@@ -137,6 +137,10 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
         # PORT => port
         port = kwargs.pop('PORT')
 
+    ### no need to open a new port if static
+    if static is True:
+        port = None
+        
     ### Run http.server on port
     HTTP = http_server(port=port, **kwargs)
 
