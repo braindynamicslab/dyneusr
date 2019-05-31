@@ -182,6 +182,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     meta['data_id'] = np.arange(len(meta)).astype(str)
     meta['uniform'] = '0' 
 
+
     # normalize meta
     # TODO: move all of this logic into color map utils
     #meta = Normalizer().fit_transform(meta.reshape(-1, 1))
@@ -372,7 +373,6 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
                 
 
 
-
     # more attribues
     for n, nbrs in G.adj.items():
         G.node[n]['degree'] = G.degree(n)
@@ -384,6 +384,15 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     for n, nbrs in G.adj.items():
         for nbr in nbrs:
             G.edges[(n,nbr)]['strength'] = 1 - (G.edges[(n,nbr)]['distance'] / max_distance)
+
+    # add coloring by degree
+    for n in G:
+        degree = int(G.degree(n))
+        size = len(G.node[n]['members'])
+        G.node[n]['group']['degree'] = G.degree(n)
+        G.node[n]['proportions']['degree'] = [dict(
+            group=degree, row_count=size, value=size
+        )]
     return G
 
 

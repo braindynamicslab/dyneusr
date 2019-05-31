@@ -1,4 +1,3 @@
-import webbrowser
 import matplotlib
 matplotlib.use("WebAgg")
 import matplotlib.pyplot as plt
@@ -42,8 +41,7 @@ graph = mapper.map(
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_haxby_decoding.html', static=True)   
-webbrowser.open(dG.HTTP.url)
+dG.visualize('dyneusr_haxby_decoding.html', static=True, show=True)   
 
 # Visualize the stages of Mapper
 fig, axes = visualize_mapper_stages(
