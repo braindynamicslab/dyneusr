@@ -772,7 +772,11 @@ function draw_force(data) {
     //  .html("<h4>Node</h4><div class='well'>"+d.tooltip+"</div>");
   }).on("mousedown", function(d) { 
     d3.event.stopPropagation();
-    set_focus(d);
+    if (focus_node === d) {
+      exit_focus();
+    } else {
+      set_focus(d);
+    }
   }).on("mouseout", function(d) {
     if (focus_node === null) {
         exit_highlight();
@@ -787,8 +791,8 @@ function draw_force(data) {
       exit_highlight();
     }
   }).on("mousedown", function() {
-    exit_focus();
-    exit_highlight();
+    //exit_focus();
+    //exit_highlight();
   });
 
   // Node highlighting logic
