@@ -662,19 +662,58 @@ function draw_force(data) {
     "center": function(d) {return {x:w/2, y:h/2};},
     "node (index)": function(d) {var xy = d.index*50;  return {x:xy, y:xy};},
     "node (degree)": function(d) {var xy = d.degree*50; return {x:xy, y:xy};},
-    "members (median)": function(d) {var xy = d3.median(d.members); return {x:xy, y:xy};},
-    "members (min)": function(d) {var xy = d3.min(d.members); return {x:xy, y:xy};},
-    "members (max)": function(d) {var xy = d3.max(d.members); return {x:xy, y:xy};},
-    "members (mean)": function(d) {var xy = d3.mean(d.members); return {x:xy, y:xy};},
+    "node (size)": function(d) {var xy = d.size*50; return {x:xy, y:xy};},
+    "members (median)": function(d) {var xy = d3.median(d.members)*10; return {x:xy, y:xy};},
+    "members (min)": function(d) {var xy = d3.min(d.members)*10; return {x:xy, y:xy};},
+    "members (max)": function(d) {var xy = d3.max(d.members)*10; return {x:xy, y:xy};},
+    "members (mean)": function(d) {var xy = d3.mean(d.members)*10; return {x:xy, y:xy};},
   };
+  // quick encoding for groups to ints
+  var groups_to_int = {};
+  d3.keys(groups).map(function(k) {
+    groups_to_int[k] = {};
+    groups[k].map(function(i, g) {
+      groups_to_int[k][parseInt(i)] = parseInt(g);
+    });
+  });
+  // some more func options based on colorings
   color_by_options.map(function(k) {
-    pos_functions["group ("+k+")"] = function(d) {
-      var xy = d.group[k];
-      return {
-        x: xy ? xy : w/2,
-        y: xy ? xy : h/2,
+    if (k === "uniform") {
+      return;
+    } else if (k === "multiclass") {
+      groups[k].map(function(i, g) {
+        pos_functions[k + " ("+i+")"] = function(d) {
+          var v = 0;
+          d.proportions[k].map(function(p) {
+            if (parseInt(p.group) === parseInt(i)) {
+              v = p.value;
+            } 
+          });
+          var xy = (1 + v) * 10; 
+          if (d.index < 5) console.log(xy);
+          return {x: xy, y: xy};
+        };
+      });
+    } else {
+      pos_functions[k] = function(d) {
+        var g = parseInt(d.group[k]);
+        var v = groups_to_int[k][g];
+        var xy = (1 + v) * 200; 
+        return {x: xy, y: xy};
       };
-    };
+      pos_functions[k + " (% group)"] = function(d) {
+        var p = d.proportions[k][0];
+        var v = (p.row_count / p.value);
+        var xy = (1 + v) * 200; 
+        return {x: xy, y: xy};
+      };
+      pos_functions[k + " (# groups)"] = function(d) {
+        var p = d.proportions[k];
+        var v = d3.keys(p).length;
+        var xy = (1 + v) * 200;
+        return {x: xy, y: xy};
+      };
+    }
   });
   var pos_by_x = "force";
   var pos_by_y = "force";
