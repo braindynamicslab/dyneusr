@@ -718,6 +718,22 @@ function draw_force(data) {
       return {x:(xy * w/2), y:h-(xy * h/2)};
     };
   });
+  // custom pos
+  var custom_layouts = json.graph.custom_layouts ? json.graph.custom_layouts : {};
+  d3.keys(custom_layouts).map(function(k) {
+    //
+    // assume position is defined for each node
+    // i.e. pos = {'custom': {1: [x, y], ...}}
+    //
+    pos_functions[k] = function(d) {
+      var xy = custom_layouts[k][d.name];
+      if (d3.keys(xy).length < 2) {
+        xy = {0:xy[0], 1:xy[0]};
+      } 
+      return {x:(xy[0] * w/2), y:h-(xy[1] * h/2)};
+    };
+  });
+  // define initial settings
   var pos_by_x = "force";
   var pos_by_y = "force";
 
@@ -1154,6 +1170,7 @@ function draw_force(data) {
   }, 1200);
   ////////////////////////////////////////////////////     
   ////////////////////////////////////////////////////
+
 
   return svg;
 };
