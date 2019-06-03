@@ -52,13 +52,13 @@ Check out some examples:
 
 
 
-## **Examples**
+## **Usage**
 
 
 This package includes several [examples](https://github.com/braindynamicslab/dyneusr/tree/master/examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, check out [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 
-### **_Basic Usage_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/trefoil_knot.py))
+### **_Basic Visualization_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/trefoil_knot.py))
 
 ```python
 
@@ -89,7 +89,7 @@ dG.visualize('dyneusr_output.html')
 
 
 
-### **_Advanced Usage_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/compare_lenses.py))
+### **_Parameter Comparison_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/compare_lenses.py))
 
 ```python
 # Define projections to compare
@@ -120,7 +120,7 @@ for projection in projections:
 
 
 
-### **_Neuroimaging Examples_** ([haxby decoding](https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding))
+### **_Neuroimaging Applications_** ([haxby decoding](https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding))
 
 ```python
 

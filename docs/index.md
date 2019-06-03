@@ -46,20 +46,19 @@ Check out some examples:
 
 - [Trefoil knot](https://braindynamicslab.github.io/dyneusr/docs/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/trefoil-knot/trefoil_knot.py))
 - [Trefoil knot (custom layouts)](https://braindynamicslab.github.io/dyneusr/docs/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/trefoil-knot-custom-layouts/trefoil_knot_custom_layouts.py))
-- [Haxby (t-SNE)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-tsne/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-tsne/haxby_tsne.py))
-- [Haxby (UMAP)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-umap/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap/haxby_umap.py))
-- [Haxby (Supervised UMAP)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-umap-supervised/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap-supervised/haxby_umap_supervised.py))
+- [Haxby decoding (t-SNE)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-tsne/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-tsne/haxby_tsne.py))
+- [Haxby decoding (UMAP)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-umap/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap/haxby_umap.py))
+- [Haxby decoding (Supervised UMAP)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-umap-supervised/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap-supervised/haxby_umap_supervised.py))
 
 
 
-
-## **Examples**
+## **Usage**
 
 
 This package includes several [examples](https://github.com/braindynamicslab/dyneusr/tree/master/examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, check out [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 
-### **_Basic Usage_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/trefoil_knot.py))
+### **_Basic Visualization_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/trefoil_knot.py))
 
 ```python
 
@@ -90,7 +89,7 @@ dG.visualize('dyneusr_output.html')
 
 
 
-### **_Advanced Usage_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/compare_lenses.py))
+### **_Parameter Comparison_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/compare_lenses.py))
 
 ```python
 # Define projections to compare
@@ -121,7 +120,7 @@ for projection in projections:
 
 
 
-### **_Neuroimaging Examples_** ([haxby decoding](https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding))
+### **_Neuroimaging Applications_** ([haxby decoding](https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding))
 
 ```python
 
@@ -163,6 +162,7 @@ dG.visualize('dyneusr_output.html')
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding">
 <img src="../examples/haxby_decoding/dyneusr_haxby_decoding.png">
 </a></p>
+
 
 
 

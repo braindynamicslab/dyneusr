@@ -22,6 +22,6 @@ Check out some examples:
 
 - [Trefoil knot](https://braindynamicslab.github.io/dyneusr/docs/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/trefoil-knot/trefoil_knot.py))
 - [Trefoil knot (custom layouts)](https://braindynamicslab.github.io/dyneusr/docs/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/trefoil-knot-custom-layouts/trefoil_knot_custom_layouts.py))
-- [Haxby (t-SNE)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-tsne/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-tsne/haxby_tsne.py))
-- [Haxby (UMAP)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-umap/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap/haxby_umap.py))
-- [Haxby (Supervised UMAP)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-umap-supervised/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap-supervised/haxby_umap_supervised.py))
+- [Haxby decoding (t-SNE)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-tsne/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-tsne/haxby_tsne.py))
+- [Haxby decoding (UMAP)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-umap/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap/haxby_umap.py))
+- [Haxby decoding (Supervised UMAP)](https://braindynamicslab.github.io/dyneusr/docs/demo/haxby-umap-supervised/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap-supervised/haxby_umap_supervised.py))
