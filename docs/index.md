@@ -1,9 +1,10 @@
 
 
 <p align="center">
+<a href="https://braindynamicslab.github.io/dyneusr/">
 <img src="../docs/assets/logo.png" height="250">
+</a>
 </p>
-
 
 <p align="center">
 <img src="../examples/haxby_decoding/mapper_stages.png">
