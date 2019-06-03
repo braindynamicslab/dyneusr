@@ -42,14 +42,13 @@ target = target[mask_sessions]
 # Generate a shape graph using KeplerMapper
 mapper = KeplerMapper(verbose=1)
 
-# Configure projections
+# Configure projection
 pca = PCA(2, random_state=1)
-tsne = TSNE(2, init='pca', random_state=1)
 umap = UMAP(n_components=2, init=pca.fit_transform(X))
 
 # Construct lens and generate the shape graph
 lens = mapper.fit_transform(
-	umap.fit_transform(X, y=target), 
+	umap.fit_transform(X, y=None), 
 	projection=[0, 1]) 
 graph = mapper.map(
     lens, X=X, 
@@ -67,10 +66,17 @@ dG.add_custom_layout(nx.spring_layout, name='nx.spring')
 dG.add_custom_layout(nx.kamada_kawai_layout, name='nx.kamada_kawai')
 dG.add_custom_layout(nx.spectral_layout, name='nx.spectral')
 dG.add_custom_layout(nx.circular_layout, name='nx.circular')
+
+# Configure some projections
+pca = PCA(2, random_state=1)
+tsne = TSNE(2, init='pca', random_state=1)
+umap = UMAP(n_components=2, init=pca.fit_transform(X))
+
+# Add projections as custom_layouts
 dG.add_custom_layout(pca.fit_transform(X), name='PCA')
 dG.add_custom_layout(tsne.fit_transform(X), name='TSNE')
 dG.add_custom_layout(umap.fit_transform(X, y=None), name='UMAP')
 dG.add_custom_layout(umap.fit_transform(X, y=target), name='Supervised UMAP')
 
 # Visualize 
-dG.visualize('haxby-umap-supervised.html', static=True, show=True)
+dG.visualize(static=True, show=True)
