@@ -373,7 +373,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
                 pos = dict(pos(self.G))
             
             # check for positions defined for each member
-            if len(pos) > len(self.G):
+            if len(pos) != len(self.G):
                 pos = {n: np.mean(pos[_], axis=0) for n,_ in self.G.nodes('members')}
             
             # make sure we have a dictionary with nodes as the keys
