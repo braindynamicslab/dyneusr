@@ -11,7 +11,6 @@ __all__ = [
     'tools',
     'visuals',
     'core',
-    'decomposition',
 ]
 
 from . import datasets
@@ -19,7 +18,6 @@ from . import mapper
 from . import tools
 from . import visuals
 from . import core
-from . import decomposition
 
 from .core import DyNeuGraph
 from ._version import __version__
