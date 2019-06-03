@@ -1,6 +1,6 @@
 
 <p align="center">
-<a href="https://braindynamicslab.github.io/dyneusr/">
+<a href="https://braindynamicslab.github.io/dyneusr/docs/">
 <img src="../docs/assets/logo.png" height="250">
 </a>
 </p>
