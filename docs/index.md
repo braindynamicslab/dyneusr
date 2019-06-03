@@ -1,12 +1,12 @@
 
 
 <p align="center">
-<img src="./docs/assets/logo.png" height="250">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/docs/assets/logo.png" height="250">
 </p>
 
 
 <p align="center">
-<img src="./examples/haxby_decoding/mapper_stages.png">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master//examples/haxby_decoding/mapper_stages.png">
 </p>
 
 
@@ -34,7 +34,7 @@ For more information about the Mapper approach, please see:
 ## **Examples**
 
 
-This package includes several [examples](./examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, check out [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
+This package includes several [examples](https://github.com/braindynamicslab/dyneusr/tree/master/examples/) that introduce DyNeuSR's API and highlight different aspects of analysis with DyNeuSR. For more detailed tutorials, check out [dyneusr-notebooks](https://github.com/braindynamicslab/dyneusr-notebooks/).
 
 
 ### **_Basic Usage_** ([trefoil knot](https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/trefoil_knot.py))
@@ -63,7 +63,7 @@ dG.visualize('dyneusr_output.html')
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/trefoil_knot">
-<img src="./examples/trefoil_knot/dyneusr_trefoil_knot.png">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/dyneusr_trefoil_knot.png">
 </a></p>
 
 
@@ -90,10 +90,10 @@ for projection in projections:
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/trefoil_knot">
-<img src="./examples/trefoil_knot/mapper_lens_0.png">
-<img src="./examples/trefoil_knot/mapper_lens_0_1.png">
-<img src="./examples/trefoil_knot/mapper_lens_0_2.png">
-<img src="./examples/trefoil_knot/mapper_lens_1_2.png">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_0.png">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_0_1.png">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_0_2.png">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/trefoil_knot/mapper_lens_1_2.png">
 </a></p>
 
 
@@ -139,7 +139,7 @@ dG.visualize('dyneusr_output.html')
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding">
-<img src="./examples/haxby_decoding/dyneusr_haxby_decoding.png">
+<img src="https://github.com/braindynamicslab/dyneusr/blob/master/examples/haxby_decoding/dyneusr_haxby_decoding.png">
 </a></p>
 
 
@@ -163,7 +163,7 @@ Online documentation (*coming soon*) will include more details about how to inst
 * [nilearn](nilearn.github.io)
 * [kmapper](kepler-mapper.scikit-tda.org)
 
-_For a full list of packages and required versions, see [`requirements.txt`](./requirements.txt) and [`requirements-versions.txt`](./requirements-versions.txt)._
+_For a full list of packages and required versions, see [`requirements.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements.txt) and [`requirements-versions.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements-versions.txt)._
 
 
 ### **_Install with Conda_**
