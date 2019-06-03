@@ -168,8 +168,6 @@ dG.visualize('dyneusr_output.html')
 
 ## **Setup**
 
-Online documentation (*coming soon*) will include more details about how to install and use DyNeuSR.
-
 ### **_Dependencies_**
 
 #### [Python 3.6](https://www.python.org/)
@@ -186,6 +184,25 @@ Online documentation (*coming soon*) will include more details about how to inst
 * [kmapper](kepler-mapper.scikit-tda.org)
 
 _For a full list of packages and required versions, see [`requirements.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements.txt) and [`requirements-versions.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements-versions.txt)._
+
+
+### **_Install with PIP_**
+
+_To install with pip:_
+```bash
+pip install dyneusr
+```
+
+_To install from source:_
+```bash
+git clone https://github.com/braindynamicslab/dyneusr.git
+cd dyneusr
+
+pip install -r requirements.txt
+pip install -e .
+
+pytest
+```
 
 
 ### **_Install with Conda_**
@@ -210,19 +227,6 @@ pytest
 
 This creates a new conda environment `dyneusr` and installs in it the dependencies that are needed. To access it, use the `conda activate dyneusr` command (if your conda version >= 4.4) and use `source activate dyneusr` command (if your conda version < 4.4).
 
-
-### **_Install with PIP_**
-
-_To install from source with pip:_
-```bash
-git clone https://github.com/braindynamicslab/dyneusr.git
-cd dyneusr
-
-pip install -r requirements.txt
-pip install -e .
-
-pytest
-```
 
 
 ## **Support**
