@@ -1,7 +1,7 @@
 
 <p align="center">
-<a href="https://braindynamicslab.github.io/dyneusr/docs/">
-<img src="../docs/assets/logo.png" height="250">
+<a href="https://braindynamicslab.github.io/dyneusr/">
+<img src="../assets/logo.png" height="250">
 </a>
 </p>
 
@@ -14,12 +14,12 @@ DyNeuSR provides an interactive interface for visualizing and exploring shape gr
 Check out the demos:
 
 
-- [Trefoil knot](https://braindynamicslab.github.io/dyneusr/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/demo/trefoil-knot/trefoil_knot.py))
+- [Trefoil knot](https://braindynamicslab.github.io/dyneusr/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/trefoil-knot/trefoil_knot.py))
 
-- [Trefoil knot (custom layouts)](https://braindynamicslab.github.io/dyneusr/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/demo/trefoil-knot-custom-layouts/trefoil_knot_custom_layouts.py))
+- [Trefoil knot (custom layouts)](https://braindynamicslab.github.io/dyneusr/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/trefoil-knot-custom-layouts/trefoil_knot_custom_layouts.py))
 
-- [Haxby fMRI data (t-SNE lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-tsne/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/demo/haxby-tsne/haxby_tsne.py))
+- [Haxby fMRI data (t-SNE lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-tsne/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-tsne/haxby_tsne.py))
 
-- [Haxby fMRI data (UMAP lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-umap/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/demo/haxby-umap/haxby_umap.py))
+- [Haxby fMRI data (UMAP lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-umap/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap/haxby_umap.py))
 
-- [Haxby fMRI data (supervised UMAP lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-umap-supervised/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/demo/haxby-umap-supervised/haxby_umap_supervised.py))
+- [Haxby fMRI data (supervised UMAP lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-umap-supervised/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap-supervised/haxby_umap_supervised.py))

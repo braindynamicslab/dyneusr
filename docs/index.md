@@ -1,7 +1,7 @@
 
 
 <p align="center">
-<a href="https://braindynamicslab.github.io/dyneusr/docs/">
+<a href="https://braindynamicslab.github.io/dyneusr/">
 <img src="./assets/logo.png" height="250">
 </a>
 </p>
@@ -16,7 +16,7 @@
 
 DyNeuSR is a Python visualization library for topological representations of neuroimaging data.
 
-[DyNeuSR](https://braindynamicslab.github.io/dyneusr/docs/) connects the Mapper algorithm (e.g. [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g. [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g. [Nilearn](https://nilearn.github.io/)). DyNeuSR provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
+[DyNeuSR](https://braindynamicslab.github.io/dyneusr/) connects the Mapper algorithm (e.g. [KeplerMapper](https://kepler-mapper.scikit-tda.org)) with network analysis tools (e.g. [NetworkX](https://networkx.github.io/)) and other neuroimaging data visualization libraries (e.g. [Nilearn](https://nilearn.github.io/)). DyNeuSR provides a high-level interface for interacting with shape graph representations of neuroimaging data and relating such representations back to neurophysiology.
 
 This package was designed specifically for working with shape graphs produced by the Mapper algorithm from topological data analysis (TDA), as described in the papers "[Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093)" (Geniesse et al., 2019) and "[Towards a new approach to reveal dynamical organization of the brain using topological data analysis](https://www.nature.com/articles/s41467-018-03664-4)" (Saggar et al., 2018). Check out this [blog post](https://bdl.stanford.edu/blog/tda-cme-paper/) for more about the initial work that inspired the development of DyNeuSR. 
 
@@ -43,11 +43,11 @@ DyNeuSR provides an interactive interface for visualizing and exploring shape gr
 Check out the [demos](https://braindynamicslab.github.io/dyneusr/demo/):
 
 
-- [Trefoil knot](https://braindynamicslab.github.io/dyneusr/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/demo/trefoil-knot/trefoil_knot.py))
-- [Trefoil knot (custom layouts)](https://braindynamicslab.github.io/dyneusr/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/demo/trefoil-knot-custom-layouts/trefoil_knot_custom_layouts.py))
-- [Haxby fMRI data (t-SNE lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-tsne/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/demo/haxby-tsne/haxby_tsne.py))
-- [Haxby fMRI data (UMAP lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-umap/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/demo/haxby-umap/haxby_umap.py))
-- [Haxby fMRI data (supervised UMAP lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-umap-supervised/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/demo/haxby-umap-supervised/haxby_umap_supervised.py))
+- [Trefoil knot](https://braindynamicslab.github.io/dyneusr/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/trefoil-knot/trefoil_knot.py))
+- [Trefoil knot (custom layouts)](https://braindynamicslab.github.io/dyneusr/demo/trefoil-knot/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/trefoil-knot-custom-layouts/trefoil_knot_custom_layouts.py))
+- [Haxby fMRI data (t-SNE lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-tsne/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-tsne/haxby_tsne.py))
+- [Haxby fMRI data (UMAP lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-umap/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap/haxby_umap.py))
+- [Haxby fMRI data (supervised UMAP lens)](https://braindynamicslab.github.io/dyneusr/demo/haxby-umap-supervised/) ([code](https://github.com/braindynamicslab/dyneusr/blob/master/docs/demo/haxby-umap-supervised/haxby_umap_supervised.py))
 
 
 
