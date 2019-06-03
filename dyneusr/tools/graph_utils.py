@@ -36,10 +36,12 @@ def in_notebook():
     return get_ipython() is not None
 
 
-def _agg_proportions(df, members=slice(0, -1)):
+def _agg_proportions(df, members=None):
     """ Aggregate proportions df for members. 
     """
-    p = df.copy().iloc[members]
+    p = df.copy()
+    if members is not None:
+        p = p.iloc[members]
     p = p.T.assign(
         group=pd.factorize(p.columns)[0],
         label=pd.factorize(p.columns)[-1],
