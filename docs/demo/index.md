@@ -7,7 +7,7 @@
 
 <p align="center">
 <a href="https://braindynamicslab.github.io/dyneusr/">
-<img src="./docs/assets/haxby_decoding_mapper_stages.png">
+<img src="../assets/haxby_decoding_mapper_stages.png">
 </a>
 </p>
 
