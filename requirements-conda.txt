@@ -8,4 +8,6 @@ scikit-learn
 matplotlib
 seaborn
 networkx
+umap-learn
+hdbscan
 fire
