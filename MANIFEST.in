@@ -1,0 +1,2 @@
+recursive-include dyneusr/visuals/templates *
+include README.md
