@@ -2,15 +2,13 @@
 
 Follow these steps when deploying a new version to Pypi
 
-1. Remove `.dev` tag from version number in `setup.py`
+1. Remove `.dev` tag from version number in `dyneusr/_version.py`
 2. Add release notes for the new version in `RELEASE.txt`
 3. Run the following commands to upload the new version to pypi
 
 ```
-pip install -U twine
-python setup.py sdist
-pip install wheel
-python setup.py bdist_wheel
+pip install -U twine wheel
+python setup.py sdist bdist_wheel
 ```
 
 ```
