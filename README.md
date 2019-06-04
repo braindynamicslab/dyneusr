@@ -2,14 +2,14 @@
 
 <p align="center">
 <a href="https://braindynamicslab.github.io/dyneusr/">
-<img src="./docs/assets/logo.png" height="250">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/logo.png" height="250">
 </a>
 </p>
 
 
 <p align="center">
 <a href="https://braindynamicslab.github.io/dyneusr/">
-<img src="./docs/assets/haxby_decoding_mapper_stages.png">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/haxby_decoding_mapper_stages.png">
 </a>
 </p>
 
@@ -86,7 +86,7 @@ dG.visualize('dyneusr_output.html')
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/trefoil_knot">
-<img src="./docs/assets/dyneusr_trefoil_knot.png">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/dyneusr_trefoil_knot.png">
 </a></p>
 
 
@@ -113,10 +113,10 @@ for projection in projections:
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/trefoil_knot">
-<img src="./docs/assets/trefoil_knot_mapper_lens_0.png">
-<img src="./docs/assets/trefoil_knot_mapper_lens_0_1.png">
-<img src="./docs/assets/trefoil_knot_mapper_lens_0_2.png">
-<img src="./docs/assets/trefoil_knot_mapper_lens_1_2.png">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/trefoil_knot_mapper_lens_0.png">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/trefoil_knot_mapper_lens_0_1.png">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/trefoil_knot_mapper_lens_0_2.png">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/trefoil_knot_mapper_lens_1_2.png">
 </a></p>
 
 
@@ -161,7 +161,7 @@ dG.visualize('dyneusr_output.html')
 ```
 
 <p align="center"><a href="https://github.com/braindynamicslab/dyneusr/tree/master/examples/haxby_decoding">
-<img src="./docs/assets/dyneusr_haxby_decoding.png">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/dyneusr_haxby_decoding.png">
 </a></p>
 
 
