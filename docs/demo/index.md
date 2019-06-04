@@ -2,14 +2,14 @@
 
 <p align="center">
 <a href="https://braindynamicslab.github.io/dyneusr/">
-<img src="../assets/logo.png" height="250">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/logo.png" height="250">
 </a>
 </p>
 
 
 <p align="center">
 <a href="https://braindynamicslab.github.io/dyneusr/">
-<img src="../assets/haxby_decoding_mapper_stages.png">
+<img src="https://raw.githubusercontent.com/braindynamicslab/dyneusr/master/docs/assets/haxby_decoding_mapper_stages.png">
 </a>
 </p>
 
