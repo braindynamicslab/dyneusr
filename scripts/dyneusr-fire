@@ -7,8 +7,24 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.cluster import KMeans, DBSCAN
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from umap.umap_ import UMAP
+from hdbscan import HDBSCAN
 from kmapper import KeplerMapper, Cover
 from dyneusr import DyNeuGraph
+
+def check_estimator(estimator):
+    """Check estimator and process if not valid.
+    """
+    if isinstance(estimator, str):
+        try: 
+            estimator = eval(estimator)
+        except NameError as e:
+            # TOOD: show use a list of valid estimators 
+            print('valid projections: PCA, TSNE, UMAP')
+            print('valid scalers: MinMaxScaler, StandardScaler')
+            print('valid clusterers: KMeans, DBSCAN, HDBSCAN')
+            raise e
+    return estimator
 
 
 class DyNeuSR(object):
@@ -87,7 +103,7 @@ class DyNeuSR(object):
 
 
     def run_mapper(self, 
-               projection=[0],
+               projection=TSNE(2),
                scaler=MinMaxScaler(),
                resolution=6, gain=0.2, 
                clusterer=KMeans(2),
@@ -96,16 +112,23 @@ class DyNeuSR(object):
         """
         # Generate shape graph using KeplerMapper
         mapper = KeplerMapper(verbose=verbose)
-        print(scaler)
+
+        # Check estimators
+        self._projection = check_estimator(projection)
+        self._scaler = check_estimator(scaler)
+        self._cover = Cover(resolution, gain)
+        self._clusterer = check_estimator(clusterer)
+
+        # Run kmapper
         lens = mapper.fit_transform(
             self.X, 
-            projection=projection, 
-            scaler=scaler
+            projection=self._projection, 
+            scaler=self._scaler
         )
         graph = mapper.map(
             lens, self.X, 
-            cover=Cover(resolution, gain), 
-            clusterer=clusterer
+            cover=self._cover, 
+            clusterer=self._cluster
         )
 
         # Store results
