@@ -43,6 +43,11 @@ DyNeuSR also provides an interactive web interface for visualizing and exploring
 
 
 
+## **Related Projects** 
+
+- [DyNeuSR Fire](https://braindynamicslab.github.io/dyneusr-fire/) is a new project that provides a command line interface for DyNeuSR. It wraps `kmapper` and `dyneusr` into a single pipeline, and uses the [Python Fire](https://github.com/google/python-fire) library to automatically generate a simple command line interface that accepts several important options and allows users to customize this pipeline. For more information about DyNeuSR Fire, check out the [docs](https://braindynamicslab.github.io/dyneusr-fire/).
+
+
 
 ## **References**
 
