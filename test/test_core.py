@@ -48,7 +48,7 @@ class TestDyNeuGraph:
         # visualize results in a tempdir
         with tempfile.TemporaryDirectory() as temp_dir:
 	        temp_html = os.path.join(temp_dir, 'test.html')
-	        dG.visualize(temp_html, path_assets=temp_dir, show=False)
+	        dG.visualize(temp_html, path_assets=temp_dir, show=False, port=None)
 	        assert os.path.exists(temp_html)
         return 
 
@@ -64,6 +64,6 @@ class TestDyNeuGraph:
         # visualize results in a tempdir
         with tempfile.TemporaryDirectory() as temp_dir:
 	        temp_html = os.path.join(temp_dir, 'test.html')
-	        dG.visualize(temp_html, path_assets=temp_dir, show=False)
+	        dG.visualize(temp_html, path_assets=temp_dir, show=False, port=None)
 	        assert os.path.exists(temp_html)
         return 

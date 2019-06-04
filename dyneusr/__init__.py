@@ -10,7 +10,7 @@ __all__ = [
     'mapper',
     'tools',
     'visuals',
-    'core'
+    'core',
 ]
 
 from . import datasets
@@ -20,5 +20,4 @@ from . import visuals
 from . import core
 
 from .core import DyNeuGraph
-
 from ._version import __version__

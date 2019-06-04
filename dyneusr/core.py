@@ -133,12 +133,29 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         self.mixtures_ = mixtures
 
         # some new conventions
-        self.G = self.G_
-        self.A = self.adj_
-        self.M = self.map_
-        self.TCM = self.tcm_
+        #self.G = self.G_
+        #self.A = self.adj_
+        #self.M = self.map_
+        #self.TCM = self.tcm_
         return self
 
+
+    @property
+    def G(self):
+        return self.G_
+
+    @property
+    def A(self):
+        return self.adj_
+    
+    @property
+    def M(self):
+        return self.map_
+    
+    @property
+    def TCM(self):
+        return self.tcm_
+    
 
     def inverse_transform(self, G, y=None):
         """ Inverse transform of G 
@@ -285,7 +302,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         return self
 
 
-    def visualize(self, path_html='index.html', json_graph=None, color_functions=None, custom_data=None, plot_tcm=False, static=True, show=True, port=None, **kwargs):
+    def visualize(self, path_html='index.html', json_graph=None, color_functions=None, custom_data=None, plot_tcm=False, static=False, show=False, port=8000, **kwargs):
         """ Visualize DyNeuGraph.
 
         TODO: this needs some work...
@@ -310,12 +327,12 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
             figs = visuals.plot_temporal_matrix(self.tcm_, y=None, show=show, **kwargs)
 
         # [2] visualize force
-        HTTP = visuals.visualize_force(self.node_link_data_, path_html=path_html, static=static, port=port, **kwargs)
+        HTTP = visuals.visualize_force(self.node_link_data_, path_html=path_html, static=static, show=show, port=port, **kwargs)
         self.HTTP = HTTP
 
         # [3] open in browser (optional)
-        if show is True:
-            self.show()
+        #if show is True:
+        #    self.show()
         return self
 
 
@@ -331,4 +348,60 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
             print('Hint: requires Python webbrowser module...')
         return self
 
+
+    def add_custom_layout(self, pos, name='custom'):
+        """Add a user-defined list of positions
+
+        Parameters
+        ----------
+        pos : dict, array-like, callable
+            Dictionary, list, or function for defining the
+            coordinate positions of nodes in the graph.
+
+        name : str
+            Name of the custom_layout.
+
+        Examples
+        --------
+        >>> dG.add_custom_layout(pca, name='pca')
+        >>> dG.add_custom_layout(nx.spectral_layout, 'spectral')
+
+        """
+        def check_node_layout(pos):
+            # check for layout functions
+            if callable(pos):
+                pos = dict(pos(self.G))
+            
+            # check for positions defined for each member
+            if len(pos) != len(self.G):
+                pos = {n: np.mean(pos[_], axis=0) for n,_ in self.G.nodes('members')}
+            
+            # make sure we have a dictionary with nodes as the keys
+            if not isinstance(pos, dict):
+                pos = {n: pos[i] for i,n in enumerate(self.G)}
+            
+            # normalize
+            from sklearn.preprocessing import MinMaxScaler
+            arr = np.stack([np.array(pos[n]) for n in pos])
+            arr = MinMaxScaler().fit_transform(arr)
+            arr = arr.round(6).astype(float)
+
+            # split components
+            arrs = {'{} {}'.format(name, i+1): 
+                    _ for i,_ in enumerate(arr.T)}
+
+            # convert all arrays to lists, return
+            pos = {k: {n:arrs[k][i] for i,n in enumerate(pos)} for k in arrs}
+            return pos
+
+        # make sure we have positions defined for each node
+        pos = check_node_layout(pos)
+
+        # get current custom_layouts, then update
+        custom_layouts = self.G.graph.get('custom_layouts', {})
+        custom_layouts.update(**pos)
+
+        # reset custom layouts
+        self.G.graph.update(custom_layouts=custom_layouts)
+        return self
 

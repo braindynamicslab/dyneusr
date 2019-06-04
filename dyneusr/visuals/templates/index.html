@@ -597,7 +597,7 @@ function draw_force(data) {
     
   // scale pie by max row count
   var data_size = d3.max(json.nodes.map(d => { 
-        return d3.max(d.members);
+        return d3.max(d.members) + 1;
     }));
   console.log("data size: "+data_size);
 
@@ -651,21 +651,95 @@ function draw_force(data) {
       .attr("data-content", function(d) { return "size : "+d.members.length; })
       .html("text");
 
-  force.on("tick", function() {
-    link.attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
 
-    node.attr("x", function(d) { return d.x; })
-        .attr("y", function(d) { return d.y; })
-        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"});
-      });
-
-  
 
   ////////////////////////////////////////////////////
-  //// Node Highlight / Focus
+  //// Node Position functions / settings
+  ////////////////////////////////////////////////////
+  // position by
+  var w = 750;
+  var h = 750;
+  var pos_functions = {
+    "force": function(d) {return {x:d.x, y:d.y};},
+    "center": function(d) {return {x:(w/2), y:h-(h/2)};},
+    "node (index)": function(d) {
+      var xy = d.index / d3.values(json.nodes).length;
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    },
+    "node (degree)": function(d) {var xy = d.degree*50; return {x:xy, y:h-xy};},
+    "node (size)": function(d) {var xy = d.size*50; return {x:xy, y:h-xy};},
+    "members (min)": function(d) {
+      var xy = d3.min(d.members) / data_size; 
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    },
+    "members (max)": function(d) {
+      var xy = d3.max(d.members) / data_size; 
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    },
+    "members (mean)": function(d) {
+      var xy = d3.mean(d.members) / data_size; 
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    },
+    "members (median)": function(d) {
+      var xy = d3.median(d.members) / data_size; 
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    },
+  };
+  // quick encoding for groups to ints
+  var groups_to_int = {};
+  d3.keys(groups).map(function(k) {
+    groups_to_int[k] = {};
+    groups[k].map(function(i, g) {
+      groups_to_int[k][parseInt(i)] = parseInt(g);
+    });
+  });
+  // some more func options based on colorings
+  color_by_options.map(function(k) {
+    if (k==="uniform" || k==="degree" || k==="multiclass") {
+      return;
+    }
+    pos_functions[k] = function(d) {
+      var g = parseInt(d.group[k]);
+      var xy = groups_to_int[k][g] / d3.max(d3.values(groups_to_int[k]));
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    };
+    pos_functions[k + ' (weighted)'] = function(d) {
+      var xy = 0;
+      d.proportions["multiclass"].map(function(p) {
+        if (p.label === k) { 
+          xy = p.value / p.row_count;
+        } 
+      });
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    };
+    pos_functions[k + " (diversity)"] = function(d) {
+      var p = d.proportions[k];
+      var xy = d3.keys(p).length / d3.keys(groups[k]).length;
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    };
+  });
+  // custom pos
+  var custom_layouts = json.graph.custom_layouts ? json.graph.custom_layouts : {};
+  d3.keys(custom_layouts).map(function(k) {
+    //
+    // assume position is defined for each node
+    // i.e. pos = {'custom': {1: [x, y], ...}}
+    //
+    pos_functions[k] = function(d) {
+      var xy = custom_layouts[k][d.name];
+      return {x:(xy * w/2), y:h-(xy * h/2)};
+    };
+  });
+  // define initial settings
+  var pos_by_x = "force";
+  var pos_by_y = "force";
+
+
+
+
+
+  ////////////////////////////////////////////////////
+  //// Menu + Menu Options
   ////////////////////////////////////////////////////
   // images ?
   var div = d3.select("#meta");
@@ -678,67 +752,88 @@ function draw_force(data) {
   d3.select('#node-meta')
     .html("<h4>Node</h4><div class='well'></div>");
 
-  // TODO: use something like this to select from csv the graph to display
-  var menu_color_by = d3.select('#graph-meta')
-    .append("div")
-      .html("<h4>Color By</h4>")
-    .append("div")
-      .attr("class", "well")
-      .attr('id', 'menu-color-by')
-  .append('select')
-    .attr('class', 'menu-choice')
-  var options_color_by = menu_color_by.selectAll("option")
-  .data(color_by_options)
-  .enter().append("option")
-    .attr('value', function (d) {console.log(d); return d;})
-    .text(function (d) {console.log(d); return d;})
-    .property("selected", function(d){ return d === color_by; });
-    
-  // color palettes
-  var menu_colors = d3.select('#graph-meta')
-      .append("div")
-        .html("<h4>Colors</h4>")
-      .append("div")
-        .attr("class", "well")
-        .attr('id', 'menu-colors')
-    .append('select')
-      .attr('class', 'menu-choice')
-  var options_colors = menu_colors.selectAll("option")
-    .data(d3.keys(color_palettes))
-    .enter().append("option")
-      .attr('value', function (d) {console.log(d); return d;})
-      .text(function (d) {console.log(d); return d;})
-      .property("selected", function(d){ return d === color_palette_key; });
 
-  // TODO: use something like this to select from csv the graph to display
-  var button_movie = d3.select('#graph-meta')
-    .append("div")
-      .html("<h4>Movie</h4>")
-    .append("div")
-      .attr("class", "well")
-      .attr('id', 'button-movie')
-  .append('button')
-    .attr('class', 'menu-button')
-    .text('Play')
+  // Create a new menu with options
+  // TODO: move to something like dat.gui at some point
+  const Menu = function(container) {
+    this.container = d3.select(container);
+    this.options = {};
+    this.buttons = {};
+    var self = this;
 
-  
-  
+    // add an option to the menu
+    this.add_option = function(name, values, selected, callback) {  
+      // check inputs
+      if (d3.keys(values)[0] !== "0") {
+        values = d3.keys(values);
+      }
+      // initialize 
+    var option = self.container
+      .append("div").html("<h4>"+name+"</h4>")
+      .append("div").attr("class", "well").attr("id", "menu-" + name.split(" ").join("-").toLowerCase())
+      .append("select").attr("class", "menu-choice");
+    // add data
+    option.selectAll("option")
+      .data(values).enter().append("option")
+        .attr('value', function (d) {console.log(d); return d;})
+        .text(function (d) {console.log(d); return d;})
+        .property("selected", function(d){ return d === selected; });
+    // add callback
+    option.on("change", callback);
+    // store
+    self.options[name] = option;
+    return option;
+  };
+  // add a button
+    this.add_button = function(name, text, callback) {          
+      // initialize 
+    var button = self.container
+      .append("div").html("<h4>"+name+"</h4>")
+      .append("div").attr("class", "well").attr("id", "button-" + name.split(" ").join("-").toLowerCase())
+      .append("button").attr("class", "menu-button");
+    // add data
+    button.text(text);
+    // add callback
+    button.on("click", callback);
+    // store
+    self.buttons[name] = button;
+    return button;
+  };
+  return this;
+  };
+  // create new menu, add options
+  // TODO: add graph selection option
+  // TODO: add movie settings as options
+  var menu = new Menu('#graph-meta');
+  var option_color_by = menu.add_option("Color", color_by_options, color_by, update_colors);
+  var option_color_palette = menu.add_option("Color Palette", color_palettes, color_palette_key, update_colors);
+  var option_pos_by_x = menu.add_option("x coordinate", pos_functions, pos_by_x, update_pos);
+  var option_pos_by_y = menu.add_option("y coordinate", pos_functions, pos_by_y, update_pos);
+  var button_movie = menu.add_button("Movie", "Play", update_movie);
 
-    
+
+
+  ////////////////////////////////////////////////////
+  //// Movie + node highlighting
+  ////////////////////////////////////////////////////
   // Mouseover effects
   var focus_node = null, highlight_node = null;
   node.on("mouseover", function(d) {
     set_highlight(d);
-    d3.select("#meta").transition()       
-        .duration(0)      
-        .style("opacity", .85); 
-    d3.select('#graph-meta#source')
-      .html("<h4>Source</h4><div class='well'>"+source+"</div>");
-    d3.select('#node-meta')
-      .html("<h4>Node</h4><div class='well'>"+d.tooltip+"</div>");
+    //d3.select("#meta").transition()       
+    //    .duration(0)      
+    //    .style("opacity", .85); 
+    //d3.select('#graph-meta#source')
+    //  .html("<h4>Source</h4><div class='well'>"+source+"</div>");
+    //d3.select('#node-meta')
+    //  .html("<h4>Node</h4><div class='well'>"+d.tooltip+"</div>");
   }).on("mousedown", function(d) { 
     d3.event.stopPropagation();
-    set_focus(d);
+    if (focus_node === d) {
+      exit_focus();
+    } else {
+      set_focus(d);
+    }
   }).on("mouseout", function(d) {
     if (focus_node === null) {
         exit_highlight();
@@ -753,8 +848,8 @@ function draw_force(data) {
       exit_highlight();
     }
   }).on("mousedown", function() {
-    exit_focus();
-    exit_highlight();
+    //exit_focus();
+    //exit_highlight();
   });
 
   // Node highlighting logic
@@ -791,6 +886,7 @@ function draw_force(data) {
       link.attr("id", function(o,i) {
         return o.source.index == d.index || o.target.index == d.index ? "focus" : "defocus";
       }); 
+      show_tooltip(d);
     }
   }
   function set_highlight(d) {
@@ -805,7 +901,6 @@ function draw_force(data) {
     if (d===null) {
       return;
     }
-
     // set id to highlight
     node.attr("id", function(o,i) {
           return isConnected(d.index, i) ? "highlight" : null;
@@ -813,6 +908,13 @@ function draw_force(data) {
     link.attr("id", function(o,i) {
       return o.source.index == d.index || o.target.index == d.index ? "highlight" : null;
     }); 
+    // show tooltip
+    show_tooltip(d);
+  }
+  function show_tooltip(d) {
+    // display tooltip
+    d3.select('#node-meta')
+      .html("<h4>Node</h4><div class='well'>"+d.tooltip+"</div>");
   }
 
   ////////////////////////////////////////////////////
@@ -869,18 +971,12 @@ function draw_force(data) {
   //// Color palette selection
   ////////////////////////////////////////////////////         
   // force data to update when menu is changed    
-  d3.select("#menu-color-by select")
-    .on("change", reset_colors);  
-
-  d3.select("#menu-colors select")
-    .on("change", reset_colors);  
-
-  function reset_colors() {
+  function update_colors() {
     // get selected color by 
-    color_by = menu_color_by.property("value");
+    color_by = option_color_by.property("value");
     console.log('color_by: '+color_by);
     // get selected color palette
-    color_palette_key = menu_colors.property("value");
+    color_palette_key = option_color_palette.property("value");
     console.log('color_palette: '+color_palette_key);
     // set palette
     color_palette = color_palettes[color_palette_key];
@@ -946,30 +1042,59 @@ function draw_force(data) {
   }
 
 
+  ////////////////////////////////////////////////////
+  //// Node position selection
+  ////////////////////////////////////////////////////  
+  function update_pos() {
+    // get selected 
+    pos_by_x = option_pos_by_x.property("value");
+    pos_by_y = option_pos_by_y.property("value");  
+    console.log("\npos_by_x: "+pos_by_x+
+                "\npos_by_y: "+pos_by_y);
+    update_pos_force();
+  }
+  function update_pos_force() {
+    // set positions
+    link.attr("x1", function(d) { return pos_functions[pos_by_x](d.source).x; })
+      .attr("y1", function(d) { return pos_functions[pos_by_y](d.source).y; })
+      .attr("x2", function(d) { return pos_functions[pos_by_x](d.target).x; })
+      .attr("y2", function(d) { return pos_functions[pos_by_y](d.target).y; })
+    node.attr("x", function(d) { return pos_functions[pos_by_x](d).x; })
+      .attr("y", function(d) { return pos_functions[pos_by_y](d).y; })
+      .attr("transform", function(d) { 
+        var dx = pos_functions[pos_by_x](d).x;
+        var dy = pos_functions[pos_by_y](d).y;
+        return "translate(" + dx + "," + dy + ")"
+      });
+  }
+
+  // initialize position
+  force.on("tick", update_pos_force);
+
+
 
   ////////////////////////////////////////////////////
   //// Movie
   ////////////////////////////////////////////////////   
-  d3.select("#button-movie button")
-    .on("click", reset_movie);  
-
   var movie_playing = null;
   var focus_i = null;
   var movie_start_pos = 0;   
-  function reset_movie(e) {
+  function update_movie(e) {
     if (movie_playing===true) {
       movie_playing = false;
       button_movie.text('Replay');
       return;
     }
+  
+    // movie length
+    var n_frames = data_size; //d3.max(node.each(function(d,i) {return i+1}));
+    var frame_duration = 0.2 * 1000; // 1 fps = 20 / 2
+    var duration = frame_duration * n_frames;
+
     // play movie
     movie_playing = true;
     button_movie.text('Pause');
 
-    // movie length
-    var n_nodes = data_size; //d3.max(node.each(function(d,i) {return i+1}));
-    var frame_duration = 0.2 * 1000; // 1 fps = 20 / 2
-    var duration = frame_duration * n_nodes;
 
     // loop over nodes until elapsed >= duration
     d3.timer(function(elapsed) {
@@ -978,6 +1103,9 @@ function draw_force(data) {
 
       // figure out which node to focus
       focus_i = Math.floor(elapsed / frame_duration);
+      frame_number = focus_i + 1;
+      button_movie.text('Pause ('+frame_number+' of '+n_frames+')');
+
       
       // loop over nodes and focus the focus node
       node.each(function(d, i) {
@@ -992,7 +1120,7 @@ function draw_force(data) {
     
       if (movie_playing === false) {
         movie_start_pos = elapsed;
-        button_movie.text('Play');
+        button_movie.text('Play ('+frame_number+' of '+n_frames+')');
         return true; 
       }
       if (elapsed >= duration) {
@@ -1006,10 +1134,11 @@ function draw_force(data) {
       };
       return elapsed >= duration;
     })
-    
 
   }
   
+  
+
   
   ////////////////////////////////////////////////////
   //// SVG width/heigh

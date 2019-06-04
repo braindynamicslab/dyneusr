@@ -1,4 +1,3 @@
-import webbrowser
 import numpy as np
 from dyneusr import DyNeuGraph
 from dyneusr.datasets import make_trefoil
@@ -21,5 +20,4 @@ graph = mapper.map(lens, X, nr_cubes=6, overlap_perc=0.5)
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph 
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr3D_sphere.html', template='3D', static=True)
-webbrowser.open(dG.HTTP.url)
+dG.visualize('dyneusr3D_sphere.html', template='3D', static=True, show=True)

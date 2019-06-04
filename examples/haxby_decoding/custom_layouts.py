@@ -38,16 +38,18 @@ graph = mapper.map(
     cover=Cover(20, 0.5), 
     clusterer=DBSCAN(eps=20.)
     )
-
-# Visualize the shape graph using DyNeuSR's DyNeuGraph
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_haxby_decoding.html', static=True, show=True)   
 
-# Visualize the stages of Mapper
-fig, axes = visualize_mapper_stages(
-    dataset, y=target, lens=lens, graph=graph, cover=mapper.cover, 
-    node_size=20, edge_size=0.5, edge_color='gray',
-    layout="kamada_kawai",  figsize=(16, 4)
-    )
-plt.savefig("mapper_stages.png", dpi=600, background='transparent')
-plt.show()
+# Define some custom_layouts
+import networkx as nx
+from sklearn.decomposition import PCA 
+from sklearn.manifold import TSNE
+dG.add_custom_layout(nx.spring_layout, name='nx.spring')
+dG.add_custom_layout(nx.kamada_kawai_layout, name='nx.kamada_kawai')
+dG.add_custom_layout(nx.spectral_layout, name='nx.spectral')
+dG.add_custom_layout(nx.circular_layout, name='nx.circular')
+dG.add_custom_layout(PCA(2).fit_transform(X), name='PCA')
+dG.add_custom_layout(TSNE(2).fit_transform(X), name='TSNE')
+
+# Visualize
+dG.visualize('dyneusr_custom_layouts.html', static=True, show=True)

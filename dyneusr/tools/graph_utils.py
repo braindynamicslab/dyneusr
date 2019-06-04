@@ -36,10 +36,12 @@ def in_notebook():
     return get_ipython() is not None
 
 
-def _agg_proportions(df, members=slice(0, -1)):
+def _agg_proportions(df, members=None):
     """ Aggregate proportions df for members. 
     """
-    p = df.copy().iloc[members]
+    p = df.copy()
+    if members is not None:
+        p = p.iloc[members]
     p = p.T.assign(
         group=pd.factorize(p.columns)[0],
         label=pd.factorize(p.columns)[-1],
@@ -181,6 +183,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     # add some defaults
     meta['data_id'] = np.arange(len(meta)).astype(str)
     meta['uniform'] = '0' 
+
 
     # normalize meta
     # TODO: move all of this logic into color map utils
@@ -372,7 +375,6 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
                 
 
 
-
     # more attribues
     for n, nbrs in G.adj.items():
         G.node[n]['degree'] = G.degree(n)
@@ -384,6 +386,15 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     for n, nbrs in G.adj.items():
         for nbr in nbrs:
             G.edges[(n,nbr)]['strength'] = 1 - (G.edges[(n,nbr)]['distance'] / max_distance)
+
+    # add coloring by degree
+    for n in G:
+        degree = int(G.degree(n))
+        size = len(G.node[n]['members'])
+        G.node[n]['group']['degree'] = G.degree(n)
+        G.node[n]['proportions']['degree'] = [dict(
+            group=degree, row_count=size, value=size
+        )]
     return G
 
 
