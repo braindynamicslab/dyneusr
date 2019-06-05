@@ -382,7 +382,8 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
             G.edges[(n,nbr)]['distance'] = 100. * (1. / min([G.degree(n), G.degree(nbr)]))
 
     # max dist
-    max_distance = max([_ for u,v,_ in G.edges(data='distance')])
+    all_distances = [_ for u,v,_ in G.edges(data='distance')]
+    max_distance = 1 if len(all_distances) < 1 else max(all_distances)
     for n, nbrs in G.adj.items():
         for nbr in nbrs:
             G.edges[(n,nbr)]['strength'] = 1 - (G.edges[(n,nbr)]['distance'] / max_distance)
