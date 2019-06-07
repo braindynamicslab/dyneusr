@@ -302,7 +302,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         return self
 
 
-    def visualize(self, path_html='index.html', json_graph=None, color_functions=None, custom_data=None, plot_tcm=False, static=False, show=False, port=8000, **kwargs):
+    def visualize(self, path_html='index.html', json_graph=None, color_functions=None, custom_data=None, plot_tcm=False, static=True, show=False, port=None, **kwargs):
         """ Visualize DyNeuGraph.
 
         TODO: this needs some work...
