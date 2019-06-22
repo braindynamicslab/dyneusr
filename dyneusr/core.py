@@ -23,7 +23,7 @@ from dyneusr import tools
 
 class DyNeuGraph(BaseEstimator, TransformerMixin):
 
-    def __init__(self, **params):
+    def __init__(self, G=None, y=None, lens=None, verbose=0, **params):
         """ DyNeuGraph
         
         Parameters
@@ -45,8 +45,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
             # Visualize
             dyneuG.visualize()
         """
-        self.cache_ = dict(params)
-        self.fit(**params)
+        self.fit(G=G, y=y, lens=lens, verbose=verbose, **params)
 
 
     def cache(self, *args, **kwargs):
@@ -67,7 +66,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
 
 
 
-    def fit(self, G=None, X=None, y=None, node_data=dict(), edge_data=dict(), G_data=False, **kwargs):
+    def fit(self, G=None, X=None, y=None, lens=None, node_data=dict(), edge_data=dict(), G_data=False, **kwargs):
         """ Fit to G.
 
         Usage
@@ -80,6 +79,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         self.G_input_ = G
         self.X_ = X 
         self.y_ = y
+        self.lens_ = lens
 
         # check graph
         if isinstance(G, nx.Graph):
@@ -93,8 +93,12 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
 
         # states, microstates
         node_ids = np.unique([n for i,n in enumerate(G['nodes'])])
-        data_ids = np.unique([_ for n,d in G['nodes'].items() for _ in d])
-        if y is not None:
+        data_ids = np.unique([_ for n,d in G['nodes'].items() for _ in d])            
+        if lens is not None:
+            data_ids = np.arange(len(lens))
+        elif X is not None:
+            data_ids = np.arange(len(X))
+        elif y is not None:
             if isinstance(y, pd.DataFrame):
                 data_ids = np.sort(y.reset_index().index)
             else:
@@ -121,7 +125,6 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         # mixture of connected TRs, for each TR 
         mixtures = [_.nonzero()[0] for _ in TCM]
 
-
         # store variables
         self.G_ = G
         self.G_data_ = G_data
@@ -137,6 +140,11 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         #self.A = self.adj_
         #self.M = self.map_
         #self.TCM = self.tcm_
+
+        # add lens as custom layout 
+        if lens is not None:
+            self.add_custom_layout(lens, name='lens')
+
         return self
 
 

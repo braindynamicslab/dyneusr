@@ -720,6 +720,8 @@ function draw_force(data) {
   });
   // custom pos
   var custom_layouts = json.graph.custom_layouts ? json.graph.custom_layouts : {};
+  var pos_by_x = "force";
+  var pos_by_y = "force";
   d3.keys(custom_layouts).map(function(k) {
     //
     // assume position is defined for each node
@@ -729,11 +731,15 @@ function draw_force(data) {
       var xy = custom_layouts[k][d.name];
       return {x:(xy * w/2), y:h-(xy * h/2)};
     };
+    //
+    // update default position if lens is found
+    //
+    //if (k === 'lens 2') {
+    //  pos_by_x = "lens 1";
+    //  pos_by_y = "lens 2";
+    //}
   });
-  // define initial settings
-  var pos_by_x = "force";
-  var pos_by_y = "force";
-
+ 
 
 
 

@@ -119,7 +119,8 @@ def http_server(port=None, host='localhost'):
         # check status, return process
         try:
             o, e = p.communicate(timeout=1)
-            print("Already serving {}:{} ".format(host, port))
+            if port is not None:
+                print("Already serving {}:{} ".format(host, port))
             p.status = False
         except subprocess.TimeoutExpired as e:
             print("Serving HTTP on {}:{} ...".format(host, port))

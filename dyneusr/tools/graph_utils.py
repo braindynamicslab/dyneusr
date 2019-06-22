@@ -20,7 +20,8 @@ import multiprocessing as mp
 import numpy as np
 import scipy as sp
 import pandas as pd
-from scipy import stats
+import scipy.stats
+import scipy.sparse
 
 from sklearn.preprocessing import Normalizer, LabelEncoder
 import networkx as nx
@@ -93,7 +94,7 @@ def process_meta(meta_, labels=None, zscore=True, **kwargs):
             # zscore
             yi = meta.copy()
             yi_nz = yi[~np.isnan(yi)]
-            zi = stats.zscore(yi_nz)
+            zi = scipy.stats.zscore(yi_nz)
             zi = np.sign(zi) * np.floor(np.abs(zi))
 
             # digitize
@@ -412,7 +413,7 @@ def extract_matrices(G, index=None, **kwargs):
             __ for n in G for __ in G.node[n]['members']
             ])
     nTR = int(max(np.r_[len(index), np.ravel(index)+1]))
-    A = nx.to_numpy_array(G)  # node x node
+    A = nx.to_scipy_sparse_matrix(G)  # node x node
     M = np.zeros((nTR, A.shape[0]))    #   TR x node
     T = np.zeros((nTR, nTR))
 
@@ -432,9 +433,9 @@ def extract_matrices(G, index=None, **kwargs):
 
         # find TRs for each edge sharing node
         node_index = [node_to_index[_] for _ in TR_nodes] 
-        M[TR, node_index] += 1.0
-        continue
-        """
+        #M[TR, node_index] += 1.0
+        
+        ### TODO: double check this
         source_TRs = [node_to_members[n] for n in TR_nodes]
         target_TRs = [node_to_members[nbr] for n in TR_nodes for nbr in G.neighbors(n)]
         #similar_TRs = list(set(__ for _ in source_TRs+target_TRs for __ in _))
@@ -444,17 +445,28 @@ def extract_matrices(G, index=None, **kwargs):
         #T[TR, similar_TRs] += 1.0
 
         # count TRs multiple times
-        similar_TRs = list(__ for _ in source_TRs+target_TRs for __ in _)
+        #similar_TRs = list(__ for _ in source_TRs+target_TRs for __ in _)
+        similar_TRs = list(__ for _ in target_TRs for __ in _)
         TRs_counted = [similar_TRs.count(_) for _ in sorted(set(similar_TRs))]
         similar_TRs = sorted(set(similar_TRs))
 
         # normalized node degrees 
         M[TR, node_index] += 1.0
         T[TR, similar_TRs] += TRs_counted
-        """
-    # normalize
-    T = M.dot(M.T)
-    T /= T.max() 
-    
+        #T[similar_TRs, TR] += TRs_counted
+
+
+        # adjust diagonal to match total degree
+        #target_nodes = [nbr for n in TR_nodes for nbr in G.neighbors(n) if nbr not in TR_nodes]
+        #T[TR, TR] += len(target_nodes)
+
+
+    # convert to sparse csr_matrix format
+    M = scipy.sparse.csr_matrix(M)
+    T = scipy.sparse.csr_matrix(T)
+
+    # now add co-occurrences to tcm
+    T = T + M.dot(M.T)
+
     # return 
     return A, M, T
