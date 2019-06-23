@@ -413,14 +413,17 @@ def extract_matrices(G, index=None, **kwargs):
             __ for n in G for __ in G.node[n]['members']
             ])
     nTR = int(max(np.r_[len(index), np.ravel(index)+1]))
-    A = nx.to_scipy_sparse_matrix(G)  # node x node
+    M = np.zeros((len(G), len(G)))    #   node x node
     M = np.zeros((nTR, A.shape[0]))    #   TR x node
     T = np.zeros((nTR, nTR))
 
     # return empty arrays if graph is empty
     if not len(G):
         return A, M, T
-
+    
+    # extract adjacency first
+    A = nx.to_scipy_sparse_matrix(G)  # node x node
+    
     # mapping from 'cube0_cluster0' => 0
     node_to_index = {n:i for i,n in enumerate(G)}
     node_to_members = dict(nx.get_node_attributes(G, 'members'))
