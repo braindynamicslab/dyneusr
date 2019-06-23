@@ -413,7 +413,7 @@ def extract_matrices(G, index=None, **kwargs):
             __ for n in G for __ in G.node[n]['members']
             ])
     nTR = int(max(np.r_[len(index), np.ravel(index)+1]))
-    M = np.zeros((len(G), len(G)))    #   node x node
+    A = np.zeros((len(G), len(G)))    #   node x node
     M = np.zeros((nTR, A.shape[0]))    #   TR x node
     T = np.zeros((nTR, nTR))
 
