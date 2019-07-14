@@ -13,7 +13,7 @@ class TestDyNeuGraph:
     """ Simple tests for DyNeuGraph
     """
     def test_init(self):
-        mapper = KMapperWrapper(verbose=0)
+        mapper = KMapperWrapper(verbose=0, memory=None)
         data = np.random.rand(100, 3)
         graph = mapper.fit_map(data)
 
@@ -25,7 +25,7 @@ class TestDyNeuGraph:
 
 
     def test_init_with_y(self):
-        mapper = KMapperWrapper(verbose=0)
+        mapper = KMapperWrapper(verbose=0, memory=None)
         data = np.random.rand(100, 3)
         graph = mapper.fit_map(data)
         y = mapper.lens_
@@ -38,7 +38,7 @@ class TestDyNeuGraph:
 
 
     def test_visualize(self):
-        mapper = KMapperWrapper(verbose=0)
+        mapper = KMapperWrapper(verbose=0, memory=None)
         data = np.random.rand(100, 3)
         graph = mapper.fit_map(data)
         y = mapper.lens_
@@ -54,7 +54,7 @@ class TestDyNeuGraph:
 
 
     def test_visualize_show(self):
-        mapper = KMapperWrapper(verbose=0)
+        mapper = KMapperWrapper(verbose=0, memory=None)
         data = np.random.rand(100, 3)
         graph = mapper.fit_map(data)
         y = mapper.lens_
