@@ -12,7 +12,7 @@ class TestWrappers:
     """
 
     def test_KMapperWrapper(self):
-        mapper = KMapperWrapper(verbose=0)
+        mapper = KMapperWrapper(verbose=0, memory=None)
         data = np.random.rand(100, 3)
         graph = mapper.fit_map(data)
         assert mapper.lens_.shape[0] == data.shape[0]
@@ -27,7 +27,7 @@ class TestUtils:
     """
 
     def test_density_filter(self):
-        mapper = KMapperWrapper(verbose=0)
+        mapper = KMapperWrapper(verbose=0, memory=None)
         data_a = np.random.rand(100, 3) 
         data_b = np.random.rand(100, 3) * 10
 

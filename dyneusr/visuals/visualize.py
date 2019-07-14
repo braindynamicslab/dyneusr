@@ -68,16 +68,19 @@ def in_notebook():
     return get_ipython() is not None
 
 def json_dump(obj, fp):
-    """ Converts np.int64 to ints
+    """ Handles numpy data types.
+
+    Reference
+    ---------
+    - [1] https://stackoverflow.com/questions/26646362/
     """
     def default(o):
-        if isinstance(o, np.int64): 
-            #print(o)
-            return int(o)
-        if isinstance(o, np.ndarray): 
-            #print(o)
-            return list(o)  
-        raise TypeError
+        if type(o).__module__ == np.__name__:
+            if isinstance(o, np.ndarray):
+                return o.tolist()
+            else:
+                return o.item()
+        return json.JSONEncoder().default(o)
 
     json.dump(obj, fp, default=default)
     return None
