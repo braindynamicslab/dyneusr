@@ -19,8 +19,8 @@ from dyneusr.tools import visualize_mapper_stages
 dataset = fetch_haxby()
 masker = NiftiMasker(
     dataset.mask_vt[0], 
-    standardize=True, detrend=True, smoothing_fwhm=4.0,
-    low_pass=0.09, high_pass=0.008, t_r=2.5,
+    standardize=True, detrend=True, smoothing_fwhm=None,#4.0,
+    low_pass=0.09, high_pass=0.01, t_r=2.5,
     memory="nilearn_cache"
     )
 X = masker.fit_transform(dataset.func[0])
@@ -41,7 +41,8 @@ graph = mapper.map(
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_haxby_decoding.html', static=True, show=True)   
+dG.visualize('dyneusr_haxby_decoding_static.html', static=True, show=True)   
+dG.visualize('dyneusr_haxby_decoding.html', static=False, show=True)   
 
 # Visualize the stages of Mapper
 fig, axes = visualize_mapper_stages(
