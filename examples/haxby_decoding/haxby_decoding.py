@@ -41,7 +41,7 @@ graph = mapper.map(
 
 # Visualize the shape graph using DyNeuSR's DyNeuGraph
 dG = DyNeuGraph(G=graph, y=y)
-dG.visualize('dyneusr_haxby_decoding.html', static=True, show=True)   
+dG.visualize('dyneusr_haxby_decoding.html', static=True, show=True)
 
 # Visualize the stages of Mapper
 fig, axes = visualize_mapper_stages(

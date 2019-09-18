@@ -24,15 +24,6 @@ def format_IFrame(path, **kwargs):
     return IPython.display.IFrame(**dict(defaults, **kwargs))
 
 
-def format_HTML(html):
-    loc, *src = html.split('://', 1)
-    if loc in ['file', 'http', 'https']:
-        src = src[0] if loc in 'file' else src[0].split('/', 1)[-1]
-        with open(src, 'r') as fid:
-            html = fid.read()
-    return IPython.display.HTML(html)
-
-
 CUSTOM_CSS = """
 <style>
   .container { width:80% !important; margin:auto }
@@ -40,21 +31,18 @@ CUSTOM_CSS = """
 </style>
 """
 
-def display_HTML(src="", figure=None, static=False):
+def display_HTML(html="", src="", figure=None, static=False):
     """ Display html inside a Jupyter notebook.
 
-    Notes
-    -----
-    Thanks to https://github.com/smartinsightsfromdata for the issue:
-    https://github.com/MLWave/kepler-mapper/issues/10
+    Reference
+    ---------
+    - [1] https://github.com/MLWave/kepler-mapper/issues/10
     """
     # check figure
     figure = figure or plt.figure()
-    css = format_HTML(CUSTOM_CSS)
-    if static:
-        html = format_HTML(src)
-    else:
-        html = format_IFrame(src)
+    # format CSS, HTML (use IFrame if static=False)
+    css = IPython.display.HTML(CUSTOM_CSS)
+    html = IPython.display.HTML(html) if static else format_IFrame(src)
     # display
     IPython.display.display(css)
     IPython.display.display(html)
@@ -152,7 +140,7 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
     if template and template not in ('movie',): 
         file_template = file_template.replace('.html', '-{}.html'.format(template))
     path_template = Path(__file__).resolve().parents[0] / 'templates' / file_template
-    with open(str(path_template), 'r') as f:
+    with path_template.open('r') as f:
         html = f.read()
 
     ### Define path to output HTML
@@ -175,7 +163,7 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
     if path_json is None:
         path_json = graphs_dir / path_html.name.replace('.html', '.json')
     path_json = Path(path_json)
-    with open(str(path_json), 'w') as f:
+    with path_json.open('w') as f:
         json_dump(js, f)
         
 
@@ -190,11 +178,11 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
     # update html with csv path
     html = html.replace('index.csv', str(path_csv_rel))
     if path_csv.exists() and not reset:
-        with open(str(path_csv), 'a') as f:
+        with path_csv.open('a') as f:
             f.write('\n')
             f.write(str(path_json_rel))
     else:
-        with open(str(path_csv), 'w') as f:
+        with path_csv.open('w') as f:
             f.write('json\n')
             f.write(str(path_json_rel))
 
@@ -203,10 +191,10 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
     if static is True:        
         ### Rename path with -static
         #path_html = Path(str(path_html).replace('.html', "-static.html"))
-        url = "file:///" + str(path_html.resolve())
+        url = path_html.absolute().as_uri()
 
         ### Add js directly to HTML
-        with open(str(path_json), 'r') as f:
+        with path_json.open('r') as f:
             json_str = json.load(f)
             json_str = json.dumps(json_str).replace("\"", "\"")
             div = """\n\t<div id="json_graph" data-json='{json_graph}' style="display:none"></div>"""
@@ -216,12 +204,12 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
 
     ### Write HTML to file
     print('[Force Graph] {}'.format(str(url)))
-    with open(str(path_html), 'w') as f:
+    with path_html.open('w') as f:
         f.write(html)    
 
     ### Show HTML
     if show and in_notebook():
-        display_HTML(str(url), figure=figure, static=static)
+        display_HTML(html=html, src=url, figure=figure, static=static)
     elif show is True:
         try:
             import webbrowser
@@ -237,7 +225,7 @@ def visualize_force(js, template=None, path_html='index.html', path_csv=None, pa
     HTTP.json = dict(js)
 
     # define some helper functions (TODO: clean up HTTP handling, move to utils)
-    HTTP.display = functools.partial(display_HTML, src=HTTP.url, static=static)
+    HTTP.display = functools.partial(display_HTML, html=HTTP.html, src=HTTP.url, static=static)
     try:
         import webbrowser
         HTTP.open = functools.partial(webbrowser.open, url=HTTP.url)
