@@ -24,6 +24,8 @@ from scipy import stats
 
 from sklearn.preprocessing import Normalizer, LabelEncoder
 import networkx as nx
+import networkx.readwrite.json_graph
+
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -137,7 +139,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     # convert to nx
     if isinstance(graph, nx.Graph):
         g = graph.copy()
-        graph = nx.node_link_data(g)
+        graph = nx.readwrite.json_graph.node_link_data(g)
     elif graph is None:
         graph = {}
 
@@ -324,12 +326,12 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
             source_id = node_to_index[source]
             target_id = node_to_index[target]
 
-            source_node = G.node[source]
-            target_node = G.node[target]
+            source_members = G.node[source]['members']
+            target_members = G.node[target]['members']
 
             # add directional edges
-            s_members = np.sort(source_node['members'])
-            t_members = np.sort(target_node['members'])
+            s_members = np.sort(source_members)
+            t_members = np.sort(target_members)
 
             # temporal connections (i.e. (t, t+1))
             members = set(s_members).intersection(t_members)
@@ -374,28 +376,28 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
                 G.add_edge(source, target, **edge_dict)
                 
 
-
-    # more attribues
+    # degree, distance attributes (used by d3 force layout)
     for n, nbrs in G.adj.items():
         G.node[n]['degree'] = G.degree(n)
         for nbr in nbrs:
-            G.edges[(n,nbr)]['distance'] = 100. * (1. / min([G.degree(n), G.degree(nbr)]))
+            G[n][nbr]['distance'] = 100. * (1. / min([G.degree(n), G.degree(nbr)]))
 
-    # max dist
+    # strength of links in the graph, based on 1 - (distance / max_distance)
     all_distances = [_ for u,v,_ in G.edges(data='distance')]
     max_distance = 1 if len(all_distances) < 1 else max(all_distances)
     for n, nbrs in G.adj.items():
         for nbr in nbrs:
-            G.edges[(n,nbr)]['strength'] = 1 - (G.edges[(n,nbr)]['distance'] / max_distance)
+            G[n][nbr]['strength'] = 1 - (G[n][nbr]['distance'] / max_distance)
 
     # add coloring by degree
     for n in G:
         degree = int(G.degree(n))
         size = len(G.node[n]['members'])
-        G.node[n]['group']['degree'] = G.degree(n)
+        G.node[n]['group']['degree'] = degree
         G.node[n]['proportions']['degree'] = [dict(
             group=degree, row_count=size, value=size
         )]
+
     return G
 
 
@@ -409,10 +411,10 @@ def extract_matrices(G, index=None, **kwargs):
     #   T    => normalized node degree
     if index is None:
         index = np.unique([
-            __ for n in G for __ in G.node[n]['members']
+            __ for n,_ in G.nodes(data='members') for __ in _
             ])
     nTR = int(max(np.r_[len(index), np.ravel(index)+1]))
-    A = nx.to_numpy_array(G)  # node x node
+    A = nx.to_numpy_matrix(G).A  # node x node
     M = np.zeros((nTR, A.shape[0]))    #   TR x node
     T = np.zeros((nTR, nTR))
 
@@ -427,21 +429,12 @@ def extract_matrices(G, index=None, **kwargs):
     # loop over TRs to fill in C_rc, C_tp
     for TR in range(nTR):
         # find nodes containing TR 
-        TR_nodes = [n for n in G if TR in G.node[n]['members']]
-        #node_degrees = dict(G.degree(TR_nodes)).values()
+        TR_nodes = [n for n,_ in G.nodes(data='members') if TR in _]
 
         # find TRs for each edge sharing node
         node_index = [node_to_index[_] for _ in TR_nodes] 
-        M[TR, node_index] += 1.0
-        continue
-        """
         source_TRs = [node_to_members[n] for n in TR_nodes]
         target_TRs = [node_to_members[nbr] for n in TR_nodes for nbr in G.neighbors(n)]
-        #similar_TRs = list(set(__ for _ in source_TRs+target_TRs for __ in _))
-        
-        # normalized node degrees 
-        #M[TR, node_index] += 1.0
-        #T[TR, similar_TRs] += 1.0
 
         # count TRs multiple times
         similar_TRs = list(__ for _ in source_TRs+target_TRs for __ in _)
@@ -451,10 +444,15 @@ def extract_matrices(G, index=None, **kwargs):
         # normalized node degrees 
         M[TR, node_index] += 1.0
         T[TR, similar_TRs] += TRs_counted
-        """
-    # normalize
-    T = M.dot(M.T)
-    T /= T.max() 
+
+        # TODO: double check that TCM is symmetric
+        #T[TR, similar_TRs] += TRs_counted # TR is the source
+        #T[similar_TRs, TR] += TRs_counted # TR is the target
+
     
+    # TODO: should we normalize?
+    #T = M.dot(M.T)
+    #T = T / np.max(T)
+
     # return 
     return A, M, T

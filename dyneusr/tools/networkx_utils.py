@@ -28,7 +28,7 @@ def get_layout_pos(G, layout="spring", layout_kws={}, pos=None, lens=None, **kwa
 
     if pos is "inverse" and lens is not None:
         pos = np.copy(lens)
-        pos = {n: list(pos[_].mean(0)) for n,_ in G.nodes.data("members")}    
+        pos = {n: list(pos[_].mean(0)) for n,_ in G.nodes(data="members")}    
 
     if layout:
         if "spring" in str(layout) and pos is "inverse":
@@ -80,32 +80,32 @@ def format_networkx(graph, meta=None, cmap="nipy_spectral_r", norm=None,  **kwar
             "proportion": 100 * float(v / float(len(_))),
             } for g,v in _group_counter(_).items()],
         "row_count": len(_),
-    } for n,_ in G.nodes("members")})
+    } for n,_ in G.nodes(data="members")})
 
 
     # more lambdas
-    _members = lambda _: set(G.nodes[_]["members"])
+    _members = lambda _: set(G.node[_].get("members"))
     _edge_members = lambda _: sorted(_members(_[0]) & _members(_[1]))
     
     # Edge Attributes
     nx.set_edge_attributes(G, {e: {
         "members": _edge_members(e),
         "group": max(_group_counter(_edge_members(e))),
-    } for e in G.edges})
+    } for e in G.edges()})
     
     
     # For visualization
     nx.set_node_attributes(G, {n: {
-        "color_by": norm(G.nodes[n]["group"]),
-        "color": to_hex(cmap(norm(G.nodes[n]["group"]))),
-        "size": len(G.nodes[n]["members"]),
-    } for n in G})
-    nx.set_edge_attributes(G, {e: {
-        "color_by": norm(G.edges[e]["group"]),
-        "color": to_hex(cmap(norm((G.edges[e]["group"])))),
-        "size": len(G.edges[e]["members"]),
-        "weight": len(G.edges[e]["members"]),
-    } for e in G.edges})
+        "color_by": norm(_.get("group")),
+        "color": to_hex(cmap(norm(_.get("group")))),
+        "size": len(_.get("members")),
+    } for n,_ in G.nodes(data=True)})
+    nx.set_edge_attributes(G, {(u,v): {
+        "color_by": norm(_.get("group")),
+        "color": to_hex(cmap(norm((_.get("group"))))),
+        "size": len(_.get("members")),
+        "weight": len(_.get("members")),
+    } for u,v,_ in G.edges(data=True)})
     
     # pos
     pos = get_layout_pos(G, **kwargs)
@@ -152,13 +152,13 @@ def draw_networkx(graph, ax=None, fig=None, nodes=True, edges=True, **kwargs):
     if edges is True:
         edge_zorder = kwargs.pop("edge_zorder", kwargs.pop("zorder", None))
         if kwargs.get("width") is None:
-            edge_w = [np.sqrt(_) for u,v,_ in G.edges.data("size")]
+            edge_w = [np.sqrt(_) for u,v,_ in G.edges(data='size')]
             kwargs.update(width=edge_w)
 
         if kwargs.get("edge_color") is None:
-            edge_c = [_ for u,v,_ in G.edges.data("color")]
+            edge_c = [_ for u,v,_ in G.edges(data="color")]
             if not any(edge_c):
-                edge_c = ['grey' for _ in G.edges]
+                edge_c = ['grey' for _ in G.edges()]
             kwargs.update(edge_color=edge_c)
 
         # draw
@@ -169,7 +169,7 @@ def draw_networkx(graph, ax=None, fig=None, nodes=True, edges=True, **kwargs):
     
     # draw nodes
     if nodes is True:
-        node_s0 = 0.5 * np.pi * area / len(G.nodes)
+        node_s0 = 0.5 * np.pi * area / G.number_of_nodes()
         node_r = np.sqrt(node_s0 / np.pi)
         node_edge = node_r / 3
         node_edge = kwargs.pop("node_edge", node_edge)
@@ -177,13 +177,13 @@ def draw_networkx(graph, ax=None, fig=None, nodes=True, edges=True, **kwargs):
         node_zorder = kwargs.pop("node_zorder", kwargs.pop("zorder", None))
 
         if kwargs.get("node_size") is None:
-            node_s = [node_s0 * np.sqrt(_) for n,_ in G.nodes.data("size")]
+            node_s = [node_s0 * np.sqrt(_) for n,_ in G.nodes(data="size")]
             kwargs.update(node_size=node_s)
 
         if kwargs.get("node_color") is None:
-            node_c = [_ for n,_ in G.nodes.data("color")]
+            node_c = [_ for n,_ in G.nodes(data="color")]
             if not any(node_c):
-                node_c = [_ for n,_ in G.nodes.data("group")]
+                node_c = [_ for n,_ in G.nodes(data="group")]
             kwargs.update(node_color=node_c)
         
         # draw
@@ -393,8 +393,8 @@ def visualize_mapper_stages(data, y=None, lens=None, cover=None, graph=None, dG=
         edge_size = [edge_scale_by*_ for u,v,_ in G.edges(data='size')]
     edge_color = kwargs.get('edge_color')
     if edge_color is None:
-        edge_sources = [G.nodes[u]['members'] for u,v in G.edges()]
-        edge_targets = [G.nodes[v]['members'] for u,v in G.edges()]
+        edge_sources = [G.node[u].get('members') for u,v in G.edges()]
+        edge_targets = [G.node[v].get('members') for u,v in G.edges()]
         edge_color = [Counter(c_hex[s + t]).most_common()[0][0] for s,t in zip(edge_sources, edge_targets)]
 
 
