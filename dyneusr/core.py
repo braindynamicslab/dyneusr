@@ -12,6 +12,7 @@ import json
 import numpy as np 
 import pandas as pd
 import networkx as nx
+import networkx.readwrite.json_graph
 
 from sklearn.base import BaseEstimator, TransformerMixin
 
@@ -84,7 +85,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
         # check graph
         if isinstance(G, nx.Graph):
             g = G.copy()
-            G = nx.node_link_data(g)
+            G = nx.readwrite.json_graph.node_link_data(g)
         elif G is None:
             G = {}
 
@@ -320,7 +321,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
             self.annotate_graph(**custom_data)
         
         # to node_link
-        self.node_link_data_ = dict(nx.node_link_data(self.G))
+        self.node_link_data_ = dict(nx.readwrite.json_graph.node_link_data(self.G))
 
         # [1] plot TCM
         if plot_tcm:
