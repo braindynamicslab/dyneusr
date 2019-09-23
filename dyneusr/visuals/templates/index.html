@@ -326,6 +326,8 @@
 // Main
 ///////////////////////////////////////////////
 var color_palettes = {
+    'castillo': ['#0500ff', '#65ff00',  '#fae23d', '#ff8c00', '#ff0000'],
+
     'kepler3': ['#0500ff', '#65ff00', '#ff0000'],
     'kepler5': ['#0500ff', '#00a4ff', '#65ff00', '#ff8c00', '#ff0000'],
     'kepler15': ['#0500ff', '#0100ff', '#0022ff', '#0064ff', '#00a4ff', 
@@ -538,7 +540,9 @@ function draw_force(data) {
 
 
   // set custom color palette if defined
-  var color_palette_key = 'kepler15';
+  //var color_palette_key = 'kepler15';
+  // hack for castillo cme data
+  color_palette_key = "castillo";
   if (groups[color_by].length <= 3) {
     color_palette_key = 'kepler3';
   } else if (groups[color_by].length <= 5) {
