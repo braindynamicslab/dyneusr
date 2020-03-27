@@ -437,8 +437,7 @@ def extract_matrices(G, index=None, **kwargs):
         # find TRs for each edge sharing node
         node_index = [node_to_index[_] for _ in TR_nodes] 
         M[TR, node_index] += 1.0
-        continue
-        """
+        
         # find TRs for each edge sharing node
         source_TRs = [node_to_members[n] for n in TR_nodes]
         target_TRs = [node_to_members[nbr] for n in TR_nodes for nbr in G.neighbors(n)]
@@ -448,16 +447,14 @@ def extract_matrices(G, index=None, **kwargs):
         TRs_counted = [similar_TRs.count(_) for _ in sorted(set(similar_TRs))]
         similar_TRs = sorted(set(similar_TRs))
 
-        # normalized node degrees 
+        # degree of connectivity b/w TRs
         T[TR, similar_TRs] += TRs_counted
-
-        # TODO: double check that TCM is symmetric
-        #T[TR, similar_TRs] += TRs_counted # TR is the source
-        #T[similar_TRs, TR] += TRs_counted # TR is the target
-        """
     
-    # TODO: should we normalize?
-    T = M.dot(M.T)
+    
+    # symmetricize
+    T = (T + T.T) / 2.0
+
+    # normalize 
     T = T / np.max(T)
 
     # return 

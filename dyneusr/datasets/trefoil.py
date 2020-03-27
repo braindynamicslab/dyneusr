@@ -19,7 +19,7 @@ import pandas as pd
 from sklearn.datasets.base import Bunch
 
 import matplotlib as mpl
-mpl.use('TkAgg', warn=False)
+#mpl.use('TkAgg', warn=False)
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
