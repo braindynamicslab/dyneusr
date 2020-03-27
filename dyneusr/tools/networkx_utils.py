@@ -9,7 +9,6 @@ from __future__ import unicode_literals
 from collections import Counter
 
 import matplotlib as mpl
-mpl.use('TkAgg', warn=False)
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -60,7 +59,7 @@ def format_networkx(graph, meta=None, cmap="nipy_spectral_r", norm=None,  **kwar
         
     # Construct Graph
     G = nx.Graph(link_dict)
-    
+
     # color,norm
     cmap = cmap if callable(cmap) else plt.get_cmap(cmap)
     norm = norm if norm else mpl.colors.Normalize(np.min(meta)-1, np.max(meta)+1)
@@ -84,6 +83,8 @@ def format_networkx(graph, meta=None, cmap="nipy_spectral_r", norm=None,  **kwar
 
 
     # more lambdas
+    if not hasattr(G, 'node'):
+        G.node = dict(G.nodes(data=True))
     _members = lambda _: set(G.node[_].get("members"))
     _edge_members = lambda _: sorted(_members(_[0]) & _members(_[1]))
     
@@ -357,6 +358,9 @@ def visualize_mapper_stages(data, y=None, lens=None, cover=None, graph=None, dG=
     except:
         from .graph_utils import process_graph
         G = process_graph(graph, meta=y)
+    
+    if not hasattr(G, 'node'):
+        G.node = dict(G.nodes(data=True))
 
     
     # member color cmap
