@@ -548,6 +548,7 @@ function draw_force(data) {
   } else if (groups[color_by].length <= 5) {
     color_palette_key = 'kepler5';
   } 
+  color_palette_key = "castillo";
   console.log("color_palette_key: "+color_palette_key);
 
   // check for custom color palettes
@@ -558,9 +559,9 @@ function draw_force(data) {
     })
   }
   // use color_by as color_palette_key, if it is valid
-  if (typeof color_palettes[color_by] !== "undefined") {
-    color_palette_key = color_by;
-  }  
+  //if (typeof color_palettes[color_by] !== "undefined") {
+  //  color_palette_key = color_by;
+  //}  
   var color_palette = color_palettes[color_palette_key];
 
   // define color scale

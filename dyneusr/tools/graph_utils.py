@@ -320,6 +320,9 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
         G.add_node(name, **node_dict)
         
     ### EDGES
+    if not hasattr(G,'node'):
+        G.node = dict(G.nodes(data=True))
+        
     for (source, targets) in edgelist.items():
         # add edge for each target
         for target in targets:
@@ -433,6 +436,10 @@ def extract_matrices(G, index=None, **kwargs):
 
         # find TRs for each edge sharing node
         node_index = [node_to_index[_] for _ in TR_nodes] 
+        M[TR, node_index] += 1.0
+        continue
+        """
+        # find TRs for each edge sharing node
         source_TRs = [node_to_members[n] for n in TR_nodes]
         target_TRs = [node_to_members[nbr] for n in TR_nodes for nbr in G.neighbors(n)]
 
@@ -442,17 +449,16 @@ def extract_matrices(G, index=None, **kwargs):
         similar_TRs = sorted(set(similar_TRs))
 
         # normalized node degrees 
-        M[TR, node_index] += 1.0
         T[TR, similar_TRs] += TRs_counted
 
         # TODO: double check that TCM is symmetric
         #T[TR, similar_TRs] += TRs_counted # TR is the source
         #T[similar_TRs, TR] += TRs_counted # TR is the target
-
+        """
     
     # TODO: should we normalize?
-    #T = M.dot(M.T)
-    #T = T / np.max(T)
+    T = M.dot(M.T)
+    T = T / np.max(T)
 
     # return 
     return A, M, T

@@ -20,7 +20,7 @@ from nilearn import plotting
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-mpl.use('TkAgg', warn=False)
+#mpl.use('TkAgg', warn=False)
 
 
 
@@ -29,11 +29,14 @@ mpl.use('TkAgg', warn=False)
 ######################################################################
 def mean_mixture(data, index=None, fwhm=None, threshold=None, **kwargs):
     # extract array
-    try:
-        X = data.data.values
-    except:
-        X = data.X
-   
+    X = data
+    if hasattr(X, 'X'):
+    	X = data.X
+    if hasattr(X, 'data'):
+    	X = X.data
+    if hasattr(X, 'values'):
+    	X = X.values
+
     # extract rows based on index
     mm_X = X[list(index), :].copy() # 
     mm_X = mm_X.mean(axis=0, keepdims=True)
@@ -52,11 +55,14 @@ def mean_mixture(data, index=None, fwhm=None, threshold=None, **kwargs):
 
 def simple_mixture(data, index=None, agg='mean', fwhm=None, threshold=None, **kwargs):
     # extract array
-    try:
-        X = data.data.values
-    except:
-        X = data.X
-   
+    X = data
+    if hasattr(X, 'X'):
+    	X = data.X
+    if hasattr(X, 'data'):
+    	X = X.data
+    if hasattr(X, 'values'):
+    	X = X.values
+
     # extract rows based on index
     mm_X = X[list(index), :].copy()
     mm_pos_X = np.copy(mm_X)

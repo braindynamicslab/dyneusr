@@ -105,7 +105,7 @@ class KMapperWrapper(BaseMapperWrapper):
 
         # [1] fit params
         self.projection = projection if projection is not None else PCA(2)
-        self.scaler = scaler or MinMaxScaler()
+        self.scaler = scaler #or MinMaxScaler()
 
         # [2] map params
         self.clusterer = clusterer or DBSCAN(eps=1, min_samples=2)
