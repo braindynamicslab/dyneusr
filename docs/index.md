@@ -238,7 +238,13 @@ pytest
 
 This creates a new conda environment `dyneusr` and installs in it the dependencies that are needed. To access it, use the `conda activate dyneusr` command (if your conda version >= 4.4) and use `source activate dyneusr` command (if your conda version < 4.4).
 
-
+### **_Run in a Singularity Container_**
+To run dyneusr in a Singularity container, for use on clusters where you do not have root access for example, first install singularity. Then, you can use the following command:
+```
+singularity run shub://jsmentch/dyneusr_container
+source activate neuro
+```
+This will download and run a singularity container from [singularity-hub](https://singularity-hub.org/) running centos 7 with dyneusr, jupyter, and all dependencies. It will also activate the conda environement `neuro` where these are installed. For more information on how to use singularity, see the [documentation](https://sylabs.io/docs/). The singularity recipe for this file was built with [neurodocker](https://github.com/ReproNim/neurodocker)
 
 ## **Support**
 
