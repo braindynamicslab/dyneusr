@@ -17,6 +17,8 @@
 
 ## **Dynamical Neuroimaging Spatiotemporal Representations**
 
+[![https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg](https://www.singularity-hub.org/static/img/hosted-singularity--hub-%23e32929.svg)](https://singularity-hub.org/collections/4218)
+
 [DyNeuSR](https://braindynamicslab.github.io/dyneusr/) is a Python visualization library for topological representations of neuroimaging data.
 
 DyNeuSR was designed specifically for working with shape graphs produced by the Mapper algorithm from topological data analysis (TDA), as described in the papers "[Generating dynamical neuroimaging spatiotemporal representations (DyNeuSR) using topological data analysis](https://www.mitpressjournals.org/doi/abs/10.1162/netn_a_00093)" (Geniesse et al., 2019) and "[Towards a new approach to reveal dynamical organization of the brain using topological data analysis](https://www.nature.com/articles/s41467-018-03664-4)" (Saggar et al., 2018). Check out this [blog post](https://bdl.stanford.edu/blog/tda-cme-paper/) for more about the initial work that inspired the development of DyNeuSR. 
@@ -229,7 +231,13 @@ pytest
 
 This creates a new conda environment `dyneusr` and installs in it the dependencies that are needed. To access it, use the `conda activate dyneusr` command (if your conda version >= 4.4) and use `source activate dyneusr` command (if your conda version < 4.4).
 
-
+### **_Run in a Singularity Container_**
+To run dyneusr in a Singularity container, for use on clusters where you do not have root access for example, first install singularity. Then, you can use the following command:
+```
+singularity run shub://braindynamicslab/dyneusr
+source activate neuro
+```
+This will download and run a singularity container from [singularity-hub](https://singularity-hub.org/) running centos 7 with dyneusr, jupyter, and all dependencies. It will also activate the conda environement `neuro` where these are installed. For more information on how to use singularity, see the [documentation](https://sylabs.io/docs/). The singularity recipe for this file was built with [neurodocker](https://github.com/ReproNim/neurodocker)
 
 ## **Support**
 
