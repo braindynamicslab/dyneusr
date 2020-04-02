@@ -428,6 +428,7 @@ def extract_matrices(G, index=None, **kwargs):
     # mapping from 'cube0_cluster0' => 0
     node_to_index = {n:i for i,n in enumerate(G)}
     node_to_members = dict(nx.get_node_attributes(G, 'members'))
+    node_members = np.array(list(node_to_members.values()))
 
     # loop over TRs to fill in C_rc, C_tp
     for TR in range(nTR):
@@ -437,19 +438,14 @@ def extract_matrices(G, index=None, **kwargs):
         # find TRs for each edge sharing node
         node_index = [node_to_index[_] for _ in TR_nodes] 
         M[TR, node_index] += 1.0
-        
-        # find TRs for each edge sharing node
-        source_TRs = [node_to_members[n] for n in TR_nodes]
-        target_TRs = [node_to_members[nbr] for n in TR_nodes for nbr in G.neighbors(n)]
 
-        # count TRs multiple times
-        similar_TRs = list(__ for _ in source_TRs+target_TRs for __ in _)
-        TRs_counted = [similar_TRs.count(_) for _ in sorted(set(similar_TRs))]
-        similar_TRs = sorted(set(similar_TRs))
+        # find neighbor nodes, find and count unique members
+        nbrs_index = np.nonzero(A[node_index,:])[-1].tolist()
+        similar_TRs = np.hstack(node_members[node_index + nbrs_index])
+        similar_TRs, TRs_counted = np.unique(similar_TRs, return_counts=True)
 
         # degree of connectivity b/w TRs
         T[TR, similar_TRs] += TRs_counted
-    
     
     # symmetricize
     T = (T + T.T) / 2.0
