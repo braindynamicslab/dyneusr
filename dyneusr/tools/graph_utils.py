@@ -439,19 +439,23 @@ def extract_matrices(G, index=None, **kwargs):
         node_index = [node_to_index[_] for _ in TR_nodes] 
         M[TR, node_index] += 1.0
 
-        # find neighbor nodes, find and count unique members
-        nbrs_index = np.nonzero(A[node_index,:])[-1].tolist()
-        similar_TRs = np.hstack(node_members[node_index + nbrs_index])
-        similar_TRs, TRs_counted = np.unique(similar_TRs, return_counts=True)
+        # find similar nodes (i.e., nodes + neighbors)
+        similar_nodes = np.nonzero(A[node_index,:])[-1]
+        similar_nodes = np.r_[node_index,similar_nodes]
+        similar_nodes = list(np.unique(similar_nodes))
+
+        # find and count members found in similar nodes
+        similar_TRs = np.hstack(node_members[similar_nodes])
+        similar_TRs, counts = np.unique(similar_TRs, return_counts=True)
 
         # degree of connectivity b/w TRs
-        T[TR, similar_TRs] += TRs_counted
+        T[TR, similar_TRs] += counts
     
     # symmetricize
     T = (T + T.T) / 2.0
 
     # normalize 
-    T = T / np.max(T)
+    T = T / np.max(T)    
 
     # return 
     return A, M, T
