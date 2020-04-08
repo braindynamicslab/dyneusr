@@ -435,6 +435,18 @@ def extract_matrices(G, index=None, **kwargs):
         # find nodes containing TR 
         TR_nodes = [n for n,_ in G.nodes(data='members') if TR in _]
 
+        # skip if no nodes found for TR
+        if not len(TR_nodes):
+            if kwargs.get('verbose', 1) > 0:
+                print('   > Found {} nodes for data point {}.'
+                      .format(len(TR_nodes), TR))
+            continue
+
+        # display number of nodes found
+        if kwargs.get('verbose', 1) > 2:
+            print('   > Found {} nodes for data point {}.'
+                  .format(len(TR_nodes), TR))
+
         # find TRs for each edge sharing node
         node_index = [node_to_index[_] for _ in TR_nodes] 
         M[TR, node_index] += 1.0
