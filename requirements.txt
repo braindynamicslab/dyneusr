@@ -10,3 +10,6 @@ seaborn
 networkx
 nilearn
 kmapper>=1.2
+umap-learn
+hdbscan
+fire

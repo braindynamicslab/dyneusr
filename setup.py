@@ -1,5 +1,6 @@
 from setuptools import find_packages, setup
 import re
+import os
 
 # parse dyneusr/_version.py
 try:
@@ -25,6 +26,7 @@ with open('README.md') as f:
 setup(
     name='dyneusr',
     version=version,
+    scripts=[os.path.join('scripts/dyneusr-fire')],
     description='Dynamical Neural Spatiotemporal Representations.',
     long_description=long_description,
     long_description_content_type="text/markdown",	

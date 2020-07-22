@@ -12,3 +12,6 @@ seaborn==0.9.0
 networkx==2.2
 nilearn==0.5.0a
 kmapper==1.2.0
+umap-learn
+hdbscan
+fire
