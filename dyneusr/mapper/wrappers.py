@@ -10,8 +10,8 @@ import numpy as np
 import pandas as pd
 
 # Machine learning libraries
+from joblib import Memory
 from sklearn.datasets.base import Bunch
-from sklearn.externals.joblib import Memory
 from sklearn.base import BaseEstimator, TransformerMixin, ClusterMixin
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA

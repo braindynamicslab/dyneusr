@@ -8,3 +8,4 @@ scikit-learn
 matplotlib
 seaborn
 networkx
+joblib
