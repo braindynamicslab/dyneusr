@@ -9,5 +9,5 @@ matplotlib
 seaborn
 networkx
 nilearn
-kmapper>=1.2
+kmapper==1.2.0
 joblib
