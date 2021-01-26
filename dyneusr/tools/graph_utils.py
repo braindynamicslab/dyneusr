@@ -38,18 +38,24 @@ def in_notebook():
     return get_ipython() is not None
 
 
-def _agg_proportions(df, members=None):
+def _agg_proportions(df_, members=None):
     """ Aggregate proportions df for members. 
     """
-    p = df.copy()
+    df = df_.copy()
     if members is not None:
-        p = p.iloc[members]
-    p = p.T.assign(
-        group=pd.factorize(p.columns)[0],
-        label=pd.factorize(p.columns)[-1],
-        value=p.sum(), #/ p.sum().sum() * p.shape[0],
-        row_count=p.shape[0]
-        )
+        df = df.iloc[members]
+    p = df.T.copy()
+    p = p.assign(group=pd.factorize(df.columns)[0])
+    p = p.assign(label=pd.factorize(df.columns)[-1])
+    #p = p.assign(   
+    #    #value=(df.sum() / df.sum().sum()) * len(df), #,# / len(df.T), #/ df.sum().sum() * df.shape[0],
+    #    #row_count=len(df),
+    #    #row_count=len(df), #.sum().sum(),
+    #    #row_count=len(df),
+    #)
+    p = p.assign(value=(df / df.values.sum(axis=1, keepdims=True)).sum())
+    p = p.assign(row_count=p.value.sum())
+    p = p.fillna(0)
     p = p[['label', 'group', 'value', 'row_count']]
     p.columns = ['label', 'group', 'value', 'row_count']
     p = list(p.T.to_dict().values())
@@ -121,7 +127,23 @@ def process_meta(meta_, labels=None, zscore=True, **kwargs):
         
         elif len(set(meta)) > 9 and zscore is False:
             # TODO: figureout continuous scale here
-            pass
+            # pass
+            min_color_bins = kwargs.get('min_color_bins', 15)
+
+            encoder = LabelEncoder()
+            yi = encoder.fit_transform(meta)
+            yi_bins = np.linspace(yi.min(), yi.max(), num=min(min_color_bins, len(set(yi))), endpoint=True)
+            #for try_precision in [2,]:
+            #    if len(set(yi_bins.round(try_precision))) >= len(set(yi_bins)):
+            #        yi_bins = yi_bins.round(try_precision)
+            meta = np.digitize(yi, yi_bins, right=True)
+            meta = yi_bins[meta]
+            meta_label = [list(yi_bins).index(_) for _ in sorted(set(meta))]
+            #meta_label = ['Group '+str(_+1) for _ in meta_label]
+            meta_bins = [_ for _ in zip(yi_bins[:-1], yi_bins[1:])] 
+            meta_label = ['Group {} ({:0.2f}, {:0.2f})'.format(_+1, __[0],__[1]) for _,__ in enumerate(meta_bins)]
+
+        
 
         # labels for legend
         meta_sets[meta_col] = [_ for _ in np.sort(np.unique(meta))]
@@ -192,7 +214,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     #meta = Normalizer().fit_transform(meta.reshape(-1, 1))
     # bin meta (?)
     meta, meta_sets, meta_labels = process_meta(meta, labels=labels, **kwargs)
-    
+
     # color_by
     if len(meta_orig.T) < 2:        
         color_by = color_by or meta_orig.columns[0] 
@@ -200,6 +222,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
     # multiclass proportions
     # TODO: make sure this works on edge cases
     multiclass = _agg_proportions(meta_orig)
+
     color_by = color_by or 'multiclass' 
     meta_sets['multiclass'] = [_.get('group') for _ in multiclass]
     meta_labels['multiclass'] = [_.get('label') for _ in multiclass]
@@ -261,7 +284,12 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
         tooltip = tooltips[node_id]
 
         # aggregate proportions into a single column
-        multiclass = _agg_proportions(meta_orig, members)
+        multiclass = None
+        if len(meta_orig) == len(nodelist):
+            multiclass = _agg_proportions(meta_orig, members=[node_id for _ in members]) 
+            #multiclass = _agg_proportions(meta_orig.iloc[[node_id],:], members=None) 
+        else:
+            multiclass = _agg_proportions(meta_orig, members=members)
         tooltip += pd.DataFrame(multiclass).to_html(
                         index=False, header=False, columns=['label','value'],
                         float_format='{:0.2f}'.format,
@@ -285,7 +313,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
 
         coloring = kwargs.get('rsn_color','separate')
         # proportions by column
-        if coloring is 'separate': # Color networks separately or put all together in one graph
+        if coloring == 'separate': # Color networks separately or put all together in one graph
             group = dict()
             for meta_col in meta.columns:
                 groups = meta[meta_col].values[members] 
@@ -300,7 +328,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
                     group=group
                     )  
 
-        elif coloring is 'together':
+        elif coloring == 'together':
             # multilabel
             groups = meta.values[members, :-2] 
             allgroups = [np.nonzero(memlabels) for memlabels in groups]
@@ -309,7 +337,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
                     dict(group=int(_), row_count=len(allgroups), value=int(c))
                     for _,c in Counter(allgroups).most_common() 
                     ]
-            group = int(Counter(allgroups).most_common()[0][0])
+            group = dict(multi=int(Counter(allgroups).most_common()[0][0]))
             # format node dict
             node_dict.update(
                 proportions=proportions, 
