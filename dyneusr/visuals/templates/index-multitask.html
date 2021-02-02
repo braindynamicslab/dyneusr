@@ -11,6 +11,10 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
   <script src="https://cdn.rawgit.com/eligrey/canvas-toBlob.js/f1a01896135ab378aa5c0118eadd81da55e698d8/canvas-toBlob.js"></script>
   <script src="https://cdn.rawgit.com/eligrey/FileSaver.js/e9d941381475b5df8b7d7691013401e171014e89/FileSaver.min.js"></script>
+  <script src="http://davidbau.com/encode/seedrandom-min.js"></script>
+  <script type="text/javascript" src="https://d3js.org/d3-array.v2.min.js"></script>
+
+
 <style>   
   body {
     font-family: "Roboto Mono", "Helvetica", sans-serif;
@@ -320,7 +324,6 @@
 
 
 
-
 <script>
 
 ///////////////////////////////////////////////
@@ -328,7 +331,10 @@
 ///////////////////////////////////////////////
 var color_palettes = {
     
-    'castillo': ['#000000','#0500ff', '#65ff00',  '#fae23d', '#ff8c00', '#ff0000'],
+    // 'castillo': ['#000000','#0500ff', '#65ff00',  '#fae23d', '#ff8c00', '#ff0000', '#7C19FF'],
+    
+    //               None      Instruct   Rest        Memory     Video      Math       TaskPositive 
+    'castillo':    ['#000000','#0500ff', '#65ff00',  '#fae23d', '#ff8c00', '#ff0000', '#7C19FF'],
 
     // castillo 1-hot coloringsss
     //'white':   ['#777', '#ffffff'],
@@ -338,6 +344,13 @@ var color_palettes = {
     'castillo (yellow)':  ['#777', '#fae23d'],
     'castillo (orange)':  ['#777', '#ff8c00'],
     'castillo (red)':     ['#777', '#ff0000'],
+    'castillo (purple)':  ['#777', '#7C19FF'], 
+
+    //               None      Instruct   Rest       TaskPositive
+    // 'task groups': ['#000000','#0500ff', '#65ff00', '#7C19FF'],
+
+
+
 
     //'castillo5': ['#0500ff', '#65ff00',  '#fae23d', '#ff8c00', '#ff0000'],
 
@@ -376,7 +389,7 @@ if (!d3.select("#json_graph").empty()) {
 // Load a list of JSON files
 function load_force_graphs() {
   d3.select("#json_graph").forEach(function(element) {
-    console.log(element[0]);
+    // console.log(element[0]);
     var data = JSON.parse(element[0].dataset.json);
     var inputs = {data:data, source:"default", total:1};
     console.log(inputs);
@@ -388,7 +401,7 @@ function load_force_graphs() {
 function load_force_graphs_csv(csv) {
     d3.csv(csv, function(error, data) {
       data.forEach(function(d, i) {
-        console.log(i, data.length, d);
+        console.log({"i":i, "data.length":data.length, "data[i]":d});
         load_force_graph(d.json, data.length);
     }); 
   });
@@ -413,18 +426,23 @@ function zoomer () {
 
 //define the event handler function
 function zoom() {
-    console.log("zoom", d3.event.translate, d3.event.scale);
+    // console.log("zoom", d3.event.translate, d3.event.scale);
     d3.selectAll("g.zoomable").attr("transform", 
              "translate(" + d3.event.translate + ")" 
          + " scale(" + d3.event.scale + ")" );
 };
 
 
+
 // Draw json
 function draw_force(data) {
-    ////////////////////////////////////////////////////
-    //// inits
-    ////////////////////////////////////////////////////
+  
+  // fixed random seed, for layout reproducibility (change string to randomize layout) 
+  Math.seedrandom('dyneusr is awesome');
+
+  ////////////////////////////////////////////////////
+  //// inits
+  ////////////////////////////////////////////////////
   var json = data.data,
       source = data.source,
       n = data.total;
@@ -433,13 +451,12 @@ function draw_force(data) {
   var nrows = d3.max([1, Math.round(n / 3)]);
   var colsize = 12 / ncols;
 
-  console.log("source: " + source);
-  console.log(ncols, nrows);
-
   var margin = {top: 0, right: 0, bottom: 100, left: 0};
   var width = (window.innerWidth / ncols) - margin.left - margin.right;
   var height = (window.innerHeight / ncols) - margin.top - margin.bottom;
-  
+  console.log({margin: margin});
+  console.log({ncols: ncols, nrows:nrows});
+  console.log({width:width, height:height});
 
   var div = d3.select("#main")
       .append("div")
@@ -448,7 +465,7 @@ function draw_force(data) {
       .attr("height", height)
       .attr("display", "inline-block");
   //width = document.getElementById("main").offsetWidth;
-  console.log(width, height);
+  console.log({width:width, height:height});
 
   
   var svg = div.append("svg")
@@ -551,33 +568,57 @@ function draw_force(data) {
       });
     });
   color_by_options = d3.keys(color_by_options);
-  console.log("color_by_options: "+color_by_options);
+  console.log({color_by_options:color_by_options});
 
   var color_by = json.graph.color_by ? json.graph.color_by : color_by_options[0];  
-  console.log("color_by: "+color_by);
+  console.log({color_by: color_by});
 
 
   // colors
-  var groups = {}
+  var groups = {};
+  var labels = {};
   if (typeof json.graph.groups !== "undefined") {
     d3.keys(json.graph.groups).map(function(k, i) {
       groups[k] = json.graph.groups[k];
     });
   }
   color_by_options.map(function(k) {
-    console.log(k)
+    // console.log(k)
     groups[k] = {};
+    labels[k] = {};
     json.nodes.map(function(d,i) {
       d.proportions[k].map(function(p,j) {
         if (groups[k][p.group]!==true) {
           groups[k][p.group] = true;
+          labels[k][p.group] = p.label || k.concat(" = ", p.group.toString());
         }
       })
     })
     groups[k] = d3.keys(groups[k]);
+    labels[k] = d3.values(labels[k]); // reindex like groups[k]
   });
-  console.log("groups: "+groups);
-  console.log("groups: "+groups[color_by]);
+  console.log({groups: groups});
+  console.log({labels: labels});
+
+  // quick encoding for groups to ints
+  var groups_to_int = {};
+  var groups_to_frac = {};
+  d3.keys(groups).map(function(k) {
+    groups_to_int[k] = {};
+    groups[k].map(function(i, g) {
+      groups_to_int[k][parseInt(i)] = parseInt(g);
+    });
+    groups_to_frac[k] = {};
+    groups[k].map(function(i, g) { 
+      // groups_to_frac[k][g] = g / d3.max(d3.values(groups[k])) || 0;
+      // groups_to_frac[k][g] = g / (groups[k].length - 1) || 0;
+      groups_to_frac[k][parseFloat(i)] = (g / (groups[k].length - 1)) || 0;
+      // groups_to_frac[k][parseFloat(i)] = parseFloat(i) / d3.max(d3.keys(groups_to_int[k])) || 0; 
+    });
+  });
+  console.log({groups_to_int: groups_to_int});
+  console.log({groups_to_frac: groups_to_frac});
+
 
 
   // set custom color palette if defined
@@ -590,7 +631,7 @@ function draw_force(data) {
     color_palette_key = 'kepler5';
   } 
   color_palette_key = "castillo";
-  console.log("color_palette_key: "+color_palette_key);
+  console.log({color_palette_key: color_palette_key});
 
   // check for custom color palettes
   var custom_colors = json.graph.colors ? json.graph.colors : json.graph.color;
@@ -606,34 +647,53 @@ function draw_force(data) {
   var color_palette = color_palettes[color_palette_key];
 
   // define color scale
+  //var color = d3.scale.linear()
+  //  .domain(groups[color_by])
+  //  .range(color_palette);
   var color = d3.scale.linear()
-    .domain(groups[color_by])
-    .range(color_palette);
-  console.log("color.domain: "+color.domain());
-  console.log("color.range: "+color.range());
+  color = color.domain(groups[color_by])
+  color = color.range(d3.values(groups_to_frac[color_by]).map(function(g) {
+    return color_palette[Math.round(g * (color_palette.length-1))]
+  }))
+  console.log({'color.domain()': color.domain(), 
+               'color.range()':  color.range()});
+     
 
   // color labels
   var color_labels = {};
   d3.keys(groups).map(function(k, i) {
-    color_labels[k] = groups[k];
-  });
+    color_labels[k] = labels[k];
+  })
+  // d3.keys(groups).map(function(k, i) {
+  //  color_labels[k] = groups[k];
+  //});
   if (typeof json.graph.labels !== "undefined") {
     d3.keys(json.graph.labels).map(function(k, i) {
-      color_labels[k] = json.graph.labels[k]
+      color_labels[k] = json.graph.labels[k];
     })
   } else if (typeof json.graph.label !== "undefined") {
     d3.keys(json.graph.label).map(function(k, i) {
-      color_labels[k] = json.graph.label[k]
+      color_labels[k] = json.graph.label[k];
     })
   }
+  // make sure labels match up with groups 
+  d3.keys(color_labels).map(function(k) {
+    if (typeof groups[k] === "undefined") return;
+    if (color_labels[k].length === (groups[k].length - 1)) {
+      color_labels[k].unshift("None"); // add dummy None label to beginning
+    }
+  })
+  console.log({color_labels: color_labels});
 
-  var color_label = d3.scale.ordinal()
-            .domain(color_labels[color_by])
-            .range(color.range());
-  console.log("color_label.domain: "+color_label.domain());
-  console.log("color_label.range: "+color_label.range());
 
-  
+  //var color_label = d3.scale.ordinal()
+  //          .domain(color_labels[color_by])
+  //          .range(color.range());
+  var color_label =  d3.scale.ordinal()
+  color_label = color_label.domain(color_labels[color_by])
+  color_label = color_label.range(color.range())
+  console.log({'color_label.domain()': color_label.domain(), 
+               'color_label.range()':  color_label.range()}); 
   
     
   // node-pie 
@@ -645,7 +705,7 @@ function draw_force(data) {
   var data_size = d3.max(json.nodes.map(d => { 
         return d3.max(d.members) + 1;
     }));
-  console.log("data size: "+data_size);
+  console.log({data_size: data_size});
 
   var pie_size = json.nodes.map(d => { 
     return d3.max(d.proportions[color_by].map(p => 
@@ -653,8 +713,10 @@ function draw_force(data) {
             ));
       });
 
-  console.log("pie_size: "+pie_size);
+  console.log({pie_size: pie_size});
   var inner_radius = 0;
+  var min_outer_radius = 3;
+  var max_outer_radius = 50;
   // size node proportional to data
   //var pie_norm = d3.scale.log()
   //    .domain([1, data_size])
@@ -662,9 +724,12 @@ function draw_force(data) {
   
   var pie_norm = d3.scale.sqrt()
       .domain([1, data_size])
-      .rangeRound([3, 50]) //data_size)]);
+      .rangeRound([min_outer_radius, max_outer_radius]) //data_size)]);
   //.rangeRound([2, 15]);
-  console.log("pie_norm([1,10,100,1000]): "+[1,10,100,1000].map(pie_norm));
+  console.log({"pie_norm(1)"   : pie_norm(1),
+               "pie_norm(10)"  : pie_norm(10),
+               "pie_norm(100)" : pie_norm(100),
+               "pie_norm(1000)": pie_norm(1000)});
 
   var link = svg.selectAll(".link")
       .data(json.links)
@@ -682,7 +747,9 @@ function draw_force(data) {
       .enter()
       .append("svg:path")
         .attr("d", d3.svg.arc().innerRadius(inner_radius).outerRadius(function(d, i) {
-          return pie_norm(d.data.row_count)+inner_radius;//*0.8;
+          var outer_radius = pie_norm(d.data.row_count);
+          if (isNaN(outer_radius)) { outer_radius = min_outer_radius };
+          return outer_radius + inner_radius;
         }))
         .attr("fill", function(d, i) { return color(d.data.group); })
         .attr("class", "circle");
@@ -719,97 +786,130 @@ function draw_force(data) {
 
   var num_to_pos = function(v) {
     //return {x:(xy * w/2), y:h-(xy * h/2)};
-    return {x:xaxis_scale(v), y:yaxis_scale(v)}
+    var x = !isNaN(v) ? v : 0 ;
+    var y = !isNaN(v) ? v : 0 ;
+    return {x:xaxis_scale(x), y:yaxis_scale(y)}
   }
-  var pos_functions = {
-    "force": function(d) {return {x:d.x, y:d.y};},
-    
-    //"node (size)": function(d) {var xy = d.size*50; return {x:xy, y:h-xy};},*/
-    //"node (degree)": function(d) {var xy = d.degree*50; return {x:xy, y:h-xy};},  
-    "node size": function(d) {
-      return num_to_pos( d.size / max_node_size )
-    },
-    "node size (sqrt)": function(d) {
-      return num_to_pos( Math.sqrt(d.size / max_node_size) )
-    },
-    "node degree": function(d) {
-      return num_to_pos( d.degree / max_node_degree )
-    },
-    "node degree (sqrt)": function(d) {
-      return num_to_pos( Math.sqrt(d.degree / max_node_degree) )
-    },
-    "node index": function(d) {
-      return num_to_pos( d.index / d3.values(json.nodes).length )
-    },
-    "members (min)": function(d) {
-      return num_to_pos( d3.min(d.members) / data_size )
-    },
-    "members (max)": function(d) {
-      return num_to_pos( d3.max(d.members) / data_size )
-    },
-    "members (mean)": function(d) {
-      return num_to_pos( d3.mean(d.members) / data_size )
-    },
-    "members (median)": function(d) {
-      return num_to_pos( d3.median(d.members) / data_size )
-    },
-    "center": function(d) { 
-      return num_to_pos( 0.5 ) 
-    }
-  };
+  
+  // initialize layout functions
+  var pos_functions = {}
+  var pos_by_x = "force";
+  var pos_by_y = "force";
 
-  // quick encoding for groups to ints
-  var groups_to_int = {};
-  var groups_to_frac = {};
-  d3.keys(groups).map(function(k) {
-    groups_to_int[k] = {};
-    groups[k].map(function(i, g) {
-      groups_to_int[k][parseInt(i)] = parseInt(g);
-    });
-    groups_to_frac[k] = {};
-    groups[k].map(function(i, g) {
-      groups_to_frac[k][g] = g / d3.max(d3.values(groups[k])) || 0;
-    });
+  // interactive force layout 
+  pos_functions["force"] = function(d) { 
+    return {x:d.x, y:d.y}; 
+  } 
+
+  // custom pos
+  var custom_layouts = json.graph.custom_layouts ? json.graph.custom_layouts : {};
+  d3.keys(custom_layouts).map(function(k) {
+    // assume position is defined for each node
+    // i.e., pos = {'custom': {1: [x, y], ...}}
+    pos_functions[k] = function(d) {
+      var xy = custom_layouts[k][d.name];
+      return num_to_pos( xy );
+    };
   });
+
+
+  // add default layout functions last (moved from above)
+  pos_functions["node size"] = function(d) {
+    return num_to_pos( d.size / max_node_size )
+  };
+  pos_functions["node size (sqrt)"] = function(d) {
+    return num_to_pos( Math.sqrt(d.size / max_node_size) )
+  };
+  pos_functions["node degree"] = function(d) {
+    return num_to_pos( d.degree / max_node_degree )
+  };
+  pos_functions["node degree (sqrt)"] = function(d) {
+    return num_to_pos( Math.sqrt(d.degree / max_node_degree) )
+  };
+  pos_functions["node index"] = function(d) { 
+    return num_to_pos( d.index / d3.values(json.nodes).length ) 
+  };
+  pos_functions["members (min)"] = function(d) {
+    return num_to_pos( d3.min(d.members) / data_size )
+  };
+  pos_functions["members (max)"] = function(d) {
+    return num_to_pos( d3.max(d.members) / data_size )
+  };   
+  pos_functions["members (mean)"] = function(d) {
+    return num_to_pos( d3.mean(d.members) / data_size )
+  };   
+  pos_functions["members (median)"] = function(d) {
+    return num_to_pos( d3.median(d.members) / data_size )
+  };  
+  pos_functions["data_id"] = function(d) {
+    var k = "data_id";
+    var winner = d3.maxIndex(d3.values(d.proportions[k]).map(p => p.value));
+    var xy = groups_to_frac[k][parseFloat(d.proportions[k][winner].group)];
+    return num_to_pos( xy );
+  };  
+  pos_functions["center"] = function(d) { 
+    return num_to_pos( 0.5 ) 
+  };  
+
+  
   // some more func options based on colorings
   color_by_options.map(function(k) {
-    if (k.includes("_counts") || k.includes("_proportions")) {
+    // skip some of the default color functions
+    if (k==="uniform" || k==="degree" || k==="data_id") { // || k==="multiclass") {
+      return;
+    } else if (typeof pos_functions[k] !== "undefined") {
+      // console.log(k); console.log(pos_functions[k])
       return;
     }
-    if (k==="uniform" || k==="degree" || k==="multiclass") {
-      return;
-    }
-    pos_functions[k] = function(d) {
-      //var g = parseInt(d.group[k]);
-      //var xy = groups_to_int[k][g] / d3.max(d3.values(groups_to_int[k]));
-      //var xy = groups_to_frac[k][parseInt(d.group[k])];
-      var xy = groups_to_frac[k][d.group[k]] || 0;
-      // return {x:(xy * w/2), y:h-(xy * h/2)};
-      return num_to_pos( xy );
-    };
 
+    // set xy = (normalized) group of the largest slice of the pie (winner takes all)
+    pos_functions[k] = function(d) {
+      var winner = d3.maxIndex(d3.values(d.proportions[k]).map(p => p.value));
+      var xy = groups_to_frac[k][parseFloat(d.proportions[k][winner].group)];
+      /* 
+      var winner = d.proportions[k][0];
+      d3.values(d.proportions[k]).map(function(p) {
+        if (p.value >= winner.value) {
+          winner = p;
+        }
+      }) 
+      */
+      return num_to_pos( xy );
+    }
+
+    // below is for binary proportions only
+    if (groups[k].length > 2) { 
+      return;
+    } 
+    // set xy = # of times group is found in node / # members in node
     pos_functions[k + ' (weighted)'] = function(d) {
       var xy = 0;
-      d.proportions["multiclass"].map(function(p) {
-        if (p.label === k) { 
-          xy = p.value / p.row_count;
-        } 
-      });
+      d3.values(d.proportions[k]).map(function(p) {
+        if ((p.label === k) || (p.group === 1)) {
+          //xy = groups_to_frac[k][parseFloat(p.group)] * (p.value / p.row_count);  
+          //xy = p.group * (p.value / p.row_count); 
+          xy = (p.value / p.row_count);  
+        }
+      })
+      //
+      // d.proportions[k].map(function(p) { // NeuroSynth (Rest) = [{group:0,...}, {group:1,...}]
+      //  if (parseInt(p.group) === 1) { 
+      //    xy = p.value / p.row_count;
+      //    break;
+      //  }
+      // });
+      //
+      // // if (xy === 0) { 
+      // d.proportions["multiclass"].map(function(p) {
+      //  if (p.label === k) { 
+      //    xy = p.value / p.row_count;
+      //    break;
+      //  } 
+      // });
+      // // }
+      //
       return num_to_pos( xy );
-    };
-
-    /*
-    pos_functions[k + ' (node_topic_counts)'] = function(d) {
-      var xy = 0;
-      d.proportions["node_topic_counts"].map(function(p) {
-        if (p.label === k) { 
-          xy = p.value ? 1 : 0;
-        } 
-      });
-      return num_to_pos( xy );
-    };
-    */
-
+    }
     /* 
     pos_functions[k + " (diversity)"] = function(d) {
       var p = d.proportions[k];
@@ -818,22 +918,6 @@ function draw_force(data) {
     };
     */
   });
-  // custom pos
-  var custom_layouts = json.graph.custom_layouts ? json.graph.custom_layouts : {};
-  d3.keys(custom_layouts).map(function(k) {
-    //
-    // assume position is defined for each node
-    // i.e. pos = {'custom': {1: [x, y], ...}}
-    //
-    pos_functions[k] = function(d) {
-      var xy = custom_layouts[k][d.name];
-      return num_to_pos( xy );
-    };
-  });
-  // define initial settings
-  var pos_by_x = "force";
-  var pos_by_y = "force";
-
 
 
 
@@ -875,8 +959,8 @@ function draw_force(data) {
     // add data
     option.selectAll("option")
       .data(values).enter().append("option")
-        .attr('value', function (d) {console.log(d); return d;})
-        .text(function (d) {console.log(d); return d;})
+        .attr('value', function (d) {/*console.log(d);*/ return d;})
+        .text(function (d) {/*console.log(d);*/ return d;})
         .property("selected", function(d){ return d === selected; });
     // add callback
     option.on("change", callback);
@@ -933,6 +1017,7 @@ function draw_force(data) {
       exit_focus();
     } else {
       set_focus(d);
+      console.log({focus_node: focus_node});
     }
   }).on("mouseout", function(d) {
     if (focus_node === null) {
@@ -1074,22 +1159,29 @@ function draw_force(data) {
   function update_colors() {
     // get selected color by 
     color_by = option_color_by.property("value");
-    console.log('color_by: '+color_by);
     // get selected color palette
     color_palette_key = option_color_palette.property("value");
-    console.log('color_palette: '+color_palette_key);
     // set palette
     color_palette = color_palettes[color_palette_key];
-    color = color
-      .domain(groups[color_by])
-      .range(color_palette);
-    console.log("color.domain: "+color.domain());
-    //console.log("color.range: "+color.range());
-    color_label = color_label
-      .domain(color_labels[color_by])
-      .range(color.range());
-    console.log("color_label.domain: "+color_label.domain());
-    //console.log("color_label.range: "+color_label.range());
+    // update color, color_label
+    // color.domain(groups[color_by]).range(color_paletter)
+    color = color.domain(groups[color_by]).range(
+        d3.values(groups_to_frac[color_by]).map(function(g) {
+          return color_palette[Math.round(g * (color_palette.length-1))]
+        }))
+    // color_label.domain(color_labels[color_by]).range(color.range())
+    color_label = color_label.domain(color_labels[color_by]).range(color.range())
+
+    // log updated colors
+    console.log({
+      "color_by"             : color_by,
+      "color_palette_key"    : color_palette_key,
+      "color_palette"        : color_palette,
+      "color.domain()"       : color.domain(), 
+      "color.range()"        : color.range(),
+      "color_label.domain()" : color_label.domain(), 
+      "color_label.range()"  : color_label.range()
+    });
 
     
     //////////////////////////////////////////
@@ -1131,7 +1223,10 @@ function draw_force(data) {
           .enter()
           .append("svg:path")
             .attr("d", d3.svg.arc().innerRadius(inner_radius).outerRadius(function(d, i) {
-              return pie_norm(d.data.row_count) + inner_radius; //*0.8;
+              // return pie_norm(d.data.row_count) + inner_radius; //*0.8;
+              var outer_radius = pie_norm(d.data.row_count);
+              if (isNaN(outer_radius)) { outer_radius = min_outer_radius };
+              return outer_radius + inner_radius;
             }))
             .attr("fill", function(d, i) { return color(d.data.group); })
             .attr("class", "circle");
@@ -1149,8 +1244,7 @@ function draw_force(data) {
     // get selected 
     pos_by_x = option_pos_by_x.property("value");
     pos_by_y = option_pos_by_y.property("value");  
-    console.log("\npos_by_x: "+pos_by_x+
-                "\npos_by_y: "+pos_by_y);
+    console.log({pos_by_x:pos_by_x, pos_by_y:pos_by_y});
     update_pos_force();
   }
   function update_pos_force() {
@@ -1211,7 +1305,7 @@ function draw_force(data) {
       node.each(function(d, i) {
         d.members.map(function(dd, ii) {
           if (focus_i == dd) {
-            console.log("[movie] TR="+dd+", NodeID="+d.index);
+            // console.log("[movie] TR="+dd+", NodeID="+d.index);
             set_highlight(d);
             set_focus(d);
           }
@@ -1280,9 +1374,9 @@ function toggle_save_as(svg, source, format) {
                       .replace(/json/g, format); // ext
   // save as svg
   console.log("Saving...");
-  console.log("format: "+format);
+  console.log({format: format});
   save_as_svg(svg, save_as);
-  console.log("saved: "+save_as);
+  console.log({saved: save_as});
 }
 
 function save_as_svg(svg, save_as){

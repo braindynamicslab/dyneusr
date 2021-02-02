@@ -38,7 +38,7 @@ def in_notebook():
     return get_ipython() is not None
 
 
-def _agg_proportions(df_, members=None):
+def _agg_proportions(df_, members=None, precision=4):
     """ Aggregate proportions df for members. 
     """
     df = df_.copy()
@@ -55,6 +55,7 @@ def _agg_proportions(df_, members=None):
     #)
     p = p.assign(value=(df / df.values.sum(axis=1, keepdims=True)).sum())
     p = p.assign(row_count=p.value.sum())
+    p = p.round(precision)
     p = p.fillna(0)
     p = p[['label', 'group', 'value', 'row_count']]
     p.columns = ['label', 'group', 'value', 'row_count']
@@ -87,7 +88,9 @@ def process_meta(meta_, labels=None, zscore=True, **kwargs):
         if str(meta[0]).isalpha() or type(meta[0]) is str:
             encoder = LabelEncoder()
             yi = encoder.fit_transform(meta)
-            yi_bins = np.linspace(yi.min(), yi.max(), num=min(5, len(set(yi))), endpoint=True)
+            # discretize into bins
+            min_color_bins = kwargs.get('min_color_bins', 7) # 5
+            yi_bins = np.linspace(yi.min(), yi.max(), num=min(min_color_bins, len(set(yi))), endpoint=True)
             meta = np.digitize(yi, yi_bins, right=True)
             meta = yi_bins[meta]
             meta_label = [list(yi_bins).index(_) for _ in sorted(set(meta))]
@@ -127,11 +130,11 @@ def process_meta(meta_, labels=None, zscore=True, **kwargs):
         
         elif len(set(meta)) > 9 and zscore is False:
             # TODO: figureout continuous scale here
-            # pass
-            min_color_bins = kwargs.get('min_color_bins', 15)
-
+            #pass
             encoder = LabelEncoder()
             yi = encoder.fit_transform(meta)
+            # discretize into bins
+            min_color_bins = kwargs.get('min_color_bins', 15)
             yi_bins = np.linspace(yi.min(), yi.max(), num=min(min_color_bins, len(set(yi))), endpoint=True)
             #for try_precision in [2,]:
             #    if len(set(yi_bins.round(try_precision))) >= len(set(yi_bins)):
@@ -206,7 +209,7 @@ def process_graph(graph=None, meta=None, tooltips=None, color_by=None, labels=No
 
     # add some defaults
     meta['data_id'] = np.arange(len(meta)).astype(str)
-    meta['uniform'] = '0' 
+    meta['uniform'] = '1' # '0' 
 
 
     # normalize meta
