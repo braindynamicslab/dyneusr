@@ -433,7 +433,6 @@ function zoom() {
 };
 
 
-
 // Draw json
 function draw_force(data) {
   
@@ -746,12 +745,12 @@ function draw_force(data) {
       .data(function(d, i) {return pie(d.proportions[color_by]); })
       .enter()
       .append("svg:path")
-        .attr("d", d3.svg.arc().innerRadius(inner_radius).outerRadius(function(d, i) {
+        .attr("d", d3.svg.arc().innerRadius(inner_radius).outerRadius(function(d) {
           var outer_radius = pie_norm(d.data.row_count);
           if (isNaN(outer_radius)) { outer_radius = min_outer_radius };
           return outer_radius + inner_radius;
         }))
-        .attr("fill", function(d, i) { return color(d.data.group); })
+        .attr("fill", function(d) { return color(d.data.group); })
         .attr("class", "circle");
       
 
@@ -813,6 +812,56 @@ function draw_force(data) {
   });
 
 
+  
+  
+  // some more func options based on colorings
+  color_by_options.map(function(k) {
+    if (k==="uniform" || k==="degree" || k==="data_id") { 
+      return;
+    } else if (typeof pos_functions[k] !== "undefined") {
+      return;
+    }
+    // set xy = (normalized) group of the largest slice of the pie (winner takes all)
+    pos_functions[k] = function(d) {
+      var winner = d3.maxIndex(d3.values(d.proportions[k]).map(p => p.value));
+      var xy = groups_to_frac[k][parseFloat(d.proportions[k][winner].group)];
+      return num_to_pos( xy );
+    }
+    //});
+
+    // (weighted) (for binary proportions only)
+    //color_by_options.map(function(k) {
+    k_wts = k + ' (weights)'
+    // if (k==="uniform" || k==="degree" || k==="data_id") { 
+    //  return;
+    //} else if (typeof pos_functions[k_wts] !== "undefined") {
+    //  return;
+    //} 
+    if (groups[k].length > 2) { 
+      return;
+    } 
+    // set xy = # of times group is found in node / # members in node
+    pos_functions[k_wts] = function(d) {
+      var xy = 0;
+      d3.values(d.proportions[k]).map(function(p) {
+        if ((p.label === k) || (p.group === 1)) {
+          xy = (p.value / p.row_count);  
+          //xy = groups_to_frac[k][parseFloat(p.group)] * (p.value / p.row_count);  
+        }
+      })
+      return num_to_pos( xy );
+    }
+  });
+
+  /* // (diversity) (for binary proportions only)
+  color_by_options.map(function(k) {
+    pos_functions[k + " (diversity)"] = function(d) {
+      var p = d.proportions[k];
+      var xy = d3.keys(p).length / d3.keys(groups[k]).length;
+      return num_to_pos( xy );
+    };
+  }); */
+
   // add default layout functions last (moved from above)
   pos_functions["node size"] = function(d) {
     return num_to_pos( d.size / max_node_size )
@@ -832,15 +881,15 @@ function draw_force(data) {
   pos_functions["members (min)"] = function(d) {
     return num_to_pos( d3.min(d.members) / data_size )
   };
-  pos_functions["members (max)"] = function(d) {
-    return num_to_pos( d3.max(d.members) / data_size )
-  };   
   pos_functions["members (mean)"] = function(d) {
     return num_to_pos( d3.mean(d.members) / data_size )
   };   
   pos_functions["members (median)"] = function(d) {
     return num_to_pos( d3.median(d.members) / data_size )
   };  
+  pos_functions["members (max)"] = function(d) {
+    return num_to_pos( d3.max(d.members) / data_size )
+  };   
   pos_functions["data_id"] = function(d) {
     var k = "data_id";
     var winner = d3.maxIndex(d3.values(d.proportions[k]).map(p => p.value));
@@ -850,74 +899,6 @@ function draw_force(data) {
   pos_functions["center"] = function(d) { 
     return num_to_pos( 0.5 ) 
   };  
-
-  
-  // some more func options based on colorings
-  color_by_options.map(function(k) {
-    // skip some of the default color functions
-    if (k==="uniform" || k==="degree" || k==="data_id") { // || k==="multiclass") {
-      return;
-    } else if (typeof pos_functions[k] !== "undefined") {
-      // console.log(k); console.log(pos_functions[k])
-      return;
-    }
-
-    // set xy = (normalized) group of the largest slice of the pie (winner takes all)
-    pos_functions[k] = function(d) {
-      var winner = d3.maxIndex(d3.values(d.proportions[k]).map(p => p.value));
-      var xy = groups_to_frac[k][parseFloat(d.proportions[k][winner].group)];
-      /* 
-      var winner = d.proportions[k][0];
-      d3.values(d.proportions[k]).map(function(p) {
-        if (p.value >= winner.value) {
-          winner = p;
-        }
-      }) 
-      */
-      return num_to_pos( xy );
-    }
-
-    // below is for binary proportions only
-    if (groups[k].length > 2) { 
-      return;
-    } 
-    // set xy = # of times group is found in node / # members in node
-    pos_functions[k + ' (weighted)'] = function(d) {
-      var xy = 0;
-      d3.values(d.proportions[k]).map(function(p) {
-        if ((p.label === k) || (p.group === 1)) {
-          //xy = groups_to_frac[k][parseFloat(p.group)] * (p.value / p.row_count);  
-          //xy = p.group * (p.value / p.row_count); 
-          xy = (p.value / p.row_count);  
-        }
-      })
-      //
-      // d.proportions[k].map(function(p) { // NeuroSynth (Rest) = [{group:0,...}, {group:1,...}]
-      //  if (parseInt(p.group) === 1) { 
-      //    xy = p.value / p.row_count;
-      //    break;
-      //  }
-      // });
-      //
-      // // if (xy === 0) { 
-      // d.proportions["multiclass"].map(function(p) {
-      //  if (p.label === k) { 
-      //    xy = p.value / p.row_count;
-      //    break;
-      //  } 
-      // });
-      // // }
-      //
-      return num_to_pos( xy );
-    }
-    /* 
-    pos_functions[k + " (diversity)"] = function(d) {
-      var p = d.proportions[k];
-      var xy = d3.keys(p).length / d3.keys(groups[k]).length;
-      return num_to_pos( xy );
-    };
-    */
-  });
 
 
 
@@ -1222,13 +1203,13 @@ function draw_force(data) {
           .data(function(d, i) {return pie(d.proportions[color_by]);})
           .enter()
           .append("svg:path")
-            .attr("d", d3.svg.arc().innerRadius(inner_radius).outerRadius(function(d, i) {
+            .attr("d", d3.svg.arc().innerRadius(inner_radius).outerRadius(function(d) {
               // return pie_norm(d.data.row_count) + inner_radius; //*0.8;
               var outer_radius = pie_norm(d.data.row_count);
               if (isNaN(outer_radius)) { outer_radius = min_outer_radius };
               return outer_radius + inner_radius;
             }))
-            .attr("fill", function(d, i) { return color(d.data.group); })
+            .attr("fill", function(d) { return color(d.data.group); })
             .attr("class", "circle");
     
     // re-color circles, legend
