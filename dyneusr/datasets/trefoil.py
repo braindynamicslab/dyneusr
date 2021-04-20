@@ -16,7 +16,7 @@ from itertools import product
 import numpy as np
 import pandas as pd 
 
-from sklearn.datasets.base import Bunch
+from sklearn.utils import Bunch
 
 import matplotlib as mpl
 #mpl.use('TkAgg', warn=False)
