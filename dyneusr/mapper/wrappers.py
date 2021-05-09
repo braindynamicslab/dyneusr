@@ -11,7 +11,7 @@ import pandas as pd
 
 # Machine learning libraries
 from joblib import Memory
-from sklearn.datasets.base import Bunch
+from sklearn.utils import Bunch
 from sklearn.base import BaseEstimator, TransformerMixin, ClusterMixin
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
