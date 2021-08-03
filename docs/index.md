@@ -184,15 +184,15 @@ dG.visualize('dyneusr_output.html')
 #### [Python 3.6](https://www.python.org/)
 
 #### Required Python Packages
-* [numpy](www.numpy.org)
-* [pandas](pandas.pydata.org)
-* [scipy](www.scipy.org)
-* [scikit-learn](scikit-learn.org)
-* [matplotlib](matplotlib.sourceforge.net)
-* [seaborn](stanford.edu/~mwaskom/software/seaborn)
-* [networkx](networkx.github.io)
-* [nilearn](nilearn.github.io)
-* [kmapper](kepler-mapper.scikit-tda.org)
+* [numpy](https://www.numpy.org)
+* [pandas](https://pandas.pydata.org)
+* [scipy](https://www.scipy.org)
+* [scikit-learn](https://scikit-learn.org)
+* [matplotlib](https://matplotlib.sourceforge.net)
+* [seaborn](https://stanford.edu/~mwaskom/software/seaborn)
+* [networkx](https://networkx.github.io)
+* [nilearn](https://nilearn.github.io)
+* [kmapper](https://kepler-mapper.scikit-tda.org)
 
 _For a full list of packages and required versions, see [`requirements.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements.txt) and [`requirements-versions.txt`](https://github.com/braindynamicslab/dyneusr/blob/master/requirements-versions.txt)._
 
