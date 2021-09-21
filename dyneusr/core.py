@@ -325,7 +325,7 @@ class DyNeuGraph(BaseEstimator, TransformerMixin):
 
         # [1] plot TCM
         if plot_tcm:
-            figs = visuals.plot_temporal_matrix(self.tcm_, y=None, show=show, **kwargs)
+            figs = visuals.plot_temporal_degree(self.tcm_, y=None, show=show, **kwargs)
 
         # [2] visualize force
         HTTP = visuals.visualize_force(self.node_link_data_, path_html=path_html, static=static, show=show, port=port, **kwargs)
