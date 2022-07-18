@@ -7,6 +7,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from collections import Counter
+from inspect import getfullargspec
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -162,8 +163,14 @@ def draw_networkx(graph, ax=None, fig=None, nodes=True, edges=True, **kwargs):
                 edge_c = ['grey' for _ in G.edges()]
             kwargs.update(edge_color=edge_c)
 
+        # only pass relevant keyword arguments to nx.draw_networkx_edges
+        draw_networkx_edges_kwargs = getfullargspec(nx.draw_networkx_edges).args
+        draw_networkx_edges_kwargs = {
+            k: kwargs.get(k) for k in draw_networkx_edges_kwargs if k in kwargs
+        }
+
         # draw
-        edges = nx.draw_networkx_edges(G, **kwargs, ax=ax)
+        edges = nx.draw_networkx_edges(G, ax=ax, **draw_networkx_edges_kwargs)
         if edge_zorder is not None:
             edges.set_zorder(edge_zorder)
 
@@ -187,8 +194,14 @@ def draw_networkx(graph, ax=None, fig=None, nodes=True, edges=True, **kwargs):
                 node_c = [_ for n,_ in G.nodes(data="group")]
             kwargs.update(node_color=node_c)
         
+        # only pass relevant keyword arguments to nx.draw_networkx_nodes
+        draw_networkx_nodes_kwargs = getfullargspec(nx.draw_networkx_nodes).args
+        draw_networkx_nodes_kwargs = {
+            k: kwargs.get(k) for k in draw_networkx_nodes_kwargs if k in kwargs
+        }
+
         # draw
-        nodes = nx.draw_networkx_nodes(G, **kwargs, ax=ax)
+        nodes = nx.draw_networkx_nodes(G, ax=ax, **draw_networkx_nodes_kwargs)
         if node_zorder is not None:
             nodes.set_zorder(node_zorder)
         if node_edge > 0:
