@@ -417,7 +417,7 @@ def extract_matrices(G, index=None, **kwargs):
             __ for n,_ in G.nodes(data='members') for __ in _
             ])
     nTR = int(max(np.r_[len(index), np.ravel(index)+1]))
-    A = nx.to_numpy_matrix(G).A  # node x node
+    A = nx.to_numpy_array(G)  # node x node
     M = np.zeros((nTR, A.shape[0]))    #   TR x node
     T = np.zeros((nTR, nTR))
 
@@ -428,7 +428,7 @@ def extract_matrices(G, index=None, **kwargs):
     # mapping from 'cube0_cluster0' => 0
     node_to_index = {n:i for i,n in enumerate(G)}
     node_to_members = dict(nx.get_node_attributes(G, 'members'))
-    node_members = np.array(list(node_to_members.values()))
+    node_members = np.array(list(node_to_members.values()), dtype=list)
 
     # loop over TRs to fill in C_rc, C_tp
     for TR in range(nTR):
