@@ -2,7 +2,7 @@
 
 setuptools
 pytest
-ipython==7.16.3
+ipython==8.10.0
 numpy>=1.16
 pandas==0.23.4
 scipy==1.0.1
